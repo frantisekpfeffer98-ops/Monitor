@@ -28,7 +28,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .mini{padding:3px 12px;font-size:.8rem;margin-left:8px;border-radius:999px}
 /* monitor */
 #mon{position:fixed;inset:0;display:grid;grid-template-columns:30% 1fr;grid-template-rows:auto 1fr;background:#000;font-family:"Arial Narrow","Roboto Condensed",Arial,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (orientation:portrait){#mon{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}#nums,#traces{grid-column:1}#traces{grid-row:2;border-left:0!important}#nums{grid-row:3}}
+@media (orientation:portrait){#mon:not(.pc){grid-template-columns:1fr;grid-template-rows:auto 1fr auto}#mon:not(.pc) #nums,#mon:not(.pc) #traces{grid-column:1}#mon:not(.pc) #traces{grid-row:2;border-left:0!important}#mon:not(.pc) #nums{grid-row:3}}
 #top{grid-column:1/-1;display:flex;align-items:center;gap:10px;background:linear-gradient(#16304f,#0b1a2e);border-bottom:1px solid #2a4a70;padding:4px 10px;font-size:.8rem;color:#c9d1d9;letter-spacing:.05em}
 #top .pt{white-space:nowrap;font-weight:700}
 .sim{border:1px solid #8b94a1;padding:0 6px;border-radius:3px;font-size:.68rem;white-space:nowrap}
@@ -57,12 +57,35 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 #heart{opacity:.25}
 #wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000d;z-index:5;text-align:center;padding:20px;font-family:system-ui,sans-serif}
 #stale{position:absolute;right:8px;top:34px;z-index:6;font-size:.75rem;color:#ff9f43}
+#fs{background:transparent;border:1px solid #8b94a1;border-radius:6px;padding:2px 10px;font-size:.9rem;color:#c9d1d9}
+#mon.pc{grid-template-columns:28% 1fr;grid-template-rows:auto 1fr}
+#mon.pc #top{font-size:1rem;padding:8px 18px}
+#mon.pc .tr span{font-size:1.05rem}
+#mon.pc .tr em{font-size:.8rem}
+#mon.pc .n{padding:6px 18px}
+#mon.pc .nh small{font-size:1.3rem}
+#mon.pc .nh u{font-size:.9rem}
+#mon.pc .n b{font-size:clamp(3rem,min(15vh,8vw),10rem)}
+#mon.pc .n b.sm{font-size:clamp(2.4rem,min(10vh,5.5vw),7rem)}
+#mon.pc .ns{font-size:1rem}
+#mon.pc #traces{grid-column:2;grid-row:2}
+#mon.pc #nums{grid-column:1;grid-row:2;grid-template-columns:1fr;grid-template-rows:repeat(4,1fr)}
+.dev{display:flex;gap:12px;margin:16px 0}.dev button{flex:1;padding:30px 12px;font-size:1.15rem}
+@media (min-width:900px){#ctl{max-width:1000px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}}
 </style>
 </head>
 <body>
 
-<div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v6</small></h1>
+<div id="pick" class="wrap">
+  <h1>Simulátor monitoru pacienta <small class="mut">v7</small></h1>
+  <p class="mut">Na jakém zařízení poběží monitor? Podle toho se přizpůsobí jeho zobrazení.</p>
+  <div class="dev"><button id="dPh" type="button">📱 Telefon</button><button id="dPc" type="button">💻 PC</button></div>
+  <div class="warn">Pouze pro výuku a nácvik. Nejedná se o zdravotnický prostředek a nesmí se používat k monitoraci skutečných pacientů.</div>
+</div>
+
+<div id="home" class="wrap hide">
+  <h1>Simulátor monitoru pacienta</h1>
+  <p class="mut">Monitor poběží na: <b id="devlab"></b> <button class="mini" id="chg" type="button">změnit</button></p>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -73,16 +96,14 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 
 <div id="ctl" class="wrap hide">
   <div class="bar"><div><span class="dot" id="cdot"></span><span id="cst" class="mut">Ovladač</span></div><button id="cback">Zpět</button></div>
-  <h1>Rytmus EKG</h1>
-  <div class="chips" id="rhy-chips"></div>
-  <h1>Scénáře</h1>
-  <div class="chips" id="presets"></div>
-  <h1>Hodnoty</h1>
-  <div id="sliders"></div>
+  <div class="cols">
+    <div><h1>Rytmus EKG</h1><div class="chips" id="rhy-chips"></div></div>
+    <div><h1>Hodnoty</h1><div id="sliders"></div></div>
+  </div>
 </div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v6</span><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v7</span><button id="fs" class="hide" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
@@ -103,20 +124,18 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 const $=id=>document.getElementById(id);
 const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],vf:['Fibrilace komor',0],asys:['Asystolie',0]};
 const FIELDS=[['hr','Srdeční frekvence (/min)',0,250],['spo2','SpO₂ (%)',0,100],['sys','TK systolický (mmHg)',0,260],['dia','TK diastolický (mmHg)',0,160],['etco2','EtCO₂ (mmHg)',0,80],['rr','Dechová frekvence (/min)',0,60]];
-const PRESETS={
- 'Stabilní':{rhythm:'sinus',hr:75,spo2:98,sys:120,dia:80,etco2:38,rr:14},
- 'Šok':{rhythm:'tachy',hr:135,spo2:93,sys:70,dia:40,etco2:26,rr:28},
- 'Hypoxie':{rhythm:'tachy',hr:120,spo2:78,sys:140,dia:90,etco2:48,rr:30},
- 'Bradykardie':{rhythm:'brady',hr:36,spo2:94,sys:80,dia:45,etco2:34,rr:12},
- 'Zástava oběhu':{rhythm:'vf',hr:0,spo2:0,sys:0,dia:0,etco2:12,rr:0}
-};
-let S={...PRESETS['Stabilní']}, code='', room=null, mode='', lastRx=0;
+const DEF={rhythm:'sinus',hr:75,spo2:98,sys:120,dia:80,etco2:38,rr:14};
+let S={...DEF}, code='', room=null, mode='', lastRx=0, dev='';
 
 try{code=localStorage.getItem('simcode')||''}catch(e){}
 if(!code)code=String(Math.floor(1000+Math.random()*9000));
 $('code').value=code;
 
-function show(id){['home','ctl','mon'].forEach(x=>$(x).classList.toggle('hide',x!==id))}
+try{dev=localStorage.getItem('simdev')||''}catch(e){}
+function setDev(d){dev=d;try{localStorage.setItem('simdev',d)}catch(e){}$('devlab').textContent=d==='pc'?'PC':'telefonu';show('home')}
+$('dPh').onclick=()=>setDev('phone');$('dPc').onclick=()=>setDev('pc');$('chg').onclick=()=>show('pick');
+if(dev)$(dev==='pc'?'dPc':'dPh').classList.add('on');
+function show(id){['pick','home','ctl','mon'].forEach(x=>$(x).classList.toggle('hide',x!==id))}
 
 function getCode(){code=($('code').value||'').replace(/\D/g,'').slice(0,4);if(code.length<4){$('code').focus();return false}try{localStorage.setItem('simcode',code)}catch(e){}return true}
 function fail(m){if(mode==='ctl'){$('cst').textContent=m;$('cdot').classList.remove('ok')}else{$('noroom').textContent=m;$('noroom').classList.remove('hide')}}
@@ -126,9 +145,8 @@ let conns=[];
 function buildCtl(){
   const rc=$('rhy-chips');rc.innerHTML='';
   for(const k in RHY){const b=document.createElement('button');b.textContent=RHY[k][0];b.dataset.k=k;
-    b.onclick=()=>{S.rhythm=k;S.hr=RHY[k][1];if(k==='vf'||k==='asys'){S.spo2=Math.min(S.spo2,0)||0;S.sys=0;S.dia=0}sync()};rc.appendChild(b)}
-  const pc=$('presets');pc.innerHTML='';
-  for(const n in PRESETS){const b=document.createElement('button');b.textContent=n;b.onclick=()=>{S={...PRESETS[n],co2on:S.co2on};sync()};pc.appendChild(b)}
+    b.onclick=()=>{const dead=k==='vf'||k==='asys',was=S.rhythm==='vf'||S.rhythm==='asys';S.rhythm=k;S.hr=RHY[k][1];
+      if(dead){S.spo2=0;S.sys=0;S.dia=0}else if(was){S.spo2=98;S.sys=120;S.dia=80}sync()};rc.appendChild(b)}
   const sl=$('sliders');sl.innerHTML='';
   for(const [k,l,mi,ma] of FIELDS){
     const d=document.createElement('div');d.className='row';
@@ -174,7 +192,7 @@ const COL=['#2ee66b','#3aa0ff','#ff9a2e'];
 const SPEED=[110,110,60]; // px za sekundu (CSS px)
 function resize(){
   cv.forEach((c,i)=>{const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;
-    c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);cx[i].setTransform(d,0,0,d,0,0);cx[i].lineWidth=2;cx[i].lineJoin='round';
+    c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);cx[i].setTransform(d,0,0,d,0,0);cx[i].lineWidth=dev==='pc'?2.5:2;cx[i].lineJoin='round';
     c.style.width='100%';T[i].x=0;T[i].y=null;});
 }
 window.addEventListener('resize',()=>{if(mode==='mon')resize()});
@@ -236,7 +254,7 @@ function frame(now){
       if(i===0)y=H*0.58-vals[0]*H*0.33;
       else if(i===1)y=H*0.85-vals[1]*H*0.65;
       else y=H*0.88-(vals[2]/60)*H*0.75;
-      const nx=t.x+SPEED[i]*h;
+      const nx=t.x+SPEED[i]*(dev==='pc'?1.4:1)*h;
       ctx.strokeStyle=COL[i];ctx.beginPath();
       if(t.y===null)ctx.moveTo(t.x,y);else ctx.moveTo(t.x,t.y);
       ctx.lineTo(nx,y);ctx.stroke();
@@ -305,7 +323,9 @@ function handleState(d){
 $('bMon').onclick=()=>{
   if(!getCode())return;
   if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
-  mode='mon';show('mon');$('wcode').textContent=code;tick();setInterval(tick,1000);resize();paintNums();
+  mode='mon';$('mon').classList.toggle('pc',dev==='pc');$('fs').classList.toggle('hide',dev!=='pc');
+  $('fs').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+  show('mon');$('wcode').textContent=code;tick();setInterval(tick,1000);resize();paintNums();
   try{if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}
   const p=new Peer();let conn=null;
   function link(){
