@@ -28,7 +28,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .mini{padding:3px 12px;font-size:.8rem;margin-left:8px;border-radius:999px}
 /* monitor */
 #mon{position:fixed;inset:0;display:grid;grid-template-columns:30% 1fr;grid-template-rows:auto 1fr;background:#000;font-family:"Arial Narrow","Roboto Condensed",Arial,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (orientation:portrait){#mon:not(.pc){grid-template-columns:1fr;grid-template-rows:auto 1fr auto}#mon:not(.pc) #nums,#mon:not(.pc) #traces{grid-column:1}#mon:not(.pc) #traces{grid-row:2;border-left:0!important}#mon:not(.pc) #nums{grid-row:3}}
+@media (orientation:portrait){#mon:not(.pc){grid-template-columns:1fr;grid-template-rows:auto 1fr 36%}#mon:not(.pc) #nums,#mon:not(.pc) #traces{grid-column:1}#mon:not(.pc) #traces{grid-row:2;border-left:0!important}#mon:not(.pc) #nums{grid-row:3}}
 #top{grid-column:1/-1;display:flex;align-items:center;gap:10px;background:linear-gradient(#16304f,#0b1a2e);border-bottom:1px solid #2a4a70;padding:4px 10px;font-size:.8rem;color:#c9d1d9;letter-spacing:.05em}
 #top .pt{white-space:nowrap;font-weight:700}
 .sim{border:1px solid #8b94a1;padding:0 6px;border-radius:3px;font-size:.68rem;white-space:nowrap}
@@ -45,15 +45,15 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .tr em{position:absolute;right:8px;top:4px;font-size:.65rem;font-style:normal;color:#8b94a1;z-index:2}
 #nums{grid-column:1;grid-row:2;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:1px;background:#3a3f47}
 @media (orientation:landscape){#nums{grid-template-columns:1fr;grid-template-rows:repeat(4,1fr)}}
-.n{position:relative;background:#000;color:var(--c);padding:4px 12px;display:flex;flex-direction:column;justify-content:center;min-height:0}
+.n{position:relative;background:#000;color:var(--c);padding:2px 12px;display:flex;flex-direction:column;justify-content:center;min-height:0;container-type:size}
 .nh{display:flex;align-items:baseline;gap:6px}
-.nh small{font-size:1rem;font-weight:700}
+.nh small{font-size:.9rem;font-weight:700}
 .nh em{font-style:normal;font-size:.75rem;opacity:.8}
 .nh u{text-decoration:none;position:absolute;right:10px;top:4px;font-size:.7rem;line-height:1.15;white-space:pre;text-align:right;opacity:.85}
-.n b{font-size:clamp(3rem,16vmin,7rem);line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
-.n b.sm{font-size:clamp(2.2rem,11vmin,5rem)}
+.n b{font-size:clamp(1.5rem,8vmin,5rem);font-size:clamp(1.5rem,min(calc(100cqh - 2.8rem),40cqw),12rem);line-height:1;font-weight:700;font-variant-numeric:tabular-nums}
+.n b.sm{font-size:clamp(1.3rem,6vmin,3.5rem);font-size:clamp(1.3rem,min(calc(100cqh - 2.8rem),21cqw),9rem)}
 .n.al b{background:#d11;color:#fff;padding:0 .12em;animation:bl 1s steps(1) infinite;align-self:flex-start}
-.ns{font-size:.75rem;opacity:.85;margin-top:2px}
+.ns{font-size:.7rem;opacity:.85}
 #heart{opacity:.25}
 #wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000d;z-index:5;text-align:center;padding:20px;font-family:system-ui,sans-serif}
 #stale{position:absolute;right:8px;top:34px;z-index:6;font-size:.75rem;color:#ff9f43}
@@ -65,27 +65,25 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 #mon.pc .n{padding:6px 18px}
 #mon.pc .nh small{font-size:1.3rem}
 #mon.pc .nh u{font-size:.9rem}
-#mon.pc .n b{font-size:clamp(3rem,min(15vh,8vw),10rem)}
-#mon.pc .n b.sm{font-size:clamp(2.4rem,min(10vh,5.5vw),7rem)}
 #mon.pc .ns{font-size:1rem}
 #mon.pc #traces{grid-column:2;grid-row:2}
 #mon.pc #nums{grid-column:1;grid-row:2;grid-template-columns:1fr;grid-template-rows:repeat(4,1fr)}
 .dev{display:flex;gap:12px;margin:16px 0}.dev button{flex:1;padding:30px 12px;font-size:1.15rem}
 @media (min-width:900px){#ctl{max-width:1000px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}}
+@media (max-height:500px){#top{padding:2px 10px;font-size:.7rem}#clock{font-size:.75rem}}
 </style>
 </head>
 <body>
 
-<div id="pick" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v7</small></h1>
-  <p class="mut">Na jakém zařízení poběží monitor? Podle toho se přizpůsobí jeho zobrazení.</p>
+<div id="pick" class="wrap hide">
+  <h1>Kde poběží monitor?</h1>
+  <p class="mut">Podle toho se přizpůsobí jeho zobrazení.</p>
   <div class="dev"><button id="dPh" type="button">📱 Telefon</button><button id="dPc" type="button">💻 PC</button></div>
-  <div class="warn">Pouze pro výuku a nácvik. Nejedná se o zdravotnický prostředek a nesmí se používat k monitoraci skutečných pacientů.</div>
+  <button id="pback" type="button">Zpět</button>
 </div>
 
-<div id="home" class="wrap hide">
-  <h1>Simulátor monitoru pacienta</h1>
-  <p class="mut">Monitor poběží na: <b id="devlab"></b> <button class="mini" id="chg" type="button">změnit</button></p>
+<div id="home" class="wrap">
+  <h1>Simulátor monitoru pacienta <small class="mut">v8</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -103,7 +101,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v7</span><button id="fs" class="hide" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v8</span><button id="fs" class="hide" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
@@ -132,8 +130,10 @@ if(!code)code=String(Math.floor(1000+Math.random()*9000));
 $('code').value=code;
 
 try{dev=localStorage.getItem('simdev')||''}catch(e){}
-function setDev(d){dev=d;try{localStorage.setItem('simdev',d)}catch(e){}$('devlab').textContent=d==='pc'?'PC':'telefonu';show('home')}
-$('dPh').onclick=()=>setDev('phone');$('dPc').onclick=()=>setDev('pc');$('chg').onclick=()=>show('pick');
+$('bMon').onclick=()=>{if(getCode())show('pick')};
+$('pback').onclick=()=>show('home');
+const pickDev=d=>{dev=d;try{localStorage.setItem('simdev',d)}catch(e){}startMon()};
+$('dPh').onclick=()=>pickDev('phone');$('dPc').onclick=()=>pickDev('pc');
 if(dev)$(dev==='pc'?'dPc':'dPh').classList.add('on');
 function show(id){['pick','home','ctl','mon'].forEach(x=>$(x).classList.toggle('hide',x!==id))}
 
@@ -320,7 +320,7 @@ function handleState(d){
   if(changed){nextBeat=st}
   paintNums();
 }
-$('bMon').onclick=()=>{
+function startMon(){
   if(!getCode())return;
   if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
   mode='mon';$('mon').classList.toggle('pc',dev==='pc');$('fs').classList.toggle('hide',dev!=='pc');
@@ -340,7 +340,7 @@ $('bMon').onclick=()=>{
   p.on('disconnected',()=>{try{p.reconnect()}catch(e){}});
   setInterval(()=>{if(lastRx&&Date.now()-lastRx>7000)$('stale').classList.remove('hide')},1000);
   prev=performance.now();requestAnimationFrame(frame);
-};
+}
 </script>
 </body>
 </html>
