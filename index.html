@@ -86,7 +86,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas><div id="rhy"></div></div>
     <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
-    <div class="tr"><span style="color:#ff9a2e">CO₂</span><em>0–60 mmHg</em><canvas id="c2"></canvas></div>
+    <div class="tr"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
   </div>
   <div id="nums">
     <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> EKG</div></div>
@@ -128,8 +128,9 @@ function buildCtl(){
   for(const k in RHY){const b=document.createElement('button');b.textContent=RHY[k][0];b.dataset.k=k;
     b.onclick=()=>{S.rhythm=k;S.hr=RHY[k][1];if(k==='vf'||k==='asys'){S.spo2=Math.min(S.spo2,0)||0;S.sys=0;S.dia=0}sync()};rc.appendChild(b)}
   const pc=$('presets');pc.innerHTML='';
-  for(const n in PRESETS){const b=document.createElement('button');b.textContent=n;b.onclick=()=>{S={...PRESETS[n]};sync()};pc.appendChild(b)}
+  for(const n in PRESETS){const b=document.createElement('button');b.textContent=n;b.onclick=()=>{S={...PRESETS[n],co2on:S.co2on};sync()};pc.appendChild(b)}
   const sl=$('sliders');sl.innerHTML='';
+  const cb=document.createElement('button');cb.id='co2btn';cb.className='big';cb.onclick=()=>{S.co2on=(S.co2on===false);sync(false)};sl.appendChild(cb);
   for(const [k,l,mi,ma] of FIELDS){
     const d=document.createElement('div');d.className='row';
     d.innerHTML=`<label><span>${l}</span><span id="o_${k}"></span></label><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="1">`;
@@ -140,6 +141,9 @@ function buildCtl(){
 function paintCtl(setSliders=true){
   document.querySelectorAll('#rhy-chips button').forEach(b=>b.classList.toggle('on',b.dataset.k===S.rhythm));
   for(const [k] of FIELDS){$('o_'+k).textContent=S[k];if(setSliders)$('s_'+k).value=S[k]}
+  const on=S.co2on!==false,cb=$('co2btn');
+  cb.textContent='EtCO₂ / kapnografie: '+(on?'ZAPNUTO':'VYPNUTO');cb.classList.toggle('on',on);
+  ['etco2','rr'].forEach(k=>{$('s_'+k).closest('.row').style.opacity=on?1:.4});
 }
 let tmr=0;
 function sync(full=true){
@@ -226,6 +230,7 @@ function frame(now){
     st+=h;sched();
     const vals=[ecg(),pleth(),capno()];
     for(let i=0;i<3;i++){
+      if(i===2&&S.co2on===false){T[2].y=null;continue}
       const c=cv[i],W=c.getBoundingClientRect().width,H=c.getBoundingClientRect().height,t=T[i],ctx=cx[i];
       let y;
       if(i===0)y=H*0.58-vals[0]*H*0.33;
@@ -256,8 +261,11 @@ function paintNums(){
   if(S.sys<=0){$('vBp').textContent='---/---';$('vMap').textContent='(---)'}
   else{$('vBp').textContent=S.sys+'/'+S.dia;$('vMap').textContent='('+Math.round((S.sys+2*S.dia)/3)+')'}
   $('vBpT').textContent=bpTime;
-  $('vCo').textContent=(S.rr<=0&&S.etco2<=0)?'---':S.etco2;
-  $('vRr').textContent=S.rr<=0?'---':S.rr;
+  const co=S.co2on!==false;
+  $('vCo').textContent=(!co||(S.rr<=0&&S.etco2<=0))?'---':S.etco2;
+  $('vRr').textContent=(!co||S.rr<=0)?'---':S.rr;
+  $('co2em').textContent=co?'0–60 mmHg':'VYPNUTO';
+  $('nCo').style.opacity=co?1:.35;
   $('lHr').textContent=LIM.hr[1]+'\n'+LIM.hr[0];
   $('lSpo').textContent=LIM.spo2[1]+'\n'+LIM.spo2[0];
   $('lBp').textContent=LIM.sys[1]+'\n'+LIM.sys[0];
@@ -271,7 +279,7 @@ function paintNums(){
     nHr:!dead&&(S.hr<LIM.hr[0]||S.hr>LIM.hr[1]),
     nSpo:!dead&&(S.spo2<LIM.spo2[0]),
     nBp:!dead&&(S.sys<LIM.sys[0]||S.sys>LIM.sys[1]),
-    nCo:S.etco2<LIM.etco2[0]||S.etco2>LIM.etco2[1]
+    nCo:co&&(S.etco2<LIM.etco2[0]||S.etco2>LIM.etco2[1])
   };
   if(f.nHr&&S.rhythm!=='vt')al.push(S.hr<LIM.hr[0]?'HR NÍZKÁ':'HR VYSOKÁ');
   if(f.nSpo)al.push('SpO₂ NÍZKÁ');
@@ -286,6 +294,8 @@ function handleState(d){
   const n={...S};
   for(const [k,,mi,ma] of FIELDS){const v=Number(d[k]);if(isFinite(v))n[k]=Math.max(mi,Math.min(ma,v))}
   n.rhythm=d.rhythm;
+  n.co2on=d.co2on!==false;
+  if(n.co2on!==(S.co2on!==false)){T[2].x=0;T[2].y=null;cx[2].clearRect(0,0,1e5,1e5)}
   if(n.sys!==S.sys||n.dia!==S.dia)bpTime=hhmm();
   const changed=n.rhythm!==S.rhythm||n.hr!==S.hr;
   S=n;lastRx=Date.now();
