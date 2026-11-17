@@ -25,6 +25,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .row label{display:flex;justify-content:space-between;font-weight:600;margin-bottom:4px}
 .row input[type=range]{width:100%;height:36px}
 .hide{display:none!important}
+.mini{padding:3px 12px;font-size:.8rem;margin-left:8px;border-radius:999px}
 /* monitor */
 #mon{position:fixed;inset:0;display:grid;grid-template-columns:30% 1fr;grid-template-rows:auto 1fr;background:#000;font-family:"Arial Narrow","Roboto Condensed",Arial,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (orientation:portrait){#mon{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}#nums,#traces{grid-column:1}#traces{grid-row:2;border-left:0!important}#nums{grid-row:3}}
@@ -62,7 +63,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <body>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta</h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v5</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -82,7 +83,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE</span><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v5</span><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas><div id="rhy"></div></div>
     <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
@@ -130,11 +131,11 @@ function buildCtl(){
   const pc=$('presets');pc.innerHTML='';
   for(const n in PRESETS){const b=document.createElement('button');b.textContent=n;b.onclick=()=>{S={...PRESETS[n],co2on:S.co2on};sync()};pc.appendChild(b)}
   const sl=$('sliders');sl.innerHTML='';
-  const cb=document.createElement('button');cb.id='co2btn';cb.className='big';cb.onclick=()=>{S.co2on=(S.co2on===false);sync(false)};sl.appendChild(cb);
   for(const [k,l,mi,ma] of FIELDS){
     const d=document.createElement('div');d.className='row';
-    d.innerHTML=`<label><span>${l}</span><span id="o_${k}"></span></label><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="1">`;
+    d.innerHTML=k==='etco2'?`<label><span>${l} <button type="button" id="co2btn" class="mini"></button></span><span id="o_${k}"></span></label><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="1">`:`<label><span>${l}</span><span id="o_${k}"></span></label><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="1">`;
     sl.appendChild(d);
+    if(k==='etco2')$('co2btn').onclick=()=>{S.co2on=(S.co2on===false);sync(false)};
     d.querySelector('input').oninput=e=>{S[k]=+e.target.value;if(k==='dia'&&S.dia>S.sys){S.sys=S.dia}if(k==='sys'&&S.sys<S.dia){S.dia=S.sys}sync(false)};
   }
 }
@@ -142,8 +143,8 @@ function paintCtl(setSliders=true){
   document.querySelectorAll('#rhy-chips button').forEach(b=>b.classList.toggle('on',b.dataset.k===S.rhythm));
   for(const [k] of FIELDS){$('o_'+k).textContent=S[k];if(setSliders)$('s_'+k).value=S[k]}
   const on=S.co2on!==false,cb=$('co2btn');
-  cb.textContent='EtCO₂ / kapnografie: '+(on?'ZAPNUTO':'VYPNUTO');cb.classList.toggle('on',on);
-  ['etco2','rr'].forEach(k=>{$('s_'+k).closest('.row').style.opacity=on?1:.4});
+  cb.textContent=on?'ZAP':'VYP';cb.classList.toggle('on',on);
+  $('s_etco2').style.opacity=on?1:.4;$('s_rr').closest('.row').style.opacity=on?1:.4;
 }
 let tmr=0;
 function sync(full=true){
