@@ -85,7 +85,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 #nibpb{padding:0 8px;font-size:.7rem;line-height:1.3;margin-left:6px;color:#fff}
 #lower{display:flex;flex:2;min-height:0}
 #lw{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
-#dfp{flex:none;width:122px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:6px;background:#101418;border-left:2px solid #ff9a2e;font-size:.75rem}
+#dfp{flex:none;width:122px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:6px;background:#101418;border:2px solid #ff9a2e;border-radius:8px;margin:4px;font-size:.75rem}
 #dfp[data-st=rdy]{border-color:#d11}
 #dfst{display:flex;flex-direction:column;align-items:center;gap:1px;color:#ff9a2e;font-size:.68rem;letter-spacing:.05em;padding:3px 2px;border-radius:4px;background:linear-gradient(90deg,#ff9a2e66 var(--p,0%),#ff9a2e1f var(--p,0%))}
 #dfst i{font-style:normal;font-weight:700}
@@ -122,7 +122,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v17</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v19</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -142,7 +142,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v17</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v19</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -394,7 +394,7 @@ function paintNums(){
   const noecg=S.rhythm==='noecg';
   $('vHr').textContent=(hrOk&&(!noecg||S.spo2>0))?S.hr:'---';
   $('nHr').style.setProperty('--c',noecg?'#3aa0ff':'#2ee66b');
-  $('hrsrc').textContent=noecg?'SpO₂':'EKG';
+  $('hrsrc').textContent=noecg?'':'EKG';
   $('vPr').textContent=(hrOk&&S.spo2>0)?S.hr:'---';
   $('vSpo').textContent=S.spo2>0?S.spo2:'---';
   const bv=nibp.val,sv=(!nibp.on&&bv)?bv.sys:0;
@@ -415,7 +415,6 @@ function paintNums(){
   if(S.rhythm==='asys'){al.push('ASYSTOLIE');crit=true}
   else if(S.rhythm==='vf'){al.push('FIBRILACE KOMOR');crit=true}
   else if(S.rhythm==='vt'){al.push('KOMOROVÁ TACHYKARDIE');crit=true}
-  if(S.rhythm==='noecg')al.push('ODPOJENÉ SVODY EKG');
   const f={
     nHr:!dead&&(S.hr<LIM.hr[0]||S.hr>LIM.hr[1]),
     nSpo:!dead&&(S.spo2<LIM.spo2[0]),
