@@ -45,7 +45,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 #alm.on.w{background:#e6c200;color:#000}
 @keyframes bl{50%{opacity:.3}}
 #clock{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700;font-size:.95rem}
-#traces{display:flex;flex-direction:column;min-height:0;border-left:1px solid #2a4a70;grid-column:2;grid-row:2}
+#traces{position:relative;display:flex;flex-direction:column;min-height:0;border-left:1px solid #2a4a70;grid-column:2;grid-row:2}
 .tr{position:relative;flex:1;min-height:0;border-bottom:1px solid #2a2d33}
 .tr:first-child{flex:1.5}
 .tr canvas{position:absolute;inset:0;width:100%;height:100%}
@@ -79,6 +79,25 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .dev{display:flex;gap:12px;margin:16px 0}.dev button{flex:1;padding:30px 12px;font-size:1.15rem}
 @media (min-width:900px){#ctl{max-width:1000px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}}
 @media (max-height:500px){#top{padding:2px 10px;font-size:.7rem}#clock{font-size:.75rem}}
+#fs{padding:2px 10px;font-size:.9rem}
+.tb{background:transparent;border:1px solid #8b94a1;border-radius:6px;padding:2px 8px;font-size:.8rem;color:#c9d1d9}
+.tb.on{background:#d11;border-color:#d11;color:#fff}
+#nibpb{padding:0 8px;font-size:.7rem;line-height:1.3;margin-left:6px;color:#fff}
+#dfp{position:absolute;left:0;right:0;bottom:0;z-index:8;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px;background:#111;border-top:2px solid #ff9a2e;font-size:.85rem}
+#dfp[data-st=rdy]{border-color:#d11}
+#dfst{flex:1 1 100%;font-weight:700;color:#ff9a2e}
+#dfp[data-st=rdy] #dfst{color:#fff;background:#d11;padding:2px 8px;border-radius:4px;animation:bl 1s steps(1) infinite}
+#dfp button{background:#222;border:1px solid #666;border-radius:6px;color:#fff;padding:6px 12px}
+#dfp button.on{background:#ff9a2e;color:#000}
+#dfp button:disabled{opacity:.35}
+#dfx:not(:disabled){background:#d11!important;border-color:#fff!important}
+#dfj{min-width:4.5ch;text-align:center}
+#flash{position:absolute;top:0;right:0;bottom:0;left:0;background:#fff;opacity:0;pointer-events:none;z-index:9;transition:opacity .12s}
+#ubar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:#0d0f12;border-top:1px solid var(--line);display:none}
+#ctl:not(.hide)~#ubar{display:block}
+#ubar button{width:100%;padding:16px;font-size:1.05rem;font-weight:700;opacity:.5}
+#ubar button.on{background:#16a34a;border-color:#16a34a;opacity:1}
+#ctl{padding-bottom:100px}
 </style>
 </head>
 <body>
@@ -91,7 +110,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v9</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v12</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -108,19 +127,23 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
   </div>
 </div>
 
+<div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
+
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v9</span><button id="fs" class="hide" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v12</span><button id="dfbtn" class="tb" type="button">DEFIB</button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
     <div class="tr"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
+    <div id="dfp" class="hide"><div id="dfst"></div><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
   </div>
   <div id="nums">
     <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> EKG</div></div>
     <div class="n" id="nSpo" style="--c:#3aa0ff"><div class="nh"><small>SpO₂</small><em>%</em><u id="lSpo"></u></div><b id="vSpo">--</b><div class="ns">PR <span id="vPr">--</span> /min</div></div>
-    <div class="n" id="nBp" style="--c:#ffffff"><div class="nh"><small>NIBP</small><em>mmHg</em><u id="lBp"></u></div><b class="sm" id="vBp">--/--</b><div class="ns"><span id="vMap">(--)</span> · <span id="vBpT"></span></div></div>
+    <div class="n" id="nBp" style="--c:#ffffff"><div class="nh"><small>NIBP</small><em>mmHg</em><u id="lBp"></u></div><b class="sm" id="vBp">--/--</b><div class="ns"><span id="vMap">(--)</span> · <span id="vBpT"></span><button id="nibpb" class="tb" type="button">Změřit TK</button></div></div>
     <div class="n" id="nCo" style="--c:#ff9a2e"><div class="nh"><small>EtCO₂</small><em>mmHg</em><u id="lCo"></u></div><b id="vCo">--</b><div class="ns">awRR <span id="vRr">--</span> /min</div></div>
   </div>
+  <div id="flash"></div>
   <div id="wait">Čekám na ovladač…<br>Kód: <span id="wcode"></span></div>
   <div id="stale" class="hide">Spojení přerušeno</div>
 </div>
@@ -131,7 +154,7 @@ const $=id=>document.getElementById(id);
 const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],vf:['Fibrilace komor',0],asys:['Asystolie',0]};
 const FIELDS=[['hr','Srdeční frekvence (/min)',0,250],['spo2','SpO₂ (%)',0,100],['sys','TK systolický (mmHg)',0,260],['dia','TK diastolický (mmHg)',0,160],['etco2','EtCO₂ (mmHg)',0,80],['rr','Dechová frekvence (/min)',0,60]];
 const DEF={rhythm:'sinus',hr:75,spo2:98,sys:120,dia:80,etco2:38,rr:14};
-let S={...DEF}, code='', room=null, mode='', lastRx=0, dev='';
+let C={...DEF}, S={...DEF}, code='', room=null, mode='', lastRx=0, dev='';
 
 try{code=localStorage.getItem('simcode')||''}catch(e){}
 if(!code)code=String(Math.floor(1000+Math.random()*9000));
@@ -172,13 +195,20 @@ function paintCtl(setSliders=true){
   $('s_etco2').style.opacity=on?1:.4;$('s_rr').closest('.row').style.opacity=on?1:.4;
 }
 let tmr=0;
+const sig=o=>[o.rhythm,o.hr,o.spo2,o.sys,o.dia,o.etco2,o.rr,o.co2on!==false].join('|');
+function dirtyPaint(){
+  const d=sig(S)!==sig(C),b=$('upd');
+  b.disabled=!d;b.classList.toggle('on',d);
+  b.textContent=d?'UPDATE – odeslat změny na monitor':'UPDATE (žádné změny k odeslání)';
+}
+$('upd').onclick=()=>{C={...S};send();dirtyPaint()};
 function sync(full=true){
   paintCtl(full);
-  clearTimeout(tmr);tmr=setTimeout(send,120);
+  dirtyPaint();
 }
 function send(){
   let n=0;
-  conns.forEach(c=>{if(c.open){try{c.send(S);n++}catch(e){}}});
+  conns.forEach(c=>{if(c.open){try{c.send(C);n++}catch(e){}}});
   $('cdot').classList.toggle('ok',n>0);
   $('cst').textContent='Kód '+code+' · připojených monitorů: '+n;
 }
@@ -209,9 +239,11 @@ const g=(x,m,s)=>Math.exp(-((x-m)**2)/(2*s*s));
 let beatFlag=0,st=0,lastBeat=-9,nextBeat=0,rrBeat=0.8,withP=true;
 function sched(){
   const r=S.rhythm;
+  if(st<shockEnd){lastBeat=-9;nextBeat=shockEnd;return}
   if(r==='vf'||r==='asys'||S.hr<=0){lastBeat=-9;nextBeat=st;return}
   while(st>=nextBeat){
-    lastBeat=nextBeat;beatFlag=1;
+    lastBeat=nextBeat;beatFlag=1;pulseBeep();
+    if(df.mode&&df.sync)markAt=lastBeat+.245*Math.min(1,60/S.hr/.8);
     let rr=60/S.hr;
     if(r==='af')rr*=0.6+0.8*Math.random(); else if(r==='sinus'||r==='tachy'||r==='brady')rr*=1+0.015*Math.sin(st*0.8);
     rrBeat=rr;nextBeat=lastBeat+rr;
@@ -219,6 +251,7 @@ function sched(){
 }
 function ecg(){
   const r=S.rhythm;
+  if(st<shockEnd)return (shockEnd-st>1.15)?(Math.random()-.5)*3:0.005*Math.random();
   if(r==='asys')return 0.01*Math.sin(st*3)+0.01*(Math.random()-.5);
   if(r==='vf')return 0.45*Math.sin(6.28*4.2*st)*(0.6+0.4*Math.sin(6.28*0.6*st))+0.3*Math.sin(6.28*6.9*st+1)+0.1*(Math.random()-.5);
   if(r==='vt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
@@ -267,12 +300,60 @@ function frame(now){
       if(t.y===null)ctx.moveTo(t.x,y);else ctx.moveTo(t.x,t.y);
       ctx.lineTo(nx,y);ctx.stroke();
       ctx.clearRect(nx+2,0,16,H);
+      if(i===0&&markAt&&st>=markAt){markAt=0;ctx.fillStyle='#fff';ctx.fillRect(nx-1,2,3,9)}
       t.x=nx;t.y=y;
       if(t.x>W){t.x=0;t.y=null}
     }
   }
   if(beatFlag){beatFlag=0;const h=$('heart');h.style.opacity=1;setTimeout(()=>{h.style.opacity=.25},130)}
   requestAnimationFrame(frame);
+}
+let AC=null,sndOn=true,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
+let nibp={on:false,t0:0,tgt:0,val:null};
+let df={mode:false,st:'idle',j:200,sync:false,t0:0,b:0};
+const EN=[50,100,150,200,300,360];
+function audioInit(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
+function tone(f,d,v,type,at){
+  if(!AC||!sndOn)return;
+  try{const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+(at||0);
+  o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||.2,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02)}catch(e){}
+}
+function pulseBeep(){if(S.spo2>0&&S.hr>0)tone(Math.max(300,Math.min(1000,300+(S.spo2-70)*23)),.09,.18)}
+function alarmTick(){
+  const rem=alSilence-Date.now();
+  $('alsil').textContent=rem>0?'🔕 '+Math.ceil(rem/1000):'🔕';
+  if(!alLevel||rem>0)return;
+  alN++;
+  if(alLevel===2&&alN%2===0)[0,.16,.32].forEach(o=>tone(960,.1,.25,'square',o));
+  else if(alLevel===1&&alN%5===0)[0,.2].forEach(o=>tone(660,.12,.22,'square',o));
+}
+function nibpStep(){
+  if(!nibp.on)return;
+  if((Date.now()-nibp.t0)/1000>=20){nibp.on=false;nibp.val={sys:S.sys,dia:S.dia};bpTime=hhmm();tone(700,.15,.15)}
+  paintNums();
+}
+function dfPaint(){
+  $('dfp').classList.toggle('hide',!df.mode);$('dfbtn').classList.toggle('on',df.mode);
+  $('dfj').textContent=df.j+' J';$('dfs').classList.toggle('on',df.sync);
+  const t={idle:'Defibrilátor · manuální režim',chg:'Nabíjení…',rdy:'PŘIPRAVEN – stiskni VÝBOJ',shk:'Výboj '+df.j+' J dodán'}[df.st];
+  $('dfst').textContent=t+(df.sync&&df.st!=='shk'?' · SYNC':'');$('dfp').dataset.st=df.st;
+  $('dfx').disabled=df.st!=='rdy';$('dfc').disabled=df.st==='shk';
+  $('dfc').textContent=(df.st==='chg'||df.st==='rdy')?'ZRUŠIT':'NABÍT';
+  $('dfm').disabled=$('dfp2').disabled=df.st!=='idle';
+}
+function dfCharge(){df.st='chg';df.t0=Date.now();for(let i=0;i<10;i++)tone(300+i*70,.28,.1,'sine',i*.3);dfPaint()}
+function dfShock(){
+  if(df.st!=='rdy')return;
+  df.st='shk';df.t0=Date.now();shockEnd=st+1.3;tone(110,.5,.5,'sawtooth');
+  const f=$('flash');f.style.opacity=1;setTimeout(()=>{f.style.opacity=0},130);dfPaint();
+}
+function dfTick(){
+  const n=Date.now()-df.t0;
+  if(df.st==='chg'&&n>=3000){df.st='rdy';df.t0=Date.now();df.b=-1}
+  if(df.st==='rdy'){const k=Math.floor((Date.now()-df.t0)/1000);if(k!==df.b){df.b=k;tone(880,.15,.15)}}
+  if(df.st==='shk'&&n>3500)df.st='idle';
+  if(df.mode)dfPaint();
 }
 const LIM={hr:[50,120],spo2:[90,100],sys:[90,180],etco2:[30,50]};
 function hhmm(){return new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'})}
@@ -284,9 +365,11 @@ function paintNums(){
   $('vHr').textContent=hrOk?S.hr:'---';
   $('vPr').textContent=(hrOk&&S.spo2>0)?S.hr:'---';
   $('vSpo').textContent=S.spo2>0?S.spo2:'---';
-  if(S.sys<=0){$('vBp').textContent='---/---';$('vMap').textContent='(---)'}
-  else{$('vBp').textContent=S.sys+'/'+S.dia;$('vMap').textContent='('+Math.round((S.sys+2*S.dia)/3)+')'}
-  $('vBpT').textContent=bpTime;
+  const bv=nibp.val,sv=(!nibp.on&&bv)?bv.sys:0;
+  if(nibp.on){const el=(Date.now()-nibp.t0)/1000,p=el<8?nibp.tgt*el/8:nibp.tgt*(1-(el-8)/12);$('vBp').textContent=Math.max(0,Math.round(p));$('vMap').textContent='manžeta';$('vBpT').textContent=Math.max(0,Math.ceil(20-el))+' s'}
+  else if(!bv||bv.sys<=0){$('vBp').textContent='---/---';$('vMap').textContent='(---)';$('vBpT').textContent=bv?bpTime:''}
+  else{$('vBp').textContent=bv.sys+'/'+bv.dia;$('vMap').textContent='('+Math.round((bv.sys+2*bv.dia)/3)+')';$('vBpT').textContent=bpTime}
+  $('nibpb').textContent=nibp.on?'Zrušit':'Změřit TK';
   const co=S.co2on!==false;
   $('vCo').textContent=(!co||(S.rr<=0&&S.etco2<=0))?'---':S.etco2;
   $('vRr').textContent=(!co||S.rr<=0)?'---':S.rr;
@@ -303,16 +386,17 @@ function paintNums(){
   const f={
     nHr:!dead&&(S.hr<LIM.hr[0]||S.hr>LIM.hr[1]),
     nSpo:!dead&&(S.spo2<LIM.spo2[0]),
-    nBp:!dead&&(S.sys<LIM.sys[0]||S.sys>LIM.sys[1]),
+    nBp:!dead&&sv>0&&(sv<LIM.sys[0]||sv>LIM.sys[1]),
     nCo:co&&(S.etco2<LIM.etco2[0]||S.etco2>LIM.etco2[1])
   };
   if(f.nHr&&S.rhythm!=='vt')al.push(S.hr<LIM.hr[0]?'HR NÍZKÁ':'HR VYSOKÁ');
   if(f.nSpo)al.push('SpO₂ NÍZKÁ');
-  if(f.nBp)al.push(S.sys<LIM.sys[0]?'TK NÍZKÝ':'TK VYSOKÝ');
+  if(f.nBp)al.push(sv<LIM.sys[0]?'TK NÍZKÝ':'TK VYSOKÝ');
   if(f.nCo)al.push(S.etco2<LIM.etco2[0]?'EtCO₂ NÍZKÝ':'EtCO₂ VYSOKÝ');
   for(const k in f)$(k).classList.toggle('al',f[k]);
   const a=$('alm');a.textContent=al.length?al.join(' · '):'\u00a0';
   a.className=al.length?(crit?'on':'on w'):'';
+  alLevel=al.length?(crit?2:1):0;
 }
 function handleState(d){
   if(!d||typeof d!=='object'||!RHY[d.rhythm])return;
@@ -335,6 +419,17 @@ function startMon(){
   $('fs').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
   show('mon');$('wcode').textContent=code;tick();setInterval(tick,1000);resize();paintNums();
   try{if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}
+  audioInit();
+  $('snd').onclick=()=>{sndOn=!sndOn;$('snd').textContent=sndOn?'🔊':'🔇';if(sndOn)audioInit()};
+  $('alsil').onclick=()=>{alSilence=alSilence>Date.now()?0:Date.now()+120000};
+  $('nibpb').onclick=()=>{if(nibp.on)nibp.on=false;else nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val};paintNums()};
+  $('dfbtn').onclick=()=>{df.mode=!df.mode;if(!df.mode&&df.st!=='shk')df.st='idle';dfPaint()};
+  $('dfm').onclick=()=>{df.j=EN[Math.max(0,EN.indexOf(df.j)-1)];dfPaint()};
+  $('dfp2').onclick=()=>{df.j=EN[Math.min(EN.length-1,EN.indexOf(df.j)+1)];dfPaint()};
+  $('dfs').onclick=()=>{df.sync=!df.sync;dfPaint()};
+  $('dfc').onclick=()=>{if(df.st==='chg'||df.st==='rdy'){df.st='idle';dfPaint()}else dfCharge()};
+  $('dfx').onclick=dfShock;
+  setInterval(()=>{nibpStep();dfTick()},250);setInterval(alarmTick,1000);dfPaint();
   const p=new Peer();let conn=null;
   function link(){
     if(conn){try{conn.close()}catch(e){}}
