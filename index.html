@@ -47,7 +47,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 #clock{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700;font-size:.95rem}
 #traces{position:relative;display:flex;flex-direction:column;min-height:0;border-left:1px solid #2a4a70;grid-column:2;grid-row:2}
 .tr{position:relative;flex:1;min-height:0;border-bottom:1px solid #2a2d33}
-.tr:first-child{flex:1.5}
+#traces>.tr:first-child{flex:1.5}
 .tr canvas{position:absolute;inset:0;width:100%;height:100%}
 .tr span{position:absolute;left:8px;top:4px;font-size:.8rem;font-weight:700;z-index:2}
 .tr em{position:absolute;right:8px;top:4px;font-size:.65rem;font-style:normal;color:#8b94a1;z-index:2}
@@ -83,17 +83,19 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .tb{background:transparent;border:1px solid #8b94a1;border-radius:6px;padding:2px 8px;font-size:.8rem;color:#c9d1d9}
 .tb.on{background:#d11;border-color:#d11;color:#fff}
 #nibpb{padding:0 8px;font-size:.7rem;line-height:1.3;margin-left:6px;color:#fff}
-.trc{display:flex;min-height:132px}
-.cw{position:relative;flex:1;min-width:0}
-#dfp{flex:none;width:158px;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:5px;background:#101418;border-left:2px solid #ff9a2e;align-content:center;font-size:.75rem}
+#lower{display:flex;flex:2;min-height:0}
+#lw{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+#dfp{flex:none;width:122px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:6px;background:#101418;border-left:2px solid #ff9a2e;font-size:.75rem}
 #dfp[data-st=rdy]{border-color:#d11}
-#dfst{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:6px;min-width:0;color:#ff9a2e;font-size:.7rem;letter-spacing:.06em;padding:2px 6px;border-radius:4px;white-space:nowrap;background:linear-gradient(90deg,#ff9a2e66 var(--p,0%),#ff9a2e1f var(--p,0%))}
+#dfst{display:flex;flex-direction:column;align-items:center;gap:1px;color:#ff9a2e;font-size:.68rem;letter-spacing:.05em;padding:3px 2px;border-radius:4px;background:linear-gradient(90deg,#ff9a2e66 var(--p,0%),#ff9a2e1f var(--p,0%))}
 #dfst i{font-style:normal;font-weight:700}
-#dfe{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:4px}
-#dfe button{padding:2px 12px}
-#dfx{grid-column:1/-1}
-@media (orientation:landscape){.trc{min-height:96px}#dfp{width:300px;grid-template-columns:repeat(3,1fr)}#dfe{grid-column:1/3}#dfs{grid-column:3}#dfc{grid-column:1}#dfx{grid-column:2/4}}
-#mon.pc #dfp{width:400px;font-size:1rem;gap:8px;padding:10px}
+#dfst i:empty{display:none}
+#dfe{display:flex;align-items:center;justify-content:space-between;gap:2px}
+#dfp #dfe button{padding:2px 9px}
+#dfp>button{width:100%}
+@media (orientation:landscape){#dfp{width:140px}}
+@media (max-height:500px){#dfp{gap:3px;padding:4px}#dfp>button{padding:2px 4px}}
+#mon.pc #dfp{width:200px;font-size:1rem;gap:8px;padding:12px}
 #mon.pc #dfst{font-size:.9rem}
 #mon.pc #dfp button{padding:10px 8px;font-size:1rem}
 #dfp[data-st=rdy] #dfst{color:#fff;background:#d11;padding:2px 8px;border-radius:4px;animation:bl 1s steps(1) infinite}
@@ -120,7 +122,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v16</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v17</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -140,16 +142,17 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v16</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v17</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
-    <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
-    <div class="tr trc"><div class="cw"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
-      <div id="dfp"><div id="dfst"><b>DEFIBRILACE</b><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
+    <div id="lower"><div id="lw">
+      <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
+      <div class="tr"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
     </div>
+    <div id="dfp"><div id="dfst"><b>DEFIBRILACE</b><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div></div>
   </div>
   <div id="nums">
-    <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> EKG</div></div>
+    <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> <span id="hrsrc">EKG</span></div></div>
     <div class="n" id="nSpo" style="--c:#3aa0ff"><div class="nh"><small>SpO₂</small><em>%</em><u id="lSpo"></u></div><b id="vSpo">--</b><div class="ns">PR <span id="vPr">--</span> /min</div></div>
     <div class="n" id="nBp" style="--c:#ffffff"><div class="nh"><small>NIBP</small><em>mmHg</em><u id="lBp"></u></div><b class="sm" id="vBp">--/--</b><div class="ns"><span id="vMap">(--)</span> · <span id="vBpT"></span><button id="nibpb" class="tb" type="button">Změřit TK</button></div></div>
     <div class="n" id="nCo" style="--c:#ff9a2e"><div class="nh"><small>EtCO₂</small><em>mmHg</em><u id="lCo"></u></div><b id="vCo">--</b><div class="ns">awRR <span id="vRr">--</span> /min</div></div>
@@ -238,7 +241,7 @@ $('cback').onclick=()=>location.reload();
 const cv=[0,1,2].map(i=>$('c'+i)),cx=cv.map(c=>c.getContext('2d'));
 const T=[{x:0,y:null},{x:0,y:null},{x:0,y:null}];
 const COL=['#2ee66b','#3aa0ff','#ff9a2e'];
-const SPEED=[110,110,60]; // px za sekundu (CSS px)
+const SPEED=[110,110,40]; // px za sekundu (CSS px)
 function resize(){
   cv.forEach((c,i)=>{const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;
     c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);cx[i].setTransform(d,0,0,d,0,0);cx[i].lineWidth=dev==='pc'?2.5:2;cx[i].lineJoin='round';
@@ -391,6 +394,7 @@ function paintNums(){
   const noecg=S.rhythm==='noecg';
   $('vHr').textContent=(hrOk&&(!noecg||S.spo2>0))?S.hr:'---';
   $('nHr').style.setProperty('--c',noecg?'#3aa0ff':'#2ee66b');
+  $('hrsrc').textContent=noecg?'SpO₂':'EKG';
   $('vPr').textContent=(hrOk&&S.spo2>0)?S.hr:'---';
   $('vSpo').textContent=S.spo2>0?S.spo2:'---';
   const bv=nibp.val,sv=(!nibp.on&&bv)?bv.sys:0;
