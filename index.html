@@ -122,7 +122,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v19</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v20</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -142,7 +142,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v19</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v20</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -327,7 +327,7 @@ let AC=null,sndOn=true,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
 let nibp={on:false,t0:0,tgt:0,val:null};
 let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0};
 const EN=[10,20,30,40,50,60,70,80,90,100,150,200,250,300,350],CHG=4000;
-let dfSnd=null;
+let dfSnd=null,nibpSnd=null;
 function audioInit(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
 function tone(f,d,v,type,at){
   if(!AC||!sndOn)return;
@@ -344,9 +344,20 @@ function alarmTick(){
   if(alLevel===2&&alN%2===0)[0,.16,.32].forEach(o=>tone(960,.1,.25,'square',o));
   else if(alLevel===1&&alN%5===0)[0,.2].forEach(o=>tone(660,.12,.22,'square',o));
 }
+function holdSound(type,f0,f1,d,v){
+  if(!AC||!sndOn)return null;
+  try{const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
+  o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.linearRampToValueAtTime(f1,t+d);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.08);g.gain.setValueAtTime(v,t+d);g.gain.linearRampToValueAtTime(0,t+d+.1);
+  let n=o;if(AC.createBiquadFilter){const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=600;o.connect(f);n=f}
+  n.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.15);return {o,g}}catch(e){return null}
+}
+function stopSound(x){if(!x)return;try{const t=AC.currentTime;x.g.gain.cancelScheduledValues(t);x.g.gain.setTargetAtTime(.0001,t,.03);x.o.stop(t+.2)}catch(e){}}
 function nibpStep(){
   if(!nibp.on)return;
-  if((Date.now()-nibp.t0)/1000>=20){nibp.on=false;nibp.val={sys:S.sys,dia:S.dia};bpTime=hhmm();tone(700,.15,.15)}
+  const el=(Date.now()-nibp.t0)/1000;
+  if(el>8){const k=Math.floor((el-8)/1.4);if(k!==nibp.k){nibp.k=k;tone(1500,.03,.1,'square')}}
+  if(el>=20){nibp.on=false;nibp.val={sys:S.sys,dia:S.dia};bpTime=hhmm();[0,.18].forEach(o=>tone(880,.12,.18,'sine',o))}
   paintNums();
 }
 function dfStopSnd(){
@@ -398,7 +409,7 @@ function paintNums(){
   $('vPr').textContent=(hrOk&&S.spo2>0)?S.hr:'---';
   $('vSpo').textContent=S.spo2>0?S.spo2:'---';
   const bv=nibp.val,sv=(!nibp.on&&bv)?bv.sys:0;
-  if(nibp.on){const el=(Date.now()-nibp.t0)/1000,p=el<8?nibp.tgt*el/8:nibp.tgt*(1-(el-8)/12);$('vBp').textContent=Math.max(0,Math.round(p));$('vMap').textContent='manžeta';$('vBpT').textContent=Math.max(0,Math.ceil(20-el))+' s'}
+  if(nibp.on){const el=(Date.now()-nibp.t0)/1000,p=el<8?nibp.tgt*el/8:nibp.tgt*(1-Math.min(12,Math.floor((el-8)/1.4)*1.4)/12);$('vBp').textContent=Math.max(0,Math.round(p));$('vMap').textContent='manžeta';$('vBpT').textContent=Math.max(0,Math.ceil(20-el))+' s'}
   else if(!bv||bv.sys<=0){$('vBp').textContent='---/---';$('vMap').textContent='(---)';$('vBpT').textContent=bv?bpTime:''}
   else{$('vBp').textContent=bv.sys+'/'+bv.dia;$('vMap').textContent='('+Math.round((bv.sys+2*bv.dia)/3)+')';$('vBpT').textContent=bpTime}
   $('nibpb').textContent=nibp.on?'Zrušit':'Změřit TK';
@@ -454,7 +465,7 @@ function startMon(){
   audioInit();
   $('snd').onclick=()=>{sndOn=!sndOn;$('snd').textContent=sndOn?'🔊':'🔇';if(sndOn)audioInit()};
   $('alsil').onclick=()=>{alSilence=alSilence>Date.now()?0:Date.now()+120000};
-  $('nibpb').onclick=()=>{if(nibp.on)nibp.on=false;else nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val};paintNums()};
+  $('nibpb').onclick=()=>{if(nibp.on){nibp.on=false;stopSound(nibpSnd);nibpSnd=null}else{nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val,k:-1};nibpSnd=holdSound('sawtooth',70,130,8,.05)}paintNums()};
   $('dfm').onclick=()=>{df.j=EN[Math.max(0,EN.indexOf(df.j)-1)];dfPaint()};
   $('dfp2').onclick=()=>{df.j=EN[Math.min(EN.length-1,EN.indexOf(df.j)+1)];dfPaint()};
   $('dfs').onclick=()=>{df.sync=!df.sync;dfPaint()};
