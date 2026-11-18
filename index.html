@@ -83,14 +83,19 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .tb{background:transparent;border:1px solid #8b94a1;border-radius:6px;padding:2px 8px;font-size:.8rem;color:#c9d1d9}
 .tb.on{background:#d11;border-color:#d11;color:#fff}
 #nibpb{padding:0 8px;font-size:.7rem;line-height:1.3;margin-left:6px;color:#fff}
-#dfp{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:5px 8px;background:#101418;border-top:2px solid #ff9a2e;font-size:.85rem}
+.trc{display:flex;min-height:130px}
+.cw{position:relative;flex:1;min-width:0}
+#dfp{flex:none;width:158px;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:5px;background:#101418;border-left:2px solid #ff9a2e;align-content:center;font-size:.75rem}
 #dfp[data-st=rdy]{border-color:#d11}
-#dfst{flex:1 1 150px;min-width:0;font-weight:700;color:#ff9a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:4px 8px;border-radius:4px;background:linear-gradient(90deg,#ff9a2e55 var(--p,0%),transparent var(--p,0%))}
-@media (orientation:portrait){#mon:not(.pc) #dfst{flex-basis:100%}#mon:not(.pc) #dfp button:not(#dfm):not(#dfp2){flex:1}}
-#mon.pc #dfp{padding:8px 14px;font-size:1.05rem;gap:10px}
-#mon.pc #dfp button{padding:10px 20px;font-size:1.05rem}
+#dfst{grid-column:1/-1;min-width:0;font-weight:700;color:#ff9a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;padding:2px 4px;border-radius:4px;background:linear-gradient(90deg,#ff9a2e55 var(--p,0%),transparent var(--p,0%))}
+#dfe{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:4px}
+#dfe button{padding:2px 12px}
+#dfx{grid-column:1/-1}
+@media (orientation:landscape){.trc{min-height:78px}#dfp{width:300px;grid-template-columns:repeat(3,1fr)}#dfe{grid-column:1/3;grid-row:1}#dfst{grid-column:3;grid-row:1}#dfx{grid-column:auto}}
+#mon.pc #dfp{width:400px;font-size:1rem;gap:8px;padding:10px}
+#mon.pc #dfp button{padding:10px 8px;font-size:1rem}
 #dfp[data-st=rdy] #dfst{color:#fff;background:#d11;padding:2px 8px;border-radius:4px;animation:bl 1s steps(1) infinite}
-#dfp button{background:#222;border:1px solid #666;border-radius:6px;color:#fff;padding:6px 12px}
+#dfp button{background:#222;border:1px solid #666;border-radius:6px;color:#fff;padding:4px 6px;font-size:inherit}
 #dfp button.on{background:#ff9a2e;color:#000}
 #dfp button:disabled{opacity:.35}
 #dfx:not(:disabled){background:#d11!important;border-color:#fff!important}
@@ -113,7 +118,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v13</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v14</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -133,12 +138,13 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v13</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v14</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
-    <div class="tr"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
-    <div id="dfp"><div id="dfst"></div><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
+    <div class="tr trc"><div class="cw"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
+      <div id="dfp"><div id="dfst"></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
+    </div>
   </div>
   <div id="nums">
     <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> EKG</div></div>
@@ -314,7 +320,7 @@ function frame(now){
 let AC=null,sndOn=true,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
 let nibp={on:false,t0:0,tgt:0,val:null};
 let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0};
-const EN=[50,100,150,200,300,360],CHG=4000;
+const EN=[10,20,30,40,50,60,70,80,90,100,150,200,250,300,350],CHG=4000;
 let dfSnd=null;
 function audioInit(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
 function tone(f,d,v,type,at){
@@ -353,7 +359,7 @@ function dfPaint(){
   $('dfj').textContent=df.j+' J';$('dfs').classList.toggle('on',df.sync);
   const pc=df.st==='chg'?Math.min(100,Math.round((Date.now()-df.t0)/CHG*100)):0;
   $('dfst').style.setProperty('--p',pc+'%');
-  const t={idle:'DEFIB · manuální režim',chg:'NABÍJENÍ '+pc+' %',rdy:'PŘIPRAVEN – VÝBOJ',shk:'Výboj '+df.j+' J dodán'}[df.st];
+  const t={idle:'DEFIB',chg:'NABÍJENÍ '+pc+' %',rdy:'PŘIPRAVEN',shk:'VÝBOJ DODÁN'}[df.st];
   $('dfst').textContent=t+(df.sync&&df.st!=='shk'?' · SYNC':'');$('dfp').dataset.st=df.st;
   $('dfx').disabled=df.st!=='rdy';$('dfc').disabled=df.st==='shk';
   $('dfc').textContent=(df.st==='chg'||df.st==='rdy')?'ZRUŠIT':'NABÍT';
