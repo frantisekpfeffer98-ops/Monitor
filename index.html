@@ -83,16 +83,18 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .tb{background:transparent;border:1px solid #8b94a1;border-radius:6px;padding:2px 8px;font-size:.8rem;color:#c9d1d9}
 .tb.on{background:#d11;border-color:#d11;color:#fff}
 #nibpb{padding:0 8px;font-size:.7rem;line-height:1.3;margin-left:6px;color:#fff}
-.trc{display:flex;min-height:130px}
+.trc{display:flex;min-height:132px}
 .cw{position:relative;flex:1;min-width:0}
 #dfp{flex:none;width:158px;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:5px;background:#101418;border-left:2px solid #ff9a2e;align-content:center;font-size:.75rem}
 #dfp[data-st=rdy]{border-color:#d11}
-#dfst{grid-column:1/-1;min-width:0;font-weight:700;color:#ff9a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;padding:2px 4px;border-radius:4px;background:linear-gradient(90deg,#ff9a2e55 var(--p,0%),transparent var(--p,0%))}
+#dfst{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:6px;min-width:0;color:#ff9a2e;font-size:.7rem;letter-spacing:.06em;padding:2px 6px;border-radius:4px;white-space:nowrap;background:linear-gradient(90deg,#ff9a2e66 var(--p,0%),#ff9a2e1f var(--p,0%))}
+#dfst i{font-style:normal;font-weight:700}
 #dfe{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:4px}
 #dfe button{padding:2px 12px}
 #dfx{grid-column:1/-1}
-@media (orientation:landscape){.trc{min-height:78px}#dfp{width:300px;grid-template-columns:repeat(3,1fr)}#dfe{grid-column:1/3;grid-row:1}#dfst{grid-column:3;grid-row:1}#dfx{grid-column:auto}}
+@media (orientation:landscape){.trc{min-height:96px}#dfp{width:300px;grid-template-columns:repeat(3,1fr)}#dfe{grid-column:1/3}#dfs{grid-column:3}#dfc{grid-column:1}#dfx{grid-column:2/4}}
 #mon.pc #dfp{width:400px;font-size:1rem;gap:8px;padding:10px}
+#mon.pc #dfst{font-size:.9rem}
 #mon.pc #dfp button{padding:10px 8px;font-size:1rem}
 #dfp[data-st=rdy] #dfst{color:#fff;background:#d11;padding:2px 8px;border-radius:4px;animation:bl 1s steps(1) infinite}
 #dfp button{background:#222;border:1px solid #666;border-radius:6px;color:#fff;padding:4px 6px;font-size:inherit}
@@ -118,7 +120,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v14</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v16</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -138,12 +140,12 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v14</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v16</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
     <div class="tr trc"><div class="cw"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
-      <div id="dfp"><div id="dfst"></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
+      <div id="dfp"><div id="dfst"><b>DEFIBRILACE</b><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
     </div>
   </div>
   <div id="nums">
@@ -160,7 +162,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],vf:['Fibrilace komor',0],asys:['Asystolie',0]};
+const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],vf:['Fibrilace komor',0],asys:['Asystolie',0],noecg:['Bez EKG',75]};
 const FIELDS=[['hr','Srdeční frekvence (/min)',0,250],['spo2','SpO₂ (%)',0,100],['sys','TK systolický (mmHg)',0,260],['dia','TK diastolický (mmHg)',0,160],['etco2','EtCO₂ (mmHg)',0,80],['rr','Dechová frekvence (/min)',0,60]];
 const DEF={rhythm:'sinus',hr:75,spo2:98,sys:120,dia:80,etco2:38,rr:14};
 let C={...DEF}, S={...DEF}, code='', room=null, mode='', lastRx=0, dev='';
@@ -261,6 +263,7 @@ function sched(){
 function ecg(){
   const r=S.rhythm;
   if(st<shockEnd)return (shockEnd-st>1.15)?(Math.random()-.5)*3:0.005*Math.random();
+  if(r==='noecg')return 0;
   if(r==='asys')return 0.01*Math.sin(st*3)+0.01*(Math.random()-.5);
   if(r==='vf')return 0.45*Math.sin(6.28*4.2*st)*(0.6+0.4*Math.sin(6.28*0.6*st))+0.3*Math.sin(6.28*6.9*st+1)+0.1*(Math.random()-.5);
   if(r==='vt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
@@ -307,7 +310,7 @@ function frame(now){
       const nx=t.x+SPEED[i]*(dev==='pc'?1.4:1)*h;
       ctx.strokeStyle=COL[i];ctx.beginPath();
       if(t.y===null)ctx.moveTo(t.x,y);else ctx.moveTo(t.x,t.y);
-      ctx.lineTo(nx,y);ctx.stroke();
+      ctx.lineTo(nx,y);if(!(i===0&&S.rhythm==='noecg'&&Math.floor(nx/10)%2))ctx.stroke();
       ctx.clearRect(nx+2,0,16,H);
       if(i===0&&markAt&&st>=markAt){markAt=0;ctx.fillStyle='#fff';ctx.fillRect(nx-1,2,3,9)}
       t.x=nx;t.y=y;
@@ -359,8 +362,8 @@ function dfPaint(){
   $('dfj').textContent=df.j+' J';$('dfs').classList.toggle('on',df.sync);
   const pc=df.st==='chg'?Math.min(100,Math.round((Date.now()-df.t0)/CHG*100)):0;
   $('dfst').style.setProperty('--p',pc+'%');
-  const t={idle:'DEFIB',chg:'NABÍJENÍ '+pc+' %',rdy:'PŘIPRAVEN',shk:'VÝBOJ DODÁN'}[df.st];
-  $('dfst').textContent=t+(df.sync&&df.st!=='shk'?' · SYNC':'');$('dfp').dataset.st=df.st;
+  const t={idle:'',chg:pc+' %',rdy:'PŘIPRAVEN',shk:'DODÁN'}[df.st];
+  $('dfch').textContent=t;$('dfp').dataset.st=df.st;
   $('dfx').disabled=df.st!=='rdy';$('dfc').disabled=df.st==='shk';
   $('dfc').textContent=(df.st==='chg'||df.st==='rdy')?'ZRUŠIT':'NABÍT';
   $('dfm').disabled=$('dfp2').disabled=df.st!=='idle';
@@ -385,7 +388,9 @@ function tick(){$('clock').textContent=new Date().toLocaleTimeString('cs-CZ',{ho
 function paintNums(){
   const dead=S.rhythm==='vf'||S.rhythm==='asys';
   const hrOk=!dead&&S.hr>0;
-  $('vHr').textContent=hrOk?S.hr:'---';
+  const noecg=S.rhythm==='noecg';
+  $('vHr').textContent=(hrOk&&(!noecg||S.spo2>0))?S.hr:'---';
+  $('nHr').style.setProperty('--c',noecg?'#3aa0ff':'#2ee66b');
   $('vPr').textContent=(hrOk&&S.spo2>0)?S.hr:'---';
   $('vSpo').textContent=S.spo2>0?S.spo2:'---';
   const bv=nibp.val,sv=(!nibp.on&&bv)?bv.sys:0;
@@ -406,6 +411,7 @@ function paintNums(){
   if(S.rhythm==='asys'){al.push('ASYSTOLIE');crit=true}
   else if(S.rhythm==='vf'){al.push('FIBRILACE KOMOR');crit=true}
   else if(S.rhythm==='vt'){al.push('KOMOROVÁ TACHYKARDIE');crit=true}
+  if(S.rhythm==='noecg')al.push('ODPOJENÉ SVODY EKG');
   const f={
     nHr:!dead&&(S.hr<LIM.hr[0]||S.hr>LIM.hr[1]),
     nSpo:!dead&&(S.spo2<LIM.spo2[0]),
