@@ -83,15 +83,18 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .tb{background:transparent;border:1px solid #8b94a1;border-radius:6px;padding:2px 8px;font-size:.8rem;color:#c9d1d9}
 .tb.on{background:#d11;border-color:#d11;color:#fff}
 #nibpb{padding:0 8px;font-size:.7rem;line-height:1.3;margin-left:6px;color:#fff}
-#dfp{position:absolute;left:0;right:0;bottom:0;z-index:8;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px;background:#111;border-top:2px solid #ff9a2e;font-size:.85rem}
+#dfp{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:5px 8px;background:#101418;border-top:2px solid #ff9a2e;font-size:.85rem}
 #dfp[data-st=rdy]{border-color:#d11}
-#dfst{flex:1 1 100%;font-weight:700;color:#ff9a2e}
+#dfst{flex:1 1 150px;min-width:0;font-weight:700;color:#ff9a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:4px 8px;border-radius:4px;background:linear-gradient(90deg,#ff9a2e55 var(--p,0%),transparent var(--p,0%))}
+@media (orientation:portrait){#mon:not(.pc) #dfst{flex-basis:100%}#mon:not(.pc) #dfp button:not(#dfm):not(#dfp2){flex:1}}
+#mon.pc #dfp{padding:8px 14px;font-size:1.05rem;gap:10px}
+#mon.pc #dfp button{padding:10px 20px;font-size:1.05rem}
 #dfp[data-st=rdy] #dfst{color:#fff;background:#d11;padding:2px 8px;border-radius:4px;animation:bl 1s steps(1) infinite}
 #dfp button{background:#222;border:1px solid #666;border-radius:6px;color:#fff;padding:6px 12px}
 #dfp button.on{background:#ff9a2e;color:#000}
 #dfp button:disabled{opacity:.35}
 #dfx:not(:disabled){background:#d11!important;border-color:#fff!important}
-#dfj{min-width:4.5ch;text-align:center}
+#dfj{min-width:4.5ch;text-align:center;font-size:1.15em}
 #flash{position:absolute;top:0;right:0;bottom:0;left:0;background:#fff;opacity:0;pointer-events:none;z-index:9;transition:opacity .12s}
 #ubar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:#0d0f12;border-top:1px solid var(--line);display:none}
 #ctl:not(.hide)~#ubar{display:block}
@@ -110,7 +113,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v12</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v13</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -130,12 +133,12 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v12</span><button id="dfbtn" class="tb" type="button">DEFIB</button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v13</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
     <div class="tr"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
-    <div id="dfp" class="hide"><div id="dfst"></div><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
+    <div id="dfp"><div id="dfst"></div><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
   </div>
   <div id="nums">
     <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> EKG</div></div>
@@ -310,8 +313,9 @@ function frame(now){
 }
 let AC=null,sndOn=true,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
 let nibp={on:false,t0:0,tgt:0,val:null};
-let df={mode:false,st:'idle',j:200,sync:false,t0:0,b:0};
-const EN=[50,100,150,200,300,360];
+let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0};
+const EN=[50,100,150,200,300,360],CHG=4000;
+let dfSnd=null;
 function audioInit(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
 function tone(f,d,v,type,at){
   if(!AC||!sndOn)return;
@@ -333,27 +337,40 @@ function nibpStep(){
   if((Date.now()-nibp.t0)/1000>=20){nibp.on=false;nibp.val={sys:S.sys,dia:S.dia};bpTime=hhmm();tone(700,.15,.15)}
   paintNums();
 }
+function dfStopSnd(){
+  if(!dfSnd)return;
+  try{const t=AC.currentTime;dfSnd.g.gain.cancelScheduledValues(t);dfSnd.g.gain.setTargetAtTime(.0001,t,.03);dfSnd.o.stop(t+.2)}catch(e){}
+  dfSnd=null;
+}
+function dfChgSnd(d){
+  dfStopSnd();if(!AC||!sndOn)return;
+  try{const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
+  o.type='triangle';o.frequency.setValueAtTime(280,t);o.frequency.exponentialRampToValueAtTime(2300,t+d);
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.09,t+.12);g.gain.setValueAtTime(.09,t+d);g.gain.linearRampToValueAtTime(0,t+d+.05);
+  o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.1);dfSnd={o,g}}catch(e){}
+}
 function dfPaint(){
-  $('dfp').classList.toggle('hide',!df.mode);$('dfbtn').classList.toggle('on',df.mode);
   $('dfj').textContent=df.j+' J';$('dfs').classList.toggle('on',df.sync);
-  const t={idle:'Defibrilátor · manuální režim',chg:'Nabíjení…',rdy:'PŘIPRAVEN – stiskni VÝBOJ',shk:'Výboj '+df.j+' J dodán'}[df.st];
+  const pc=df.st==='chg'?Math.min(100,Math.round((Date.now()-df.t0)/CHG*100)):0;
+  $('dfst').style.setProperty('--p',pc+'%');
+  const t={idle:'DEFIB · manuální režim',chg:'NABÍJENÍ '+pc+' %',rdy:'PŘIPRAVEN – VÝBOJ',shk:'Výboj '+df.j+' J dodán'}[df.st];
   $('dfst').textContent=t+(df.sync&&df.st!=='shk'?' · SYNC':'');$('dfp').dataset.st=df.st;
   $('dfx').disabled=df.st!=='rdy';$('dfc').disabled=df.st==='shk';
   $('dfc').textContent=(df.st==='chg'||df.st==='rdy')?'ZRUŠIT':'NABÍT';
   $('dfm').disabled=$('dfp2').disabled=df.st!=='idle';
 }
-function dfCharge(){df.st='chg';df.t0=Date.now();for(let i=0;i<10;i++)tone(300+i*70,.28,.1,'sine',i*.3);dfPaint()}
+function dfCharge(){df.st='chg';df.t0=Date.now();dfChgSnd(CHG/1000);dfPaint()}
 function dfShock(){
   if(df.st!=='rdy')return;
-  df.st='shk';df.t0=Date.now();shockEnd=st+1.3;tone(110,.5,.5,'sawtooth');
+  dfStopSnd();df.st='shk';df.t0=Date.now();shockEnd=st+1.3;tone(110,.5,.5,'sawtooth');
   const f=$('flash');f.style.opacity=1;setTimeout(()=>{f.style.opacity=0},130);dfPaint();
 }
 function dfTick(){
   const n=Date.now()-df.t0;
-  if(df.st==='chg'&&n>=3000){df.st='rdy';df.t0=Date.now();df.b=-1}
-  if(df.st==='rdy'){const k=Math.floor((Date.now()-df.t0)/1000);if(k!==df.b){df.b=k;tone(880,.15,.15)}}
+  if(df.st==='chg'&&n>=CHG){df.st='rdy';df.t0=Date.now();df.b=-1}
+  if(df.st==='rdy'){const k=Math.floor((Date.now()-df.t0)/600);if(k!==df.b){df.b=k;tone(1400,.28,.12)}}
   if(df.st==='shk'&&n>3500)df.st='idle';
-  if(df.mode)dfPaint();
+  dfPaint();
 }
 const LIM={hr:[50,120],spo2:[90,100],sys:[90,180],etco2:[30,50]};
 function hhmm(){return new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'})}
@@ -423,11 +440,10 @@ function startMon(){
   $('snd').onclick=()=>{sndOn=!sndOn;$('snd').textContent=sndOn?'🔊':'🔇';if(sndOn)audioInit()};
   $('alsil').onclick=()=>{alSilence=alSilence>Date.now()?0:Date.now()+120000};
   $('nibpb').onclick=()=>{if(nibp.on)nibp.on=false;else nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val};paintNums()};
-  $('dfbtn').onclick=()=>{df.mode=!df.mode;if(!df.mode&&df.st!=='shk')df.st='idle';dfPaint()};
   $('dfm').onclick=()=>{df.j=EN[Math.max(0,EN.indexOf(df.j)-1)];dfPaint()};
   $('dfp2').onclick=()=>{df.j=EN[Math.min(EN.length-1,EN.indexOf(df.j)+1)];dfPaint()};
   $('dfs').onclick=()=>{df.sync=!df.sync;dfPaint()};
-  $('dfc').onclick=()=>{if(df.st==='chg'||df.st==='rdy'){df.st='idle';dfPaint()}else dfCharge()};
+  $('dfc').onclick=()=>{if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle';dfPaint()}else dfCharge()};
   $('dfx').onclick=dfShock;
   setInterval(()=>{nibpStep();dfTick()},250);setInterval(alarmTick,1000);dfPaint();
   const p=new Peer();let conn=null;
