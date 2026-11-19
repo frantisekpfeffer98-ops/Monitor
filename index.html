@@ -92,9 +92,21 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 #dfst i:empty{display:none}
 #dfe{display:flex;align-items:center;justify-content:space-between;gap:2px}
 #dfp #dfe button{padding:2px 9px}
-#dfp>button{width:100%}
+#dfp button{width:100%}
+#dfp #dfe button,#dfp .pe button{width:auto}
+.sec{display:flex;flex-direction:column;gap:4px}
+#dfp .md{font-size:.6rem;letter-spacing:0;padding:4px 2px}
+.pl{font-size:.6rem;color:#ff9a2e;text-align:center}
+.pe{display:flex;align-items:center;justify-content:space-between;gap:2px}
+.pe b{font-size:1.1em}
+#dfp .pe button{padding:2px 10px}
+#pst{font-size:.65rem;text-align:center;color:#ff9a2e;min-height:1em}
+#pgo.run{background:#d11!important;border-color:#fff!important}
+#mon.pc #dfp .md{font-size:.8rem}
+#dfp[data-md=p] .sec{order:1}
+#dfp[data-md=p] #mdd{order:3}
 @media (orientation:landscape){#dfp{width:140px}}
-@media (max-height:500px){#dfp{gap:3px;padding:4px}#dfp>button{padding:2px 4px}}
+@media (max-height:500px){#dfp{gap:3px;padding:4px}#dfp button{padding:2px 4px}}
 #mon.pc #dfp{width:200px;font-size:1rem;gap:8px;padding:12px}
 #mon.pc #dfst{font-size:.9rem}
 #mon.pc #dfp button{padding:10px 8px;font-size:1rem}
@@ -122,7 +134,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v20</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v22</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -142,20 +154,23 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v20</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v22</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
       <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
       <div class="tr"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
     </div>
-    <div id="dfp"><div id="dfst"><b>DEFIBRILACE</b><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div></div>
+    <div id="dfp" data-md="d"><button id="mdp" class="md" type="button">KARDIOSTIMULACE</button><button id="mdd" class="md on" type="button">DEFIBRILACE</button>
+      <div id="secd" class="sec"><div id="dfst"><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
+      <div id="secp" class="sec hide"><div class="pl">FREKVENCE /min</div><div class="pe"><button id="prm" type="button">−</button><b id="prv">70</b><button id="prp" type="button">+</button></div><div class="pl">VÝSTUP mA</div><div class="pe"><button id="pom" type="button">−</button><b id="pov">50</b><button id="pop" type="button">+</button></div><button id="pps" type="button">PAUZA 5 s</button><div id="pst"></div></div>
+    </div></div>
   </div>
   <div id="nums">
     <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> <span id="hrsrc">EKG</span></div></div>
-    <div class="n" id="nSpo" style="--c:#3aa0ff"><div class="nh"><small>SpO₂</small><em>%</em><u id="lSpo"></u></div><b id="vSpo">--</b><div class="ns">PR <span id="vPr">--</span> /min</div></div>
+    <div class="n" id="nSpo" style="--c:#3aa0ff"><div class="nh"><small>SpO₂</small><em>%</em><u id="lSpo"></u></div><b id="vSpo">--</b><div class="ns">TF <span id="vPr">--</span> /min</div></div>
     <div class="n" id="nBp" style="--c:#ffffff"><div class="nh"><small>NIBP</small><em>mmHg</em><u id="lBp"></u></div><b class="sm" id="vBp">--/--</b><div class="ns"><span id="vMap">(--)</span> · <span id="vBpT"></span><button id="nibpb" class="tb" type="button">Změřit TK</button></div></div>
-    <div class="n" id="nCo" style="--c:#ff9a2e"><div class="nh"><small>EtCO₂</small><em>mmHg</em><u id="lCo"></u></div><b id="vCo">--</b><div class="ns">awRR <span id="vRr">--</span> /min</div></div>
+    <div class="n" id="nCo" style="--c:#ff9a2e"><div class="nh"><small>EtCO₂</small><em>mmHg</em><u id="lCo"></u></div><b id="vCo">--</b><div class="ns">DF <span id="vRr">--</span> /min</div></div>
   </div>
   <div id="flash"></div>
   <div id="wait">Čekám na ovladač…<br>Kód: <span id="wcode"></span></div>
@@ -197,6 +212,7 @@ function buildCtl(){
     const d=document.createElement('div');d.className='row';
     d.innerHTML=k==='etco2'?`<label><span>${l} <button type="button" id="co2btn" class="mini"></button></span><span id="o_${k}"></span></label><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="1">`:`<label><span>${l}</span><span id="o_${k}"></span></label><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="1">`;
     sl.appendChild(d);
+    if(TG[k]){const b=document.createElement('button');b.type='button';b.id='tg_'+k;b.className='mini';d.querySelector('label span').appendChild(b);b.onclick=()=>{S[TG[k]]=(S[TG[k]]===false);sync(false)}}
     if(k==='etco2')$('co2btn').onclick=()=>{S.co2on=(S.co2on===false);sync(false)};
     d.querySelector('input').oninput=e=>{S[k]=+e.target.value;if(k==='dia'&&S.dia>S.sys){S.sys=S.dia}if(k==='sys'&&S.sys<S.dia){S.dia=S.sys}sync(false)};
   }
@@ -207,9 +223,11 @@ function paintCtl(setSliders=true){
   const on=S.co2on!==false,cb=$('co2btn');
   cb.textContent=on?'ZAP':'VYP';cb.classList.toggle('on',on);
   $('s_etco2').style.opacity=on?1:.4;$('s_rr').closest('.row').style.opacity=on?1:.4;
+  for(const k in TG){const o=S[TG[k]]!==false,b=$('tg_'+k);b.textContent=o?'ZAP':'VYP';b.classList.toggle('on',o);$('s_'+k).style.opacity=o?1:.4}
 }
 let tmr=0;
-const sig=o=>[o.rhythm,o.hr,o.spo2,o.sys,o.dia,o.etco2,o.rr,o.co2on!==false].join('|');
+const TG={hr:'hron',spo2:'spo2on',sys:'syson',dia:'diaon'};
+const sig=o=>[o.rhythm,o.hr,o.spo2,o.sys,o.dia,o.etco2,o.rr,o.co2on!==false,o.hron!==false,o.spo2on!==false,o.syson!==false,o.diaon!==false].join('|');
 function dirtyPaint(){
   const d=sig(S)!==sig(C),b=$('upd');
   b.disabled=!d;b.classList.toggle('on',d);
@@ -254,27 +272,35 @@ let beatFlag=0,st=0,lastBeat=-9,nextBeat=0,rrBeat=0.8,withP=true;
 function sched(){
   const r=S.rhythm;
   if(st<shockEnd){lastBeat=-9;nextBeat=shockEnd;return}
+  if(pFire()){
+    const iv=60/pc.rate;
+    if(pNext<=0||pNext>st+iv+1)pNext=st;
+    while(st>=pNext){pLast=pNext;pNext+=iv;if(pCap()){lastBeat=pLast-.2;btype='p';rrBeat=iv;beatFlag=1;pulseBeep()}}
+    if(pCap()){nextBeat=st+.5;return}
+  }else{pNext=st+.3;pLast=-9}
   if(r==='vf'||r==='asys'||S.hr<=0){lastBeat=-9;nextBeat=st;return}
   while(st>=nextBeat){
-    lastBeat=nextBeat;beatFlag=1;pulseBeep();
+    lastBeat=nextBeat;btype='n';beatFlag=1;pulseBeep();
     if(df.mode&&df.sync)markAt=lastBeat+.245*Math.min(1,60/S.hr/.8);
     let rr=60/S.hr;
     if(r==='af')rr*=0.6+0.8*Math.random(); else if(r==='sinus'||r==='tachy'||r==='brady')rr*=1+0.015*Math.sin(st*0.8);
     rrBeat=rr;nextBeat=lastBeat+rr;
   }
 }
-function ecg(){
+function ecg(){return ecgBase()+((pFire()&&pLast>-5)?g(st,pLast,.008):0)}
+function ecgBase(){
   const r=S.rhythm;
   if(st<shockEnd)return (shockEnd-st>1.15)?(Math.random()-.5)*3:0.005*Math.random();
   if(r==='noecg')return 0;
-  if(r==='asys')return 0.01*Math.sin(st*3)+0.01*(Math.random()-.5);
+  if(r==='asys'&&!pCap())return 0.01*Math.sin(st*3)+0.01*(Math.random()-.5);
   if(r==='vf')return 0.45*Math.sin(6.28*4.2*st)*(0.6+0.4*Math.sin(6.28*0.6*st))+0.3*Math.sin(6.28*6.9*st+1)+0.1*(Math.random()-.5);
   if(r==='vt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
   let v=0;
   if(lastBeat>-5){
     const k=Math.min(1,rrBeat/0.8),u=(st-lastBeat)/k;
-    v=-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045);
-    if(r==='sinus'||r==='tachy'||r==='brady')v+=0.12*g(u,0.10,0.025);
+    if(btype==='p')v=.8*g(u,.27,.035)-.3*g(u,.34,.03)-.3*g(u,.58,.06);
+    else{v=-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045);
+    if(r==='sinus'||r==='tachy'||r==='brady')v+=0.12*g(u,0.10,0.025)}
   }
   if(r==='flutter')v+=((st*5)%1-0.5)*0.35;
   if(r==='af')v+=0.04*(Math.sin(6.28*7*st)+Math.sin(6.28*11.3*st+2))+0.015*(Math.random()-.5);
@@ -304,7 +330,7 @@ function frame(now){
     st+=h;sched();
     const vals=[ecg(),pleth(),capno()];
     for(let i=0;i<3;i++){
-      if(i===2&&S.co2on===false){T[2].y=null;continue}
+      if((i===0&&S.hron===false)||(i===1&&S.spo2on===false)||(i===2&&S.co2on===false)){T[i].y=null;continue}
       const c=cv[i],W=c.getBoundingClientRect().width,H=c.getBoundingClientRect().height,t=T[i],ctx=cx[i];
       let y;
       if(i===0)y=H*0.58-vals[0]*H*0.33;
@@ -317,7 +343,7 @@ function frame(now){
       ctx.clearRect(nx+2,0,16,H);
       if(i===0&&markAt&&st>=markAt){markAt=0;ctx.fillStyle='#fff';ctx.fillRect(nx-1,2,3,9)}
       t.x=nx;t.y=y;
-      if(t.x>W){t.x=0;t.y=null}
+      if(t.x>W){t.x=0;t.y=null;ctx.clearRect(0,0,20,H)}
     }
   }
   if(beatFlag){beatFlag=0;const h=$('heart');h.style.opacity=1;setTimeout(()=>{h.style.opacity=.25},130)}
@@ -326,8 +352,19 @@ function frame(now){
 let AC=null,sndOn=true,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
 let nibp={on:false,t0:0,tgt:0,val:null};
 let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0};
-const EN=[10,20,30,40,50,60,70,80,90,100,150,200,250,300,350],CHG=4000;
+const EN=[2,3,4,5,6,7,8,9,10,15,20,30,50,70,100,125,150,175,200,225,250,275,300,325,360],CHG=4000;
 let dfSnd=null,nibpSnd=null;
+let pc={on:false,rate:70,ma:50,pz:0},pNext=0,pLast=-9,btype='n';const THR=70;
+function pFire(){const r=S.rhythm;return pc.on&&Date.now()>=pc.pz&&r!=='vf'&&(r==='asys'||S.hr<pc.rate)}
+function pCap(){return pFire()&&pc.ma>=THR}
+function pPaint(){$('prv').textContent=pc.rate;$('pov').textContent=pc.ma;const pz=pc.pz-Date.now();$('pps').textContent=pz>0?'PAUZA '+Math.ceil(pz/1000)+' s':'PAUZA 5 s';$('pps').disabled=pz>0;$('pst').textContent=pz>0?'STIMULACE POZASTAVENA':'STIMULACE ZAP';paintNums()}
+function pTick(){if(pc.pz){if(Date.now()>=pc.pz)pc.pz=0;pPaint()}}
+function setMode(m){
+  $('dfp').dataset.md=m;$('mdd').classList.toggle('on',m==='d');$('mdp').classList.toggle('on',m==='p');
+  $('secd').classList.toggle('hide',m!=='d');$('secp').classList.toggle('hide',m!=='p');
+  if(m==='d'){pc.on=false;pLast=-9}else{pc.on=true;pc.pz=0;pNext=st+.3;if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}}
+  dfPaint();pPaint();
+}
 function audioInit(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
 function tone(f,d,v,type,at){
   if(!AC||!sndOn)return;
@@ -335,7 +372,7 @@ function tone(f,d,v,type,at){
   o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||.2,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+d);
   o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02)}catch(e){}
 }
-function pulseBeep(){if(S.spo2>0&&S.hr>0)tone(Math.max(300,Math.min(1000,300+(S.spo2-70)*23)),.09,.18)}
+function pulseBeep(){const sp=S.spo2on!==false&&S.spo2>0;if((sp||(S.hron!==false&&S.spo2>0))&&(S.hr>0||pCap()))tone(sp?Math.max(300,Math.min(1000,300+(S.spo2-70)*23)):700,.09,.18)}
 function alarmTick(){
   const rem=alSilence-Date.now();
   $('alsil').textContent=rem>0?'🔕 '+Math.ceil(rem/1000):'🔕';
@@ -344,15 +381,17 @@ function alarmTick(){
   if(alLevel===2&&alN%2===0)[0,.16,.32].forEach(o=>tone(960,.1,.25,'square',o));
   else if(alLevel===1&&alN%5===0)[0,.2].forEach(o=>tone(660,.12,.22,'square',o));
 }
-function holdSound(type,f0,f1,d,v){
+function holdSound(type,f0,f1,d,v,beat){
   if(!AC||!sndOn)return null;
-  try{const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
-  o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.linearRampToValueAtTime(f1,t+d);
-  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.08);g.gain.setValueAtTime(v,t+d);g.gain.linearRampToValueAtTime(0,t+d+.1);
-  let n=o;if(AC.createBiquadFilter){const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=600;o.connect(f);n=f}
-  n.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.15);return {o,g}}catch(e){return null}
+  try{const t=AC.currentTime,g=AC.createGain(),os=[];
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.1);g.gain.setValueAtTime(v,t+d);g.gain.linearRampToValueAtTime(0,t+d+.1);
+  let dest=g;
+  if(AC.createBiquadFilter){const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=1800;f.connect(g);dest=f}
+  g.connect(AC.destination);
+  [0,beat].forEach((b,i)=>{if(i&&!b)return;const o=AC.createOscillator();o.type=type;o.frequency.setValueAtTime(f0+b,t);o.frequency.linearRampToValueAtTime(f1+b,t+d);o.connect(dest);o.start(t);o.stop(t+d+.15);os.push(o)});
+  return {o:os,g}}catch(e){return null}
 }
-function stopSound(x){if(!x)return;try{const t=AC.currentTime;x.g.gain.cancelScheduledValues(t);x.g.gain.setTargetAtTime(.0001,t,.03);x.o.stop(t+.2)}catch(e){}}
+function stopSound(x){if(!x)return;try{const t=AC.currentTime;x.g.gain.cancelScheduledValues(t);x.g.gain.setTargetAtTime(.0001,t,.03);[].concat(x.o).forEach(o=>o.stop(t+.2))}catch(e){}}
 function nibpStep(){
   if(!nibp.on)return;
   const el=(Date.now()-nibp.t0)/1000;
@@ -400,39 +439,41 @@ function hhmm(){return new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',min
 let bpTime=hhmm();
 function tick(){$('clock').textContent=new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 function paintNums(){
-  const dead=S.rhythm==='vf'||S.rhythm==='asys';
-  const hrOk=!dead&&S.hr>0;
+  const cap=pCap(),dead=(S.rhythm==='vf'||S.rhythm==='asys')&&!cap,hrv=cap?pc.rate:S.hr;
+  const hOn=S.hron!==false,sOn=S.spo2on!==false,yOn=S.syson!==false,dOn=S.diaon!==false;
+  const hrOk=!dead&&hrv>0;
   const noecg=S.rhythm==='noecg';
-  $('vHr').textContent=(hrOk&&(!noecg||S.spo2>0))?S.hr:'---';
+  $('vHr').textContent=(hOn&&hrOk&&(!noecg||(S.spo2>0&&sOn)))?hrv:'---';
   $('nHr').style.setProperty('--c',noecg?'#3aa0ff':'#2ee66b');
   $('hrsrc').textContent=noecg?'':'EKG';
-  $('vPr').textContent=(hrOk&&S.spo2>0)?S.hr:'---';
-  $('vSpo').textContent=S.spo2>0?S.spo2:'---';
-  const bv=nibp.val,sv=(!nibp.on&&bv)?bv.sys:0;
+  $('vPr').textContent=(sOn&&hrOk&&S.spo2>0)?hrv:'---';
+  $('vSpo').textContent=(sOn&&S.spo2>0)?S.spo2:'---';
+  const bv=nibp.val,sv=(!nibp.on&&bv&&yOn)?bv.sys:0;
   if(nibp.on){const el=(Date.now()-nibp.t0)/1000,p=el<8?nibp.tgt*el/8:nibp.tgt*(1-Math.min(12,Math.floor((el-8)/1.4)*1.4)/12);$('vBp').textContent=Math.max(0,Math.round(p));$('vMap').textContent='manžeta';$('vBpT').textContent=Math.max(0,Math.ceil(20-el))+' s'}
   else if(!bv||bv.sys<=0){$('vBp').textContent='---/---';$('vMap').textContent='(---)';$('vBpT').textContent=bv?bpTime:''}
-  else{$('vBp').textContent=bv.sys+'/'+bv.dia;$('vMap').textContent='('+Math.round((bv.sys+2*bv.dia)/3)+')';$('vBpT').textContent=bpTime}
+  else{$('vBp').textContent=(yOn?bv.sys:'---')+'/'+(dOn?bv.dia:'---');$('vMap').textContent=(yOn&&dOn)?'('+Math.round((bv.sys+2*bv.dia)/3)+')':'(---)';$('vBpT').textContent=bpTime}
   $('nibpb').textContent=nibp.on?'Zrušit':'Změřit TK';
   const co=S.co2on!==false;
   $('vCo').textContent=(!co||(S.rr<=0&&S.etco2<=0))?'---':S.etco2;
   $('vRr').textContent=(!co||S.rr<=0)?'---':S.rr;
   $('co2em').textContent=co?'0–60 mmHg':'VYPNUTO';
   $('nCo').style.opacity=co?1:.35;
+  $('nHr').style.opacity=hOn?1:.35;$('nSpo').style.opacity=sOn?1:.35;$('nBp').style.opacity=(yOn||dOn)?1:.35;
   $('lHr').textContent=LIM.hr[1]+'\n'+LIM.hr[0];
   $('lSpo').textContent=LIM.spo2[1]+'\n'+LIM.spo2[0];
   $('lBp').textContent=LIM.sys[1]+'\n'+LIM.sys[0];
   $('lCo').textContent=LIM.etco2[1]+'\n'+LIM.etco2[0];
   const al=[];let crit=false;
-  if(S.rhythm==='asys'){al.push('ASYSTOLIE');crit=true}
+  if(S.rhythm==='asys'&&!cap){al.push('ASYSTOLIE');crit=true}
   else if(S.rhythm==='vf'){al.push('FIBRILACE KOMOR');crit=true}
   else if(S.rhythm==='vt'){al.push('KOMOROVÁ TACHYKARDIE');crit=true}
   const f={
-    nHr:!dead&&(S.hr<LIM.hr[0]||S.hr>LIM.hr[1]),
-    nSpo:!dead&&(S.spo2<LIM.spo2[0]),
+    nHr:hOn&&!dead&&(hrv<LIM.hr[0]||hrv>LIM.hr[1]),
+    nSpo:sOn&&!dead&&(S.spo2<LIM.spo2[0]),
     nBp:!dead&&sv>0&&(sv<LIM.sys[0]||sv>LIM.sys[1]),
     nCo:co&&(S.etco2<LIM.etco2[0]||S.etco2>LIM.etco2[1])
   };
-  if(f.nHr&&S.rhythm!=='vt')al.push(S.hr<LIM.hr[0]?'HR NÍZKÁ':'HR VYSOKÁ');
+  if(f.nHr&&S.rhythm!=='vt')al.push(hrv<LIM.hr[0]?'HR NÍZKÁ':'HR VYSOKÁ');
   if(f.nSpo)al.push('SpO₂ NÍZKÁ');
   if(f.nBp)al.push(sv<LIM.sys[0]?'TK NÍZKÝ':'TK VYSOKÝ');
   if(f.nCo)al.push(S.etco2<LIM.etco2[0]?'EtCO₂ NÍZKÝ':'EtCO₂ VYSOKÝ');
@@ -446,8 +487,8 @@ function handleState(d){
   const n={...S};
   for(const [k,,mi,ma] of FIELDS){const v=Number(d[k]);if(isFinite(v))n[k]=Math.max(mi,Math.min(ma,v))}
   n.rhythm=d.rhythm;
-  n.co2on=d.co2on!==false;
-  if(n.co2on!==(S.co2on!==false)){T[2].x=0;T[2].y=null;cx[2].clearRect(0,0,1e5,1e5)}
+  ['hron','spo2on','syson','diaon','co2on'].forEach(k=>{n[k]=d[k]!==false});
+  [['hron',0],['spo2on',1],['co2on',2]].forEach(([k,i])=>{if(n[k]!==(S[k]!==false)){T[i].x=0;T[i].y=null;cx[i].clearRect(0,0,1e5,1e5)}});
   if(n.sys!==S.sys||n.dia!==S.dia)bpTime=hhmm();
   const changed=n.rhythm!==S.rhythm||n.hr!==S.hr;
   S=n;lastRx=Date.now();
@@ -465,13 +506,17 @@ function startMon(){
   audioInit();
   $('snd').onclick=()=>{sndOn=!sndOn;$('snd').textContent=sndOn?'🔊':'🔇';if(sndOn)audioInit()};
   $('alsil').onclick=()=>{alSilence=alSilence>Date.now()?0:Date.now()+120000};
-  $('nibpb').onclick=()=>{if(nibp.on){nibp.on=false;stopSound(nibpSnd);nibpSnd=null}else{nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val,k:-1};nibpSnd=holdSound('sawtooth',70,130,8,.05)}paintNums()};
+  $('nibpb').onclick=()=>{if(nibp.on){nibp.on=false;stopSound(nibpSnd);nibpSnd=null}else{nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val,k:-1};nibpSnd=holdSound('triangle',420,620,8,.05,9)}paintNums()};
   $('dfm').onclick=()=>{df.j=EN[Math.max(0,EN.indexOf(df.j)-1)];dfPaint()};
   $('dfp2').onclick=()=>{df.j=EN[Math.min(EN.length-1,EN.indexOf(df.j)+1)];dfPaint()};
   $('dfs').onclick=()=>{df.sync=!df.sync;dfPaint()};
   $('dfc').onclick=()=>{if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle';dfPaint()}else dfCharge()};
   $('dfx').onclick=dfShock;
-  setInterval(()=>{nibpStep();dfTick()},250);setInterval(alarmTick,1000);dfPaint();
+  $('mdd').onclick=()=>setMode('d');$('mdp').onclick=()=>setMode('p');
+  $('prm').onclick=()=>{pc.rate=Math.max(40,pc.rate-5);pPaint()};$('prp').onclick=()=>{pc.rate=Math.min(170,pc.rate+5);pPaint()};
+  $('pom').onclick=()=>{pc.ma=Math.max(0,pc.ma-10);pPaint()};$('pop').onclick=()=>{pc.ma=Math.min(200,pc.ma+10);pPaint()};
+  $('pps').onclick=()=>{pc.pz=Date.now()+5000;pLast=-9;pPaint()};
+  setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);dfPaint();
   const p=new Peer();let conn=null;
   function link(){
     if(conn){try{conn.close()}catch(e){}}
