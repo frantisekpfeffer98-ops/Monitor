@@ -64,7 +64,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .ns{font-size:.7rem;opacity:.85}
 #heart{opacity:.25}
 #wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000d;z-index:5;text-align:center;padding:20px;font-family:system-ui,sans-serif}
-#stale{position:absolute;right:8px;top:34px;z-index:6;font-size:.75rem;color:#ff9f43}
+#stale{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:4;background:#ff9f43;color:#000;font-weight:700;font-size:.75rem;padding:2px 10px;border-radius:999px;white-space:nowrap;pointer-events:none}
 #fs{background:transparent;border:1px solid #8b94a1;border-radius:6px;padding:2px 10px;font-size:.9rem;color:#c9d1d9}
 #mon.pc{grid-template-columns:28% 1fr;grid-template-rows:auto 1fr}
 #mon.pc #top{font-size:1rem;padding:8px 18px}
@@ -76,7 +76,6 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 #mon.pc .ns{font-size:1rem}
 #mon.pc #traces{grid-column:2;grid-row:2}
 #mon.pc #nums{grid-column:1;grid-row:2;grid-template-columns:1fr;grid-template-rows:repeat(4,1fr)}
-.dev{display:flex;gap:12px;margin:16px 0}.dev button{flex:1;padding:30px 12px;font-size:1.15rem}
 @media (min-width:900px){#ctl{max-width:1000px}.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}}
 @media (max-height:500px){#top{padding:2px 10px;font-size:.7rem}#clock{font-size:.75rem}}
 #fs{padding:2px 10px;font-size:.9rem}
@@ -143,7 +142,6 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 @media (max-width:520px){.card{padding:14px 8px 12px;border-radius:18px}.card svg{width:100%;max-width:110px;height:auto}.card b{font-size:1.05rem}.card span{font-size:.8rem;text-align:center}}
 .c-ctl{border-top:6px solid #2f7df6}.c-mon{border-top:6px solid #12b886}
 .c-ctl:hover,.c-ctl.on{border-color:#2f7df6}.c-mon:hover,.c-mon.on{border-color:#12b886}
-.ghost{background:transparent;border:2px solid #cfe1f5;color:#2a4a6e;border-radius:999px;padding:10px 26px;margin-top:6px}
 .page .foot{margin-top:auto;padding-top:22px;width:100%;display:flex;justify-content:space-between;color:#7a8ea3;font-size:.8rem}
 /* --- plynulý přechod kardiostimulace / defibrilace --- */
 #secs{display:grid}
@@ -246,20 +244,12 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 #ubar .ubi #upd{flex:1;min-width:0}
 #ubar #upd.auto{background:#e6faf2;color:#0b8a5f;font-weight:700}
 #devb{font-size:.85rem}
+#top .pt{min-width:0;overflow:hidden;text-overflow:ellipsis}#alm{min-width:0}
+@media (max-width:600px){#top{gap:6px;padding:4px 8px}#top .sim{display:none}#top .tb{padding:2px 6px}}
 #top{position:relative;z-index:6}
 </style>
 </head>
 <body>
-
-<div id="pick" class="page hide">
-  <div class="hero"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7df6"/><stop offset="1" stop-color="#12b886"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg)"/><polyline points="8,34 20,34 25,24 31,44 37,16 43,38 47,34 56,34" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><h1>Kde poběží monitor?</h1><p class="sub">Podle toho se přizpůsobí jeho zobrazení.</p></div>
-  <div class="cards">
-    <button id="dPh" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="22" y="22" width="96" height="62" rx="11" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="32,56 52,56 57,46 62,56 72,56 77,36 82,72 87,56 108,56" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="114" cy="53" r="3" fill="#9db4cf"/></svg><b>Telefon</b></button>
-    <button id="dPc" class="card c-ctl" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>PC</b></button>
-  </div>
-  <button id="pback" class="ghost" type="button">Zpět</button>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v57</span></div>
-</div>
 
 <div id="home" class="page">
   <div class="hero"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7df6"/><stop offset="1" stop-color="#12b886"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg2)"/><polyline points="8,34 20,34 25,24 31,44 37,16 43,38 47,34 56,34" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><h1>Simulátor monitoru pacienta</h1>
@@ -270,7 +260,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v57</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v58</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -285,7 +275,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v57</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v58</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -296,7 +286,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
       <div id="secd" class="sec"><div id="dfst"><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
       <div id="secp" class="sec off"><div class="pe"><button id="prm" type="button">−</button><b><span id="prv">70</span> /min</b><button id="prp" type="button">+</button></div><div class="pe"><button id="pom" type="button">−</button><b><span id="pov">5</span> mA</b><button id="pop" type="button">+</button></div><button id="pps" type="button">PAUZA</button></div></div>
     </div></div>
-  </div>
+  <div id="stale" class="hide" role="status">⚠ Spojení přerušeno</div></div>
   <div id="nums">
     <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> <span id="hrsrc">EKG</span></div></div>
     <div class="n" id="nSpo" style="--c:#3aa0ff"><div class="nh"><small>SpO₂</small><em>%</em><u id="lSpo"></u></div><b id="vSpo">--</b><div class="ns">TF <span id="vPr">--</span> /min</div></div>
@@ -305,7 +295,6 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
   </div>
   <div id="flash"></div>
   <div id="wait">Čekám na ovladač…<br>Kód: <span id="wcode"></span></div>
-  <div id="stale" class="hide">Spojení přerušeno</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
@@ -325,11 +314,7 @@ $('code').value=code;
 
 try{dev=localStorage.getItem('simdev')||''}catch(e){}
 $('bMon').onclick=()=>{if(!getCode())return;if(!dev)dev=Math.min(screen.width,screen.height)>=700?'pc':'phone';startMon()};
-$('pback').onclick=()=>show('home');
-const pickDev=d=>{dev=d;try{localStorage.setItem('simdev',d)}catch(e){}startMon()};
-$('dPh').onclick=()=>pickDev('phone');$('dPc').onclick=()=>pickDev('pc');
-if(dev)$(dev==='pc'?'dPc':'dPh').classList.add('on');
-function show(id){['pick','home','ctl','mon'].forEach(x=>$(x).classList.toggle('hide',x!==id));document.body.classList.toggle('lightbg',id==='ctl');document.documentElement.classList.toggle('lightbg',id==='ctl')}
+function show(id){['home','ctl','mon'].forEach(x=>$(x).classList.toggle('hide',x!==id));document.body.classList.toggle('lightbg',id==='ctl');document.documentElement.classList.toggle('lightbg',id==='ctl')}
 
 function getCode(){code=($('code').value||'').replace(/\D/g,'').slice(0,4);if(code.length<4){$('code').focus();return false}try{localStorage.setItem('simcode',code)}catch(e){}return true}
 function fail(m){if(mode==='ctl'){$('cst').textContent=m;$('cdot').classList.remove('ok')}else{$('noroom').textContent=m;$('noroom').classList.remove('hide')}}
