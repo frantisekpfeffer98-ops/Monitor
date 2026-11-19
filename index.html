@@ -260,7 +260,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v60</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v61</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -275,7 +275,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v60</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v61</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -305,7 +305,7 @@ const NOPULSE=['vf','asys','pea','tdp'];
 const LIMR={hr:['Srdeční frekvence','#0ca678',20,250,5],spo2:['SpO₂','#1c7ed6',50,100,1],sys:['TK systolický','#e03131',40,260,5],etco2:['EtCO₂','#f76707',5,80,1]};
 const LIMDEF={hr:[50,120],spo2:[90,100],sys:[90,180],etco2:[30,50]};
 const FIELDS=[['hr','Srdeční frekvence (/min)',0,250],['spo2','SpO₂ (%)',0,100],['sys','TK systolický (mmHg)',0,260],['dia','TK diastolický (mmHg)',0,160],['etco2','EtCO₂ (mmHg)',0,80],['rr','Dechová frekvence (/min)',0,60]];
-const DEF={rhythm:'sinus',hr:75,spo2:98,sys:120,dia:80,etco2:38,rr:14,ecgon:false,hron:false,spo2on:false,syson:false,co2on:false,kpr:false,lim:LIMDEF};
+const DEF={rhythm:'sinus',hr:75,spo2:98,sys:120,dia:80,etco2:38,rr:14,ecgon:false,hron:false,spo2on:false,syson:true,co2on:false,kpr:false,lim:LIMDEF};
 let C={...DEF}, S={...DEF}, code='', room=null, mode='', lastRx=0, dev='';
 
 try{code=localStorage.getItem('simcode')||''}catch(e){}
@@ -368,18 +368,18 @@ function paintCtl(setSliders=true){
   cb.textContent=on?'ZAP':'VYP';cb.classList.toggle('on',on);
   $('s_etco2').style.opacity=on?1:.4;$('s_rr').closest('.row').style.opacity=on?1:.4;
   for(const k in TG){const o=S[TG[k]]!==false,b=$('tg_'+k);b.textContent=o?'ZAP':'VYP';b.classList.toggle('on',o);$('s_'+k).style.opacity=o?1:.4}
-  $('s_dia').style.opacity=S.syson!==false?1:.4;$('s_hr').style.opacity=(S.spo2on!==false||S.ecgon!==false)?1:.4;
+  $('s_hr').style.opacity=(S.spo2on!==false||S.ecgon!==false)?1:.4;
   const kp=S.kpr===true;$('kprc').classList.toggle('on',kp);$('kprb').textContent=kp?'VYPNOUT':'ZAPNOUT';$('kprs').textContent=kp?'probíhá – rušení na EKG a pletysmografu':'rušení na EKG a pletysmografu';
   for(const k in LIMR)[0,1].forEach(j=>{$(`lim_${k}_${j}`).textContent=S.lim[k][j]});
   document.querySelectorAll('#ctl .mini').forEach(b=>{b.setAttribute('role','switch');b.setAttribute('aria-checked',b.classList.contains('on'))});
 }
 let tmr=0;
-const TG={spo2:'spo2on',sys:'syson'};
+const TG={spo2:'spo2on'};
 const sig=o=>[o.rhythm,o.hr,o.spo2,o.sys,o.dia,o.etco2,o.rr,o.co2on!==false,o.hron!==false,o.spo2on!==false,o.syson!==false,o.ecgon!==false,o.kpr===true,JSON.stringify(o.lim)].join('|');
 let autoSend=false;try{autoSend=localStorage.getItem('simauto')==='1'}catch(e){}
 function saveState(){try{localStorage.setItem('simstate',JSON.stringify({S,C}))}catch(e){}}
 function loadState(){try{const o=JSON.parse(localStorage.getItem('simstate')||'null');if(!o||!o.S||!o.C||!RHY[o.S.rhythm]||!RHY[o.C.rhythm])return;
-  const fix=x=>{const n={...DEF,...x};n.lim={...LIMDEF,...(x.lim||{})};return n};S=fix(o.S);C=fix(o.C)}catch(e){}}
+  const fix=x=>{const n={...DEF,...x,syson:true};n.lim={...LIMDEF,...(x.lim||{})};return n};S=fix(o.S);C=fix(o.C)}catch(e){}}
 function dirtyPaint(){
   const d=sig(S)!==sig(C),b=$('upd'),a=$('autob');
   a.classList.toggle('on',autoSend);a.setAttribute('role','switch');a.setAttribute('aria-checked',autoSend);
@@ -675,6 +675,7 @@ function handleState(d){
   for(const [k,,mi,ma] of FIELDS){const v=Number(d[k]);if(isFinite(v))n[k]=Math.max(mi,Math.min(ma,v))}
   n.rhythm=d.rhythm;
   ['ecgon','hron','spo2on','syson','co2on'].forEach(k=>{n[k]=d[k]!==false});
+  n.syson=true; /* tlak nejde vypnout – do prvního změření je ---/--- */
   n.kpr=d.kpr===true;
   if(d.lim&&typeof d.lim==='object'){const L={...LIM};for(const k in LIMR){const v=d.lim[k],mi=LIMR[k][2],ma=LIMR[k][3];if(Array.isArray(v)&&v.length===2){const lo=Math.max(mi,Math.min(ma,Number(v[0]))),hi=Math.max(mi,Math.min(ma,Number(v[1])));if(isFinite(lo)&&isFinite(hi)&&lo<hi)L[k]=[lo,hi]}}LIM=L;n.lim=L}
   [['ecgon',0],['spo2on',1],['co2on',2]].forEach(([k,i])=>{if(n[k]!==(S[k]!==false)){T[i].x=0;T[i].y=null;cx[i].clearRect(0,0,1e5,1e5)}});
