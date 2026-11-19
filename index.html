@@ -262,7 +262,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v64</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v65</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -277,7 +277,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v64</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v65</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -464,7 +464,8 @@ function kprStep(){if(KC.next<st-1)KC.next=st;while(st>=KC.next){const iv=60/110
 function kprShape(){if(KC.start<-5)return 0;const x=(st-KC.start)/KC.dur;if(x<0||x>1)return 0;
   if(x<0.42)return Math.pow(Math.sin(Math.PI*x/0.42),1.4);const t=(x-0.42)/0.58;return -0.28*Math.sin(Math.PI*t)*Math.exp(-1.5*t)}
 function kprOn(){return S.kpr===true&&st>=shockEnd}
-function ecg(){let v=ecgBase();
+function respW(){return S.rr>0?Math.sin(6.2832*S.rr/60*st):0}
+function ecg(){let v=ecgBase();if(ecgOn()&&st>=shockEnd&&!kprOn())v+=0.03*respW();
   if(kprOn()&&ecgOn()){kprStep();v=v*0.3+1.15*KC.amp*kprShape()+0.12*Math.sin(6.28*0.27*st)+0.06*Math.sin(6.28*0.11*st+1)}
   return v+((pFire()&&pLast>-5&&pc.ma>=20)?Math.min(.4,.1+pc.ma/250)*g(st,pLast,.008):0)}
 function ecgBase(){
@@ -496,7 +497,7 @@ function pleth(){
   if(lastBeat<-5||S.spo2<=0)return 0.02;
   const tb=st-lastBeat;
   const perf=Math.max(0.12,Math.min(1,S.sys/110))*Math.max(0.35,Math.min(1,S.spo2/95));
-  return perf*(g(tb,0.28,0.07)+0.3*g(tb,0.48,0.09));
+  return perf*(1+0.07*respW())*(g(tb,0.28,0.07)+0.3*g(tb,0.48,0.09))+0.015*respW();
 }
 function capno(){
   if(S.rr<=0)return 0;
@@ -536,7 +537,7 @@ function frame(now){
   if(beatFlag){beatFlag=0;if(hrShown){const h=$('heart');h.style.opacity=1;setTimeout(()=>{h.style.opacity=.25},130)}}
   requestAnimationFrame(frame);
 }
-let hrShown=false,spShown=false,AC=null,sndOn=true,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
+let hrShown=false,spShown=false,AC=null,sndOn=true,alPrev=0,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
 let nibp={on:false,t0:0,tgt:0,val:null};
 let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0,pend:false,pendT:0,msgT:0};
 /* čas příštího vrcholu R pro synchronizovanou kardioverzi; null = monitor nenajde QRS (VF, asystolie, torsades, KPR) */
@@ -567,21 +568,29 @@ function setMode(m){
   if(m==='d'){pc.on=false;pc.pz=0;pLast=-9}else{pc.on=true;pc.pz=0;pNext=st+.3;if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}}
   dfPaint();pPaint();
 }
+let VOL=2;try{const v=localStorage.getItem('simvol');if(v!==null&&+v>=0&&+v<=3)VOL=+v}catch(e){}
+const VOLG=[0,.25,.6,1],VOLI=['🔇','🔈','🔉','🔊'];let MG=null;
+function OUT(){if(!MG){MG=AC.createGain();MG.connect(AC.destination)}MG.gain.value=VOLG[VOL];return MG}
+/* tón alarmu: plochý puls s krátkým náběhem a doběhem, se svrchní harmonickou (lépe slyšitelný) */
+function apulse(f,d,v,at){if(!AC||!sndOn)return;try{const t=AC.currentTime+(at||0),g=AC.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.setValueAtTime(v,t+d-.03);g.gain.linearRampToValueAtTime(0,t+d);g.connect(OUT());
+  [[f,'triangle',1],[f*2,'sine',.35],[f*3,'sine',.15]].forEach(([fr,ty,a])=>{const o=AC.createOscillator(),og=AC.createGain();o.type=ty;o.frequency.value=fr;og.gain.value=a;o.connect(og);og.connect(g);o.start(t);o.stop(t+d+.02)})}catch(e){}}
+function alarmSound(lv){if(lv===2)[0,.2,.4,.9,1.1].forEach(o=>apulse(880,.15,.28,o));else[0,.28,.56].forEach(o=>apulse(587,.2,.22,o))}
 function audioInit(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
 function tone(f,d,v,type,at){
   if(!AC||!sndOn)return;
   try{const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+(at||0);
   o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||.2,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+d);
-  o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02)}catch(e){}
+  o.connect(g);g.connect(OUT());o.start(t);o.stop(t+d+.02)}catch(e){}
 }
 function pulseBeep(){if(spShown)tone(Math.max(300,Math.min(1000,300+(S.spo2-70)*23)),.09,.18);else if(hrShown)tone(700,.09,.18)}
 function alarmTick(){
   const rem=alSilence-Date.now();
   $('alsil').textContent=rem>0?'🔕 '+Math.ceil(rem/1000):'🔕';
-  if(!alLevel||rem>0)return;
+  /* vysoká priorita (kritický rytmus): 3+2 tóny každé 4 s; střední priorita: 3 tóny každých 8 s */
+  if(!alLevel||rem>0){alN=0;alPrev=0;return}
+  if(alLevel!==alPrev){alN=0;alPrev=alLevel}
+  if(alN%(alLevel===2?4:8)===0)alarmSound(alLevel);
   alN++;
-  if(alLevel===2&&alN%2===0)[0,.16,.32].forEach(o=>tone(960,.1,.25,'square',o));
-  else if(alLevel===1&&alN%5===0)[0,.2].forEach(o=>tone(660,.12,.22,'square',o));
 }
 function holdSound(type,f0,f1,d,v){
   if(!AC||!sndOn)return null;
@@ -589,14 +598,14 @@ function holdSound(type,f0,f1,d,v){
   o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.linearRampToValueAtTime(f1,t+d);
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.08);g.gain.setValueAtTime(v,t+d);g.gain.linearRampToValueAtTime(0,t+d+.1);
   let n=o;if(AC.createBiquadFilter){const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=600;o.connect(f);n=f}
-  n.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.15);return {o,g}}catch(e){return null}
+  n.connect(g);g.connect(OUT());o.start(t);o.stop(t+d+.15);return {o,g}}catch(e){return null}
 }
 function stopSound(x){if(!x)return;try{const t=AC.currentTime;x.g.gain.cancelScheduledValues(t);x.g.gain.setTargetAtTime(.0001,t,.03);[].concat(x.o).forEach(o=>o.stop(t+.2))}catch(e){}}
 function nibpStep(){
   if(!nibp.on)return;
   const el=(Date.now()-nibp.t0)/1000;
   if(el>8){const k=Math.floor((el-8)/1.4);if(k!==nibp.k){nibp.k=k;tone(1500,.03,.1,'square')}}
-  if(el>=20){nibp.on=false;nibp.val={sys:S.sys,dia:S.dia};bpTime=hhmm();[0,.18].forEach(o=>tone(880,.12,.18,'sine',o))}
+  if(el>=20){nibp.on=false;const j=()=>Math.round(Math.random()*4-2);nibp.val={sys:S.sys>0?Math.max(1,S.sys+j()):0,dia:S.dia>0?Math.max(1,S.dia+j()):0};bpTime=hhmm();[0,.18].forEach(o=>tone(880,.12,.18,'sine',o))}
   paintNums();
 }
 function dfStopSnd(){
@@ -609,7 +618,7 @@ function dfChgSnd(d){
   try{const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
   o.type='triangle';o.frequency.setValueAtTime(280,t);o.frequency.exponentialRampToValueAtTime(2300,t+d);
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.09,t+.12);g.gain.setValueAtTime(.09,t+d);g.gain.linearRampToValueAtTime(0,t+d+.05);
-  o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.1);dfSnd={o,g}}catch(e){}
+  o.connect(g);g.connect(OUT());o.start(t);o.stop(t+d+.1);dfSnd={o,g}}catch(e){}
 }
 function dfPaint(){
   $('dfj').textContent=df.j+' J';$('dfs').classList.toggle('on',df.sync);
@@ -631,7 +640,7 @@ function dfShock(){
 }
 function dfFire(){
   if(df.st!=='rdy'||!ecgOn())return;
-  df.pend=false;dfStopSnd();df.st='shk';df.t0=Date.now();shockEnd=st+1.3;tone(110,.5,.5,'sawtooth');
+  df.pend=false;df.sync=false;markAt=0;dfStopSnd();df.st='shk';df.t0=Date.now();shockEnd=st+1.3;tone(110,.5,.5,'sawtooth');
   const f=$('flash');f.style.opacity=1;setTimeout(()=>{f.style.opacity=0},130);dfPaint();
 }
 function dfTick(){
@@ -646,17 +655,21 @@ let LIM={...LIMDEF};
 function hhmm(){return new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'})}
 let bpTime=hhmm();
 function tick(){$('clock').textContent=new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+/* přirozené kolísání zobrazených hodnot (alarmy počítají s nastavenou hodnotou) */
+const VAR={hr:0,spo2:0,rr:0,etco2:0};
+function varStep(){const af=S.rhythm==='af',w=(k,a,b)=>{VAR[k]=Math.max(-b,Math.min(b,VAR[k]+a*(Math.floor(Math.random()*3)-1)))};w('hr',af?3:1,af?8:2);w('spo2',1,1);w('rr',1,1);w('etco2',1,1)}
+const vv=(k,b,mi,ma)=>b<=0?b:Math.max(mi,Math.min(ma,b+VAR[k]));
 function paintNums(){
   const cap=pCap(),dead=(S.rhythm==='vf'||S.rhythm==='asys')&&!cap,hrv=cap?pc.rate:S.hr;
   const eOn=S.ecgon!==false,sOn=S.spo2on!==false,hOn=eOn||sOn,yOn=S.syson!==false,dOn=yOn;
   const hrOk=!dead&&hrv>0;
   const noecg=S.ecgon===false;
-  const kp=S.kpr===true;
-  $('vHr').textContent=(!kp&&hOn&&hrOk&&(!noecg||(S.spo2>0&&sOn)))?hrv:'---';
+  const kp=S.kpr===true,hrd=cap?pc.rate:vv('hr',hrv,1,300);
+  $('vHr').textContent=(!kp&&hOn&&hrOk&&(!noecg||(S.spo2>0&&sOn)))?hrd:'---';
   $('nHr').style.setProperty('--c',noecg?'#3aa0ff':'#2ee66b');
   $('hrsrc').textContent=noecg?'':'EKG';
-  $('vPr').textContent=(sOn&&hrOk&&S.spo2>0)?hrv:'---';
-  $('vSpo').textContent=(sOn&&S.spo2>0)?S.spo2:'---';
+  $('vPr').textContent=(sOn&&hrOk&&S.spo2>0)?hrd:'---';
+  $('vSpo').textContent=(sOn&&S.spo2>0)?vv('spo2',S.spo2,1,100):'---';
   hrShown=$('vHr').textContent!=='---';spShown=$('vSpo').textContent!=='---';
   const bv=nibp.val,sv=(!nibp.on&&bv&&yOn)?bv.sys:0;
   if(nibp.on){const el=(Date.now()-nibp.t0)/1000,p=el<8?nibp.tgt*el/8:nibp.tgt*(1-Math.min(12,Math.floor((el-8)/1.4)*1.4)/12);$('vBp').textContent=Math.max(0,Math.round(p));$('vMap').textContent='manžeta';$('vBpT').textContent=Math.max(0,Math.ceil(20-el))+' s'}
@@ -664,8 +677,8 @@ function paintNums(){
   else{$('vBp').textContent=(yOn?bv.sys:'---')+'/'+(dOn?bv.dia:'---');$('vMap').textContent=(yOn&&dOn)?'('+Math.round((bv.sys+2*bv.dia)/3)+')':'(---)';$('vBpT').textContent=bpTime}
   $('nibpb').textContent=nibp.on?'Zrušit':'Změřit TK';
   const co=S.co2on!==false;
-  $('vCo').textContent=(!co||(S.rr<=0&&S.etco2<=0))?'---':S.etco2;
-  $('vRr').textContent=(!co||S.rr<=0)?'---':S.rr;
+  $('vCo').textContent=(!co||(S.rr<=0&&S.etco2<=0))?'---':vv('etco2',S.etco2,1,99);
+  $('vRr').textContent=(!co||S.rr<=0)?'---':vv('rr',S.rr,1,99);
   $('co2em').textContent=co?'0–60 mmHg':'VYPNUTO';
   $('nCo').style.opacity=co?1:.35;
   $('nHr').style.opacity=hOn?1:.35;$('nSpo').style.opacity=sOn?1:.35;$('nBp').style.opacity=(yOn||dOn)?1:.35;
@@ -722,7 +735,9 @@ function startMon(){
   show('mon');$('wcode').textContent=code;tick();setInterval(tick,1000);resize();paintNums();
   try{if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}
   audioInit();
-  $('snd').onclick=()=>{sndOn=!sndOn;$('snd').textContent=sndOn?'🔊':'🔇';if(sndOn)audioInit()};
+  const volPaint=()=>{const b=$('snd');b.textContent=VOLI[VOL];b.title='Hlasitost: '+['vypnuto','tiše','středně','nahlas'][VOL]+' (klepnutím změníš)';b.setAttribute('aria-label',b.title)};
+  sndOn=VOL>0;volPaint();
+  $('snd').onclick=()=>{VOL=(VOL+1)%4;sndOn=VOL>0;try{localStorage.setItem('simvol',VOL)}catch(e){}volPaint();if(MG)MG.gain.value=VOLG[VOL];if(sndOn){audioInit();OUT();tone(880,.08,.18)}};
   $('alsil').onclick=()=>{alSilence=alSilence>Date.now()?0:Date.now()+120000};
   $('nibpb').onclick=()=>{if(nibp.on){nibp.on=false;stopSound(nibpSnd);nibpSnd=null}else{nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val,k:-1};nibpSnd=holdSound('sawtooth',70,130,8,.05)}paintNums()};
   $('dfm').onclick=()=>{df.j=EN[Math.max(0,EN.indexOf(df.j)-1)];dfPaint()};
@@ -734,7 +749,7 @@ function startMon(){
   $('prm').onclick=()=>{pc.rate=Math.max(40,pc.rate-5);pPaint()};$('prp').onclick=()=>{pc.rate=Math.min(170,pc.rate+5);pPaint()};
   $('pom').onclick=()=>{pc.ma=CUR[Math.max(0,CUR.indexOf(pc.ma)-1)];pPaint()};$('pop').onclick=()=>{pc.ma=CUR[Math.min(CUR.length-1,CUR.indexOf(pc.ma)+1)];pPaint()};
   $('pps').onclick=()=>{if(!pc.on||!ecgOn())return;pc.pz=Date.now()+5000;pLast=-9;pPaint()};
-  setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);dfPaint();
+  setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);setInterval(()=>{varStep();paintNums()},2000);dfPaint();
   const p=new Peer();let conn=null;
   function link(){
     if(conn){try{conn.close()}catch(e){}}
