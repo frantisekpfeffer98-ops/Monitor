@@ -164,7 +164,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
     <button id="dPc" class="card c-ctl" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>PC</b></button>
   </div>
   <button id="pback" class="ghost" type="button">Zpět</button>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v34</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v35</span></div>
 </div>
 
 <div id="home" class="page">
@@ -176,7 +176,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v34</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v35</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -190,7 +190,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v34</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v35</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -262,7 +262,7 @@ function paintCtl(setSliders=true){
   cb.textContent=on?'ZAP':'VYP';cb.classList.toggle('on',on);
   $('s_etco2').style.opacity=on?1:.4;$('s_rr').closest('.row').style.opacity=on?1:.4;
   for(const k in TG){const o=S[TG[k]]!==false,b=$('tg_'+k);b.textContent=o?'ZAP':'VYP';b.classList.toggle('on',o);$('s_'+k).style.opacity=o?1:.4}
-  $('s_dia').style.opacity=S.syson!==false?1:.4;$('s_hr').style.opacity=S.spo2on!==false?1:.4;
+  $('s_dia').style.opacity=S.syson!==false?1:.4;$('s_hr').style.opacity=(S.spo2on!==false||S.ecgon!==false)?1:.4;
 }
 let tmr=0;
 const TG={spo2:'spo2on',sys:'syson'};
@@ -478,7 +478,7 @@ let bpTime=hhmm();
 function tick(){$('clock').textContent=new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 function paintNums(){
   const cap=pCap(),dead=(S.rhythm==='vf'||S.rhythm==='asys')&&!cap,hrv=cap?pc.rate:S.hr;
-  const eOn=S.ecgon!==false,hOn=S.hron!==false,sOn=S.spo2on!==false,yOn=S.syson!==false,dOn=yOn;
+  const eOn=S.ecgon!==false,sOn=S.spo2on!==false,hOn=eOn||sOn,yOn=S.syson!==false,dOn=yOn;
   const hrOk=!dead&&hrv>0;
   const noecg=S.ecgon===false;
   $('vHr').textContent=(hOn&&hrOk&&(!noecg||(S.spo2>0&&sOn)))?hrv:'---';
