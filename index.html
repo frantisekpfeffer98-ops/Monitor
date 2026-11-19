@@ -192,6 +192,8 @@ body.lightbg,body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff
 /* --- ovladač: světlé pozadí přes celou výšku stránky (ne jen první obrazovku) --- */
 html.lightbg,html:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff 0%,#f7fbff 48%,#e7f9f1 100%) fixed #f2f8fd}
 html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;min-height:100%}
+#ctl .bbtn{display:flex;gap:8px;flex:none}
+#ctl #cfs{width:46px;padding:0;font-size:1.2rem}
 </style>
 </head>
 <body>
@@ -203,7 +205,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="dPc" class="card c-ctl" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>PC</b></button>
   </div>
   <button id="pback" class="ghost" type="button">Zpět</button>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v49</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v50</span></div>
 </div>
 
 <div id="home" class="page">
@@ -215,11 +217,11 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v49</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v50</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
-  <div class="bar"><div><span class="dot" id="cdot"></span><span id="cst" class="mut">Ovladač</span></div><button id="cback">Zpět</button></div>
+  <div class="bar"><div><span class="dot" id="cdot"></span><span id="cst" class="mut">Ovladač</span></div><div class="bbtn"><button id="cfs" type="button" class="hide" aria-label="Celá obrazovka" title="Celá obrazovka">⛶</button><button id="cback">Zpět</button></div></div>
   <div class="cols">
     <div><h1>Rytmus EKG <button type="button" id="ecgbtn" class="mini"></button></h1><div class="chips" id="rhy-chips"></div></div>
     <div><h1>Hodnoty</h1><div id="sliders"></div></div>
@@ -229,7 +231,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v49</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v50</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -343,6 +345,11 @@ $('bCtl').onclick=()=>{
   p.on('disconnected',()=>{try{p.reconnect()}catch(e){}});
 };
 $('cback').onclick=()=>location.reload();
+{const de=document.documentElement,req=de.requestFullscreen||de.webkitRequestFullscreen,fsEl=()=>document.fullscreenElement||document.webkitFullscreenElement,
+  cfs=$('cfs'),paint=()=>{const on=!!fsEl();cfs.textContent=on?'✕':'⛶';cfs.title=on?'Ukončit celou obrazovku':'Celá obrazovka';cfs.setAttribute('aria-label',cfs.title)};
+ cfs.classList.toggle('hide',!req);
+ cfs.onclick=async()=>{try{if(fsEl())await (document.exitFullscreen||document.webkitExitFullscreen).call(document);else await req.call(de)}catch(e){}};
+ document.addEventListener('fullscreenchange',paint);document.addEventListener('webkitfullscreenchange',paint);}
 
 /* ---------- Monitor ---------- */
 const cv=[0,1,2].map(i=>$('c'+i)),cx=cv.map(c=>c.getContext('2d'));
