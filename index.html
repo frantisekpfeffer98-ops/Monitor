@@ -235,6 +235,18 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 #almsheet .lstep{gap:4px;padding:6px 4px}
 #ctl #almsheet .lstep button{width:32px;height:32px}
 @media (max-width:360px){#ctl .bar.hj{gap:6px}#ctl .hj .ib{width:34px;height:34px}.hj .code{padding:3px 6px}.hj .code b{letter-spacing:.1em;margin-right:-.1em;font-size:.95rem}}
+/* --- ovladač: přepínače, odesílat ihned --- */
+#ctl .mini,#ubar .mini{position:relative;width:46px;height:26px;padding:0;font-size:0;border-radius:999px;background:#d5dfeb;border:0;vertical-align:middle;margin-left:8px;flex:none;transition:background .2s;box-shadow:none}
+#ctl .mini::after,#ubar .mini::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:left .2s}
+#ctl .mini.on,#ubar .mini.on{background:linear-gradient(135deg,#2f7df6,#12b886)}
+#ctl .mini.on::after,#ubar .mini.on::after{left:23px}
+#ubar .ubi{display:flex;align-items:center;gap:12px;max-width:560px;margin:0 auto}
+#ubar .auto{display:flex;align-items:center;gap:8px;flex:none;font-size:.78rem;font-weight:700;color:#4b6178;line-height:1.15;cursor:pointer}
+#ubar .auto .mini{margin-left:0}
+#ubar .ubi #upd{flex:1;min-width:0}
+#ubar #upd.auto{background:#e6faf2;color:#0b8a5f;font-weight:700}
+#devb{font-size:.85rem}
+#top{position:relative;z-index:6}
 </style>
 </head>
 <body>
@@ -246,7 +258,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="dPc" class="card c-ctl" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>PC</b></button>
   </div>
   <button id="pback" class="ghost" type="button">Zpět</button>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v56</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v57</span></div>
 </div>
 
 <div id="home" class="page">
@@ -258,7 +270,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v56</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v57</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -270,10 +282,10 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="almsheet" class="hide" role="dialog" aria-modal="true" aria-labelledby="almt"><div class="sbg" id="almbg"></div><div class="sbox"><div class="shd"><h1 id="almt">Hranice alarmů</h1><button id="almx" type="button" class="ib" aria-label="Zavřít">✕</button></div><div id="lims"></div><p class="snote">Změny se na monitor odešlou tlačítkem UPDATE.</p></div></div>
 </div>
 
-<div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
+<div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v56</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v57</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -312,7 +324,7 @@ if(!code)code=String(Math.floor(1000+Math.random()*9000));
 $('code').value=code;
 
 try{dev=localStorage.getItem('simdev')||''}catch(e){}
-$('bMon').onclick=()=>{if(getCode())show('pick')};
+$('bMon').onclick=()=>{if(!getCode())return;if(!dev)dev=Math.min(screen.width,screen.height)>=700?'pc':'phone';startMon()};
 $('pback').onclick=()=>show('home');
 const pickDev=d=>{dev=d;try{localStorage.setItem('simdev',d)}catch(e){}startMon()};
 $('dPh').onclick=()=>pickDev('phone');$('dPc').onclick=()=>pickDev('pc');
@@ -374,18 +386,30 @@ function paintCtl(setSliders=true){
   $('s_dia').style.opacity=S.syson!==false?1:.4;$('s_hr').style.opacity=(S.spo2on!==false||S.ecgon!==false)?1:.4;
   const kp=S.kpr===true;$('kprc').classList.toggle('on',kp);$('kprb').textContent=kp?'VYPNOUT':'ZAPNOUT';$('kprs').textContent=kp?'probíhá – rušení na EKG a pletysmografu':'rušení na EKG a pletysmografu';
   for(const k in LIMR)[0,1].forEach(j=>{$(`lim_${k}_${j}`).textContent=S.lim[k][j]});
+  document.querySelectorAll('#ctl .mini').forEach(b=>{b.setAttribute('role','switch');b.setAttribute('aria-checked',b.classList.contains('on'))});
 }
 let tmr=0;
 const TG={spo2:'spo2on',sys:'syson'};
 const sig=o=>[o.rhythm,o.hr,o.spo2,o.sys,o.dia,o.etco2,o.rr,o.co2on!==false,o.hron!==false,o.spo2on!==false,o.syson!==false,o.ecgon!==false,o.kpr===true,JSON.stringify(o.lim)].join('|');
+let autoSend=false;try{autoSend=localStorage.getItem('simauto')==='1'}catch(e){}
+function saveState(){try{localStorage.setItem('simstate',JSON.stringify({S,C}))}catch(e){}}
+function loadState(){try{const o=JSON.parse(localStorage.getItem('simstate')||'null');if(!o||!o.S||!o.C||!RHY[o.S.rhythm]||!RHY[o.C.rhythm])return;
+  const fix=x=>{const n={...DEF,...x};n.lim={...LIMDEF,...(x.lim||{})};return n};S=fix(o.S);C=fix(o.C)}catch(e){}}
 function dirtyPaint(){
-  const d=sig(S)!==sig(C),b=$('upd');
+  const d=sig(S)!==sig(C),b=$('upd'),a=$('autob');
+  a.classList.toggle('on',autoSend);a.setAttribute('role','switch');a.setAttribute('aria-checked',autoSend);
+  b.classList.toggle('auto',autoSend);
+  if(autoSend){b.disabled=true;b.classList.remove('on');b.textContent='Změny se odesílají ihned';return}
   b.disabled=!d;b.classList.toggle('on',d);
-  b.textContent=d?'UPDATE – odeslat změny na monitor':'UPDATE (žádné změny k odeslání)';
+  b.textContent=d?'UPDATE – odeslat změny':'Žádné změny k odeslání';
 }
-$('upd').onclick=()=>{C={...S};send();dirtyPaint()};
+function commit(){clearTimeout(tmr);tmr=0;C={...S};send();saveState();dirtyPaint()}
+$('upd').onclick=commit;
+$('autob').onclick=()=>{autoSend=!autoSend;try{localStorage.setItem('simauto',autoSend?'1':'0')}catch(e){}if(autoSend&&sig(S)!==sig(C))commit();else dirtyPaint()};
 function sync(full=true){
   paintCtl(full);
+  saveState();
+  if(autoSend&&!tmr)tmr=setTimeout(commit,150);
   dirtyPaint();
 }
 function send(){
@@ -398,12 +422,13 @@ $('bCtl').onclick=()=>{
   if(!getCode())return;
   if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
   const p=new Peer('ecgsim-'+code);
-  p.on('open',()=>{mode='ctl';show('ctl');buildCtl();paintCtl();send();setInterval(send,2000)});
+  p.on('open',()=>{mode='ctl';loadState();show('ctl');buildCtl();paintCtl();dirtyPaint();send();setInterval(send,2000)});
   p.on('connection',c=>{conns.push(c);c.on('open',()=>send());c.on('close',()=>{conns=conns.filter(x=>x!==c);send()});c.on('error',()=>{})});
   p.on('error',e=>{fail(e.type==='unavailable-id'?'Tento kód už někdo používá. Zvol jiný.':'Chyba spojení: '+e.type)});
   p.on('disconnected',()=>{try{p.reconnect()}catch(e){}});
 };
-$('cback').onclick=()=>location.reload();
+$('cback').onclick=()=>{const d=!autoSend&&sig(S)!==sig(C);
+  if(confirm('Opravdu odejít z ovladače?\n\nMonitor přestane dostávat hodnoty. Nastavení zůstane uložené a příště se obnoví.'+(d?'\n\nPozor: máš neodeslané změny.':'')))location.reload()};
 {const sh=$('almsheet'),open=o=>{sh.classList.toggle('hide',!o);$('calm').classList.toggle('on',o);if(o)$('almx').focus()};
  $('calm').onclick=()=>open(sh.classList.contains('hide'));$('almx').onclick=$('almbg').onclick=()=>open(false);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sh.classList.contains('hide'))open(false)})}
@@ -679,7 +704,9 @@ function handleState(d){
 function startMon(){
   if(!getCode())return;
   if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
-  mode='mon';$('mon').classList.toggle('pc',dev==='pc');$('fs').classList.toggle('hide',!document.documentElement.requestFullscreen);
+  mode='mon';$('mon').classList.toggle('pc',dev==='pc');
+  const devPaint=()=>{const b=$('devb');b.textContent=dev==='pc'?'🖥':'📱';b.title=dev==='pc'?'Zobrazení pro PC – přepnout na telefon':'Zobrazení pro telefon – přepnout na PC';b.setAttribute('aria-label',b.title)};devPaint();
+  $('devb').onclick=()=>{dev=dev==='pc'?'phone':'pc';try{localStorage.setItem('simdev',dev)}catch(e){}$('mon').classList.toggle('pc',dev==='pc');devPaint();requestAnimationFrame(resize)};$('fs').classList.toggle('hide',!document.documentElement.requestFullscreen);
   $('fs').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else{await document.documentElement.requestFullscreen();try{await screen.orientation.lock('landscape')}catch(e){}}}catch(e){}};
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement){try{screen.orientation.unlock()}catch(e){}}});
   show('mon');$('wcode').textContent=code;tick();setInterval(tick,1000);resize();paintNums();
