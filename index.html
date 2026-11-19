@@ -98,13 +98,13 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 #dfp .md{font-size:.6rem;letter-spacing:0;padding:4px 2px}
 .pl{font-size:.6rem;color:#ff9a2e;text-align:center}
 .pe{display:flex;align-items:center;justify-content:space-between;gap:2px}
-.pe b{font-size:1.1em}
-#dfp .pe button{padding:2px 10px}
+.pe b{font-size:.95em}
+#dfp .pe button{padding:2px 8px}
 #pst{font-size:.65rem;text-align:center;color:#ff9a2e;min-height:1em}
 #pgo.run{background:#d11!important;border-color:#fff!important}
 #mon.pc #dfp .md{font-size:.8rem}
-#dfp[data-md=p] .sec{order:1}
-#dfp[data-md=p] #mdd{order:3}
+.pe2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.pe b{white-space:nowrap}
 @media (orientation:landscape){#dfp{width:140px}}
 @media (max-height:500px){#dfp{gap:3px;padding:4px}#dfp button{padding:2px 4px}}
 #mon.pc #dfp{width:200px;font-size:1rem;gap:8px;padding:12px}
@@ -134,7 +134,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v22</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v23</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -154,7 +154,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v22</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v23</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -163,7 +163,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
     </div>
     <div id="dfp" data-md="d"><button id="mdp" class="md" type="button">KARDIOSTIMULACE</button><button id="mdd" class="md on" type="button">DEFIBRILACE</button>
       <div id="secd" class="sec"><div id="dfst"><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
-      <div id="secp" class="sec hide"><div class="pl">FREKVENCE /min</div><div class="pe"><button id="prm" type="button">−</button><b id="prv">70</b><button id="prp" type="button">+</button></div><div class="pl">VÝSTUP mA</div><div class="pe"><button id="pom" type="button">−</button><b id="pov">50</b><button id="pop" type="button">+</button></div><button id="pps" type="button">PAUZA 5 s</button><div id="pst"></div></div>
+      <div id="secp" class="sec hide"><div class="pe"><button id="prm" type="button">−</button><b><span id="prv">70</span> /min</b><button id="prp" type="button">+</button></div><div class="pe"><button id="pom" type="button">−</button><b><span id="pov">50</span> mA</b><button id="pop" type="button">+</button></div><div class="pe2"><button id="pgo" type="button">START</button><button id="pps" type="button">PAUZA</button></div></div>
     </div></div>
   </div>
   <div id="nums">
@@ -224,10 +224,11 @@ function paintCtl(setSliders=true){
   cb.textContent=on?'ZAP':'VYP';cb.classList.toggle('on',on);
   $('s_etco2').style.opacity=on?1:.4;$('s_rr').closest('.row').style.opacity=on?1:.4;
   for(const k in TG){const o=S[TG[k]]!==false,b=$('tg_'+k);b.textContent=o?'ZAP':'VYP';b.classList.toggle('on',o);$('s_'+k).style.opacity=o?1:.4}
+  $('s_dia').style.opacity=S.syson!==false?1:.4;
 }
 let tmr=0;
-const TG={hr:'hron',spo2:'spo2on',sys:'syson',dia:'diaon'};
-const sig=o=>[o.rhythm,o.hr,o.spo2,o.sys,o.dia,o.etco2,o.rr,o.co2on!==false,o.hron!==false,o.spo2on!==false,o.syson!==false,o.diaon!==false].join('|');
+const TG={hr:'hron',spo2:'spo2on',sys:'syson'};
+const sig=o=>[o.rhythm,o.hr,o.spo2,o.sys,o.dia,o.etco2,o.rr,o.co2on!==false,o.hron!==false,o.spo2on!==false,o.syson!==false].join('|');
 function dirtyPaint(){
   const d=sig(S)!==sig(C),b=$('upd');
   b.disabled=!d;b.classList.toggle('on',d);
@@ -346,10 +347,10 @@ function frame(now){
       if(t.x>W){t.x=0;t.y=null;ctx.clearRect(0,0,20,H)}
     }
   }
-  if(beatFlag){beatFlag=0;const h=$('heart');h.style.opacity=1;setTimeout(()=>{h.style.opacity=.25},130)}
+  if(beatFlag){beatFlag=0;if(hrShown){const h=$('heart');h.style.opacity=1;setTimeout(()=>{h.style.opacity=.25},130)}}
   requestAnimationFrame(frame);
 }
-let AC=null,sndOn=true,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
+let hrShown=false,spShown=false,AC=null,sndOn=true,alSilence=0,alLevel=0,alN=0,markAt=0,shockEnd=0;
 let nibp={on:false,t0:0,tgt:0,val:null};
 let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0};
 const EN=[2,3,4,5,6,7,8,9,10,15,20,30,50,70,100,125,150,175,200,225,250,275,300,325,360],CHG=4000;
@@ -357,12 +358,12 @@ let dfSnd=null,nibpSnd=null;
 let pc={on:false,rate:70,ma:50,pz:0},pNext=0,pLast=-9,btype='n';const THR=70;
 function pFire(){const r=S.rhythm;return pc.on&&Date.now()>=pc.pz&&r!=='vf'&&(r==='asys'||S.hr<pc.rate)}
 function pCap(){return pFire()&&pc.ma>=THR}
-function pPaint(){$('prv').textContent=pc.rate;$('pov').textContent=pc.ma;const pz=pc.pz-Date.now();$('pps').textContent=pz>0?'PAUZA '+Math.ceil(pz/1000)+' s':'PAUZA 5 s';$('pps').disabled=pz>0;$('pst').textContent=pz>0?'STIMULACE POZASTAVENA':'STIMULACE ZAP';paintNums()}
+function pPaint(){$('prv').textContent=pc.rate;$('pov').textContent=pc.ma;const pz=pc.pz-Date.now();$('pgo').textContent=pc.on?'STOP':'START';$('pgo').classList.toggle('run',pc.on);$('pps').textContent=pz>0?Math.ceil(pz/1000)+' s':'PAUZA';$('pps').disabled=!pc.on||pz>0;paintNums()}
 function pTick(){if(pc.pz){if(Date.now()>=pc.pz)pc.pz=0;pPaint()}}
 function setMode(m){
   $('dfp').dataset.md=m;$('mdd').classList.toggle('on',m==='d');$('mdp').classList.toggle('on',m==='p');
   $('secd').classList.toggle('hide',m!=='d');$('secp').classList.toggle('hide',m!=='p');
-  if(m==='d'){pc.on=false;pLast=-9}else{pc.on=true;pc.pz=0;pNext=st+.3;if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}}
+  if(m==='d'){pc.on=false;pc.pz=0;pLast=-9}else if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}
   dfPaint();pPaint();
 }
 function audioInit(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
@@ -372,7 +373,7 @@ function tone(f,d,v,type,at){
   o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v||.2,t+.005);g.gain.exponentialRampToValueAtTime(.0001,t+d);
   o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02)}catch(e){}
 }
-function pulseBeep(){const sp=S.spo2on!==false&&S.spo2>0;if((sp||(S.hron!==false&&S.spo2>0))&&(S.hr>0||pCap()))tone(sp?Math.max(300,Math.min(1000,300+(S.spo2-70)*23)):700,.09,.18)}
+function pulseBeep(){if(spShown)tone(Math.max(300,Math.min(1000,300+(S.spo2-70)*23)),.09,.18);else if(hrShown)tone(700,.09,.18)}
 function alarmTick(){
   const rem=alSilence-Date.now();
   $('alsil').textContent=rem>0?'🔕 '+Math.ceil(rem/1000):'🔕';
@@ -440,7 +441,7 @@ let bpTime=hhmm();
 function tick(){$('clock').textContent=new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 function paintNums(){
   const cap=pCap(),dead=(S.rhythm==='vf'||S.rhythm==='asys')&&!cap,hrv=cap?pc.rate:S.hr;
-  const hOn=S.hron!==false,sOn=S.spo2on!==false,yOn=S.syson!==false,dOn=S.diaon!==false;
+  const hOn=S.hron!==false,sOn=S.spo2on!==false,yOn=S.syson!==false,dOn=yOn;
   const hrOk=!dead&&hrv>0;
   const noecg=S.rhythm==='noecg';
   $('vHr').textContent=(hOn&&hrOk&&(!noecg||(S.spo2>0&&sOn)))?hrv:'---';
@@ -448,6 +449,7 @@ function paintNums(){
   $('hrsrc').textContent=noecg?'':'EKG';
   $('vPr').textContent=(sOn&&hrOk&&S.spo2>0)?hrv:'---';
   $('vSpo').textContent=(sOn&&S.spo2>0)?S.spo2:'---';
+  hrShown=$('vHr').textContent!=='---';spShown=$('vSpo').textContent!=='---';
   const bv=nibp.val,sv=(!nibp.on&&bv&&yOn)?bv.sys:0;
   if(nibp.on){const el=(Date.now()-nibp.t0)/1000,p=el<8?nibp.tgt*el/8:nibp.tgt*(1-Math.min(12,Math.floor((el-8)/1.4)*1.4)/12);$('vBp').textContent=Math.max(0,Math.round(p));$('vMap').textContent='manžeta';$('vBpT').textContent=Math.max(0,Math.ceil(20-el))+' s'}
   else if(!bv||bv.sys<=0){$('vBp').textContent='---/---';$('vMap').textContent='(---)';$('vBpT').textContent=bv?bpTime:''}
@@ -487,7 +489,7 @@ function handleState(d){
   const n={...S};
   for(const [k,,mi,ma] of FIELDS){const v=Number(d[k]);if(isFinite(v))n[k]=Math.max(mi,Math.min(ma,v))}
   n.rhythm=d.rhythm;
-  ['hron','spo2on','syson','diaon','co2on'].forEach(k=>{n[k]=d[k]!==false});
+  ['hron','spo2on','syson','co2on'].forEach(k=>{n[k]=d[k]!==false});
   [['hron',0],['spo2on',1],['co2on',2]].forEach(([k,i])=>{if(n[k]!==(S[k]!==false)){T[i].x=0;T[i].y=null;cx[i].clearRect(0,0,1e5,1e5)}});
   if(n.sys!==S.sys||n.dia!==S.dia)bpTime=hhmm();
   const changed=n.rhythm!==S.rhythm||n.hr!==S.hr;
@@ -515,7 +517,8 @@ function startMon(){
   $('mdd').onclick=()=>setMode('d');$('mdp').onclick=()=>setMode('p');
   $('prm').onclick=()=>{pc.rate=Math.max(40,pc.rate-5);pPaint()};$('prp').onclick=()=>{pc.rate=Math.min(170,pc.rate+5);pPaint()};
   $('pom').onclick=()=>{pc.ma=Math.max(0,pc.ma-10);pPaint()};$('pop').onclick=()=>{pc.ma=Math.min(200,pc.ma+10);pPaint()};
-  $('pps').onclick=()=>{pc.pz=Date.now()+5000;pLast=-9;pPaint()};
+  $('pps').onclick=()=>{if(!pc.on)return;pc.pz=Date.now()+5000;pLast=-9;pPaint()};
+  $('pgo').onclick=()=>{pc.on=!pc.on;pc.pz=0;pNext=st+.3;pLast=-9;pPaint()};
   setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);dfPaint();
   const p=new Peer();let conn=null;
   function link(){
