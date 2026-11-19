@@ -134,7 +134,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v23</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v24</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -154,7 +154,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v23</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v24</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -292,14 +292,14 @@ function ecg(){return ecgBase()+((pFire()&&pLast>-5)?g(st,pLast,.008):0)}
 function ecgBase(){
   const r=S.rhythm;
   if(st<shockEnd)return (shockEnd-st>1.15)?(Math.random()-.5)*3:0.005*Math.random();
-  if(r==='noecg')return 0;
+  if(r==='noecg'||S.hron===false)return 0;
   if(r==='asys'&&!pCap())return 0.01*Math.sin(st*3)+0.01*(Math.random()-.5);
   if(r==='vf')return 0.45*Math.sin(6.28*4.2*st)*(0.6+0.4*Math.sin(6.28*0.6*st))+0.3*Math.sin(6.28*6.9*st+1)+0.1*(Math.random()-.5);
   if(r==='vt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
   let v=0;
   if(lastBeat>-5){
     const k=Math.min(1,rrBeat/0.8),u=(st-lastBeat)/k;
-    if(btype==='p')v=.8*g(u,.27,.035)-.3*g(u,.34,.03)-.3*g(u,.58,.06);
+    if(btype==='p')v=-.85*g(u,.31,.04)-.2*g(u,.375,.025)+.12*g(u,.47,.06)+.45*g(u,.62,.075);
     else{v=-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045);
     if(r==='sinus'||r==='tachy'||r==='brady')v+=0.12*g(u,0.10,0.025)}
   }
@@ -331,7 +331,7 @@ function frame(now){
     st+=h;sched();
     const vals=[ecg(),pleth(),capno()];
     for(let i=0;i<3;i++){
-      if((i===0&&S.hron===false)||(i===1&&S.spo2on===false)||(i===2&&S.co2on===false)){T[i].y=null;continue}
+      if((i===1&&S.spo2on===false)||(i===2&&S.co2on===false)){T[i].y=null;continue}
       const c=cv[i],W=c.getBoundingClientRect().width,H=c.getBoundingClientRect().height,t=T[i],ctx=cx[i];
       let y;
       if(i===0)y=H*0.58-vals[0]*H*0.33;
@@ -340,7 +340,7 @@ function frame(now){
       const nx=t.x+SPEED[i]*(dev==='pc'?1.4:1)*h;
       ctx.strokeStyle=COL[i];ctx.beginPath();
       if(t.y===null)ctx.moveTo(t.x,y);else ctx.moveTo(t.x,t.y);
-      ctx.lineTo(nx,y);if(!(i===0&&S.rhythm==='noecg'&&Math.floor(nx/10)%2))ctx.stroke();
+      ctx.lineTo(nx,y);if(!(i===0&&(S.rhythm==='noecg'||S.hron===false)&&Math.floor(nx/10)%2))ctx.stroke();
       ctx.clearRect(nx+2,0,16,H);
       if(i===0&&markAt&&st>=markAt){markAt=0;ctx.fillStyle='#fff';ctx.fillRect(nx-1,2,3,9)}
       t.x=nx;t.y=y;
@@ -356,9 +356,11 @@ let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0};
 const EN=[2,3,4,5,6,7,8,9,10,15,20,30,50,70,100,125,150,175,200,225,250,275,300,325,360],CHG=4000;
 let dfSnd=null,nibpSnd=null;
 let pc={on:false,rate:70,ma:50,pz:0},pNext=0,pLast=-9,btype='n';const THR=70;
+function ecgOn(){return S.hron!==false&&S.rhythm!=='noecg'}
+function ecgGuard(){if(ecgOn())return;if(pc.on){pc.on=false;pc.pz=0;pLast=-9}if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}}
 function pFire(){const r=S.rhythm;return pc.on&&Date.now()>=pc.pz&&r!=='vf'&&(r==='asys'||S.hr<pc.rate)}
 function pCap(){return pFire()&&pc.ma>=THR}
-function pPaint(){$('prv').textContent=pc.rate;$('pov').textContent=pc.ma;const pz=pc.pz-Date.now();$('pgo').textContent=pc.on?'STOP':'START';$('pgo').classList.toggle('run',pc.on);$('pps').textContent=pz>0?Math.ceil(pz/1000)+' s':'PAUZA';$('pps').disabled=!pc.on||pz>0;paintNums()}
+function pPaint(){$('prv').textContent=pc.rate;$('pov').textContent=pc.ma;const pz=pc.pz-Date.now();$('pgo').textContent=pc.on?'STOP':'START';$('pgo').disabled=!pc.on&&!ecgOn();$('pgo').classList.toggle('run',pc.on);$('pps').textContent=pz>0?Math.ceil(pz/1000)+' s':'PAUZA';$('pps').disabled=!pc.on||pz>0;paintNums()}
 function pTick(){if(pc.pz){if(Date.now()>=pc.pz)pc.pz=0;pPaint()}}
 function setMode(m){
   $('dfp').dataset.md=m;$('mdd').classList.toggle('on',m==='d');$('mdp').classList.toggle('on',m==='p');
@@ -417,14 +419,14 @@ function dfPaint(){
   const pc=df.st==='chg'?Math.min(100,Math.round((Date.now()-df.t0)/CHG*100)):0;
   $('dfst').style.setProperty('--p',pc+'%');
   const t={idle:'',chg:pc+' %',rdy:'PŘIPRAVEN',shk:'DODÁN'}[df.st];
-  $('dfch').textContent=t;$('dfp').dataset.st=df.st;
-  $('dfx').disabled=df.st!=='rdy';$('dfc').disabled=df.st==='shk';
+  $('dfch').textContent=(!ecgOn()&&df.st==='idle')?'BEZ EKG':t;$('dfp').dataset.st=df.st;
+  const eo=ecgOn();$('dfx').disabled=df.st!=='rdy'||!eo;$('dfc').disabled=df.st==='shk'||(!eo&&df.st==='idle');
   $('dfc').textContent=(df.st==='chg'||df.st==='rdy')?'ZRUŠIT':'NABÍT';
   $('dfm').disabled=$('dfp2').disabled=df.st!=='idle';
 }
-function dfCharge(){df.st='chg';df.t0=Date.now();dfChgSnd(CHG/1000);dfPaint()}
+function dfCharge(){if(!ecgOn())return;df.st='chg';df.t0=Date.now();dfChgSnd(CHG/1000);dfPaint()}
 function dfShock(){
-  if(df.st!=='rdy')return;
+  if(df.st!=='rdy'||!ecgOn())return;
   dfStopSnd();df.st='shk';df.t0=Date.now();shockEnd=st+1.3;tone(110,.5,.5,'sawtooth');
   const f=$('flash');f.style.opacity=1;setTimeout(()=>{f.style.opacity=0},130);dfPaint();
 }
@@ -495,6 +497,7 @@ function handleState(d){
   const changed=n.rhythm!==S.rhythm||n.hr!==S.hr;
   S=n;lastRx=Date.now();
   $('wait').classList.add('hide');$('stale').classList.add('hide');
+  ecgGuard();dfPaint();pPaint();
   if(changed){nextBeat=st}
   paintNums();
 }
@@ -518,7 +521,7 @@ function startMon(){
   $('prm').onclick=()=>{pc.rate=Math.max(40,pc.rate-5);pPaint()};$('prp').onclick=()=>{pc.rate=Math.min(170,pc.rate+5);pPaint()};
   $('pom').onclick=()=>{pc.ma=Math.max(0,pc.ma-10);pPaint()};$('pop').onclick=()=>{pc.ma=Math.min(200,pc.ma+10);pPaint()};
   $('pps').onclick=()=>{if(!pc.on)return;pc.pz=Date.now()+5000;pLast=-9;pPaint()};
-  $('pgo').onclick=()=>{pc.on=!pc.on;pc.pz=0;pNext=st+.3;pLast=-9;pPaint()};
+  $('pgo').onclick=()=>{if(!pc.on&&!ecgOn())return;pc.on=!pc.on;pc.pz=0;pNext=st+.3;pLast=-9;pPaint()};
   setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);dfPaint();
   const p=new Peer();let conn=null;
   function link(){
