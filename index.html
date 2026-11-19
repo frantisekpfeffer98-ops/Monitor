@@ -101,7 +101,6 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .pe b{font-size:.95em}
 #dfp .pe button{padding:2px 8px}
 #pst{font-size:.65rem;text-align:center;color:#ff9a2e;min-height:1em}
-#pgo.run{background:#d11!important;border-color:#fff!important}
 #mon.pc #dfp .md{font-size:.8rem}
 .pe2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .pe b{white-space:nowrap}
@@ -134,7 +133,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 </div>
 
 <div id="home" class="wrap">
-  <h1>Simulátor monitoru pacienta <small class="mut">v24</small></h1>
+  <h1>Simulátor monitoru pacienta <small class="mut">v25</small></h1>
   <p class="mut">Otevři stránku na dvou telefonech. Na jednom zvol Ovladač, na druhém Monitor, a zadejte stejný kód. Nejdřív spusť Ovladač, potom Monitor.</p>
   <div class="row"><label>Kód spárování</label><input id="code" type="text" inputmode="numeric" maxlength="4"></div>
   <button class="big on" id="bCtl">Ovladač (nastavuji hodnoty)</button>
@@ -154,7 +153,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v24</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v25</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -163,7 +162,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
     </div>
     <div id="dfp" data-md="d"><button id="mdp" class="md" type="button">KARDIOSTIMULACE</button><button id="mdd" class="md on" type="button">DEFIBRILACE</button>
       <div id="secd" class="sec"><div id="dfst"><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
-      <div id="secp" class="sec hide"><div class="pe"><button id="prm" type="button">−</button><b><span id="prv">70</span> /min</b><button id="prp" type="button">+</button></div><div class="pe"><button id="pom" type="button">−</button><b><span id="pov">50</span> mA</b><button id="pop" type="button">+</button></div><div class="pe2"><button id="pgo" type="button">START</button><button id="pps" type="button">PAUZA</button></div></div>
+      <div id="secp" class="sec hide"><div class="pe"><button id="prm" type="button">−</button><b><span id="prv">70</span> /min</b><button id="prp" type="button">+</button></div><div class="pe"><button id="pom" type="button">−</button><b><span id="pov">50</span> mA</b><button id="pop" type="button">+</button></div><button id="pps" type="button">PAUZA</button></div>
     </div></div>
   </div>
   <div id="nums">
@@ -276,7 +275,7 @@ function sched(){
   if(pFire()){
     const iv=60/pc.rate;
     if(pNext<=0||pNext>st+iv+1)pNext=st;
-    while(st>=pNext){pLast=pNext;pNext+=iv;if(pCap()){lastBeat=pLast-.2;btype='p';rrBeat=iv;beatFlag=1;pulseBeep()}}
+    while(st>=pNext){pLast=pNext;pNext+=iv;if(pCap()){lastBeat=pLast-.17;btype='p';rrBeat=iv;beatFlag=1;pulseBeep()}}
     if(pCap()){nextBeat=st+.5;return}
   }else{pNext=st+.3;pLast=-9}
   if(r==='vf'||r==='asys'||S.hr<=0){lastBeat=-9;nextBeat=st;return}
@@ -298,10 +297,9 @@ function ecgBase(){
   if(r==='vt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
   let v=0;
   if(lastBeat>-5){
-    const k=Math.min(1,rrBeat/0.8),u=(st-lastBeat)/k;
-    if(btype==='p')v=-.85*g(u,.31,.04)-.2*g(u,.375,.025)+.12*g(u,.47,.06)+.45*g(u,.62,.075);
-    else{v=-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045);
-    if(r==='sinus'||r==='tachy'||r==='brady')v+=0.12*g(u,0.10,0.025)}
+    const k=btype==='p'?1:Math.min(1,rrBeat/0.8),u=(st-lastBeat)/k;
+    v=-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045);
+    if(btype!=='p'&&(r==='sinus'||r==='tachy'||r==='brady'))v+=0.12*g(u,0.10,0.025)
   }
   if(r==='flutter')v+=((st*5)%1-0.5)*0.35;
   if(r==='af')v+=0.04*(Math.sin(6.28*7*st)+Math.sin(6.28*11.3*st+2))+0.015*(Math.random()-.5);
@@ -357,15 +355,15 @@ const EN=[2,3,4,5,6,7,8,9,10,15,20,30,50,70,100,125,150,175,200,225,250,275,300,
 let dfSnd=null,nibpSnd=null;
 let pc={on:false,rate:70,ma:50,pz:0},pNext=0,pLast=-9,btype='n';const THR=70;
 function ecgOn(){return S.hron!==false&&S.rhythm!=='noecg'}
-function ecgGuard(){if(ecgOn())return;if(pc.on){pc.on=false;pc.pz=0;pLast=-9}if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}}
-function pFire(){const r=S.rhythm;return pc.on&&Date.now()>=pc.pz&&r!=='vf'&&(r==='asys'||S.hr<pc.rate)}
+function ecgGuard(){if(ecgOn())return;if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}}
+function pFire(){const r=S.rhythm;return pc.on&&ecgOn()&&Date.now()>=pc.pz&&r!=='vf'&&(r==='asys'||S.hr<pc.rate)}
 function pCap(){return pFire()&&pc.ma>=THR}
-function pPaint(){$('prv').textContent=pc.rate;$('pov').textContent=pc.ma;const pz=pc.pz-Date.now();$('pgo').textContent=pc.on?'STOP':'START';$('pgo').disabled=!pc.on&&!ecgOn();$('pgo').classList.toggle('run',pc.on);$('pps').textContent=pz>0?Math.ceil(pz/1000)+' s':'PAUZA';$('pps').disabled=!pc.on||pz>0;paintNums()}
+function pPaint(){$('prv').textContent=pc.rate;$('pov').textContent=pc.ma;const pz=pc.pz-Date.now(),eo=ecgOn();$('pps').textContent=!eo?'BEZ EKG':pz>0?Math.ceil(pz/1000)+' s':'PAUZA';$('pps').disabled=!eo||pz>0;paintNums()}
 function pTick(){if(pc.pz){if(Date.now()>=pc.pz)pc.pz=0;pPaint()}}
 function setMode(m){
   $('dfp').dataset.md=m;$('mdd').classList.toggle('on',m==='d');$('mdp').classList.toggle('on',m==='p');
   $('secd').classList.toggle('hide',m!=='d');$('secp').classList.toggle('hide',m!=='p');
-  if(m==='d'){pc.on=false;pc.pz=0;pLast=-9}else if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}
+  if(m==='d'){pc.on=false;pc.pz=0;pLast=-9}else{pc.on=true;pc.pz=0;pNext=st+.3;if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}}
   dfPaint();pPaint();
 }
 function audioInit(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}}
@@ -395,10 +393,31 @@ function holdSound(type,f0,f1,d,v,beat){
   return {o:os,g}}catch(e){return null}
 }
 function stopSound(x){if(!x)return;try{const t=AC.currentTime;x.g.gain.cancelScheduledValues(t);x.g.gain.setTargetAtTime(.0001,t,.03);[].concat(x.o).forEach(o=>o.stop(t+.2))}catch(e){}}
+let nbuf=null;
+function noiseBuf(){if(!nbuf){nbuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const a=nbuf.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1}return nbuf}
+function nibpPump(d){
+  if(!AC||!sndOn)return null;
+  try{const t=AC.currentTime,g=AC.createGain(),os=[];
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+.15);g.gain.setValueAtTime(1,t+d);g.gain.linearRampToValueAtTime(0,t+d+.1);g.connect(AC.destination);
+  const src=AC.createBufferSource();src.buffer=noiseBuf();src.loop=true;
+  const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=900;bp.Q.value=.6;
+  const ng=AC.createGain();ng.gain.value=.11;src.connect(bp);bp.connect(ng);ng.connect(g);
+  const lfo=AC.createOscillator();lfo.frequency.value=11;const lg=AC.createGain();lg.gain.value=.05;lfo.connect(lg);lg.connect(ng.gain);
+  const o=AC.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(210,t);o.frequency.linearRampToValueAtTime(222,t+d);
+  const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;const og=AC.createGain();og.gain.value=.025;o.connect(lp);lp.connect(og);og.connect(g);
+  [src,lfo,o].forEach(x=>{x.start(t);x.stop(t+d+.15);os.push(x)});
+  return {o:os,g}}catch(e){return null}
+}
+function nibpHiss(){
+  if(!AC||!sndOn)return;
+  try{const t=AC.currentTime,s=AC.createBufferSource();s.buffer=noiseBuf();
+  const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=2800;f.Q.value=.9;const g=AC.createGain();
+  g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.12);s.connect(f);f.connect(g);g.connect(AC.destination);s.start(t);s.stop(t+.13)}catch(e){}
+}
 function nibpStep(){
   if(!nibp.on)return;
   const el=(Date.now()-nibp.t0)/1000;
-  if(el>8){const k=Math.floor((el-8)/1.4);if(k!==nibp.k){nibp.k=k;tone(1500,.03,.1,'square')}}
+  if(el>8){const k=Math.floor((el-8)/1.4);if(k!==nibp.k){nibp.k=k;nibpHiss()}}
   if(el>=20){nibp.on=false;nibp.val={sys:S.sys,dia:S.dia};bpTime=hhmm();[0,.18].forEach(o=>tone(880,.12,.18,'sine',o))}
   paintNums();
 }
@@ -511,7 +530,7 @@ function startMon(){
   audioInit();
   $('snd').onclick=()=>{sndOn=!sndOn;$('snd').textContent=sndOn?'🔊':'🔇';if(sndOn)audioInit()};
   $('alsil').onclick=()=>{alSilence=alSilence>Date.now()?0:Date.now()+120000};
-  $('nibpb').onclick=()=>{if(nibp.on){nibp.on=false;stopSound(nibpSnd);nibpSnd=null}else{nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val,k:-1};nibpSnd=holdSound('triangle',420,620,8,.05,9)}paintNums()};
+  $('nibpb').onclick=()=>{if(nibp.on){nibp.on=false;stopSound(nibpSnd);nibpSnd=null}else{nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val,k:-1};nibpSnd=nibpPump(8)}paintNums()};
   $('dfm').onclick=()=>{df.j=EN[Math.max(0,EN.indexOf(df.j)-1)];dfPaint()};
   $('dfp2').onclick=()=>{df.j=EN[Math.min(EN.length-1,EN.indexOf(df.j)+1)];dfPaint()};
   $('dfs').onclick=()=>{df.sync=!df.sync;dfPaint()};
@@ -520,8 +539,7 @@ function startMon(){
   $('mdd').onclick=()=>setMode('d');$('mdp').onclick=()=>setMode('p');
   $('prm').onclick=()=>{pc.rate=Math.max(40,pc.rate-5);pPaint()};$('prp').onclick=()=>{pc.rate=Math.min(170,pc.rate+5);pPaint()};
   $('pom').onclick=()=>{pc.ma=Math.max(0,pc.ma-10);pPaint()};$('pop').onclick=()=>{pc.ma=Math.min(200,pc.ma+10);pPaint()};
-  $('pps').onclick=()=>{if(!pc.on)return;pc.pz=Date.now()+5000;pLast=-9;pPaint()};
-  $('pgo').onclick=()=>{if(!pc.on&&!ecgOn())return;pc.on=!pc.on;pc.pz=0;pNext=st+.3;pLast=-9;pPaint()};
+  $('pps').onclick=()=>{if(!pc.on||!ecgOn())return;pc.pz=Date.now()+5000;pLast=-9;pPaint()};
   setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);dfPaint();
   const p=new Peer();let conn=null;
   function link(){
