@@ -189,6 +189,9 @@ body.lightbg,body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff
 .adj input{flex:1;min-width:0}
 #ctl .adj button{width:42px;height:42px;padding:0;border-radius:50%;font-size:1.35rem;font-weight:700;line-height:1;flex:none;color:var(--k);border-color:color-mix(in srgb,var(--k) 35%,#fff);touch-action:manipulation;-webkit-user-select:none;user-select:none}
 #ctl .adj button:active{background:color-mix(in srgb,var(--k) 15%,#fff)}
+/* --- ovladač: světlé pozadí přes celou výšku stránky (ne jen první obrazovku) --- */
+html.lightbg,html:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff 0%,#f7fbff 48%,#e7f9f1 100%) fixed #f2f8fd}
+html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;min-height:100%}
 </style>
 </head>
 <body>
@@ -200,7 +203,7 @@ body.lightbg,body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff
     <button id="dPc" class="card c-ctl" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>PC</b></button>
   </div>
   <button id="pback" class="ghost" type="button">Zpět</button>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v48</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v49</span></div>
 </div>
 
 <div id="home" class="page">
@@ -212,7 +215,7 @@ body.lightbg,body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v48</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v49</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -226,7 +229,7 @@ body.lightbg,body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v48</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v49</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -267,7 +270,7 @@ $('pback').onclick=()=>show('home');
 const pickDev=d=>{dev=d;try{localStorage.setItem('simdev',d)}catch(e){}startMon()};
 $('dPh').onclick=()=>pickDev('phone');$('dPc').onclick=()=>pickDev('pc');
 if(dev)$(dev==='pc'?'dPc':'dPh').classList.add('on');
-function show(id){['pick','home','ctl','mon'].forEach(x=>$(x).classList.toggle('hide',x!==id));document.body.classList.toggle('lightbg',id==='ctl')}
+function show(id){['pick','home','ctl','mon'].forEach(x=>$(x).classList.toggle('hide',x!==id));document.body.classList.toggle('lightbg',id==='ctl');document.documentElement.classList.toggle('lightbg',id==='ctl')}
 
 function getCode(){code=($('code').value||'').replace(/\D/g,'').slice(0,4);if(code.length<4){$('code').focus();return false}try{localStorage.setItem('simcode',code)}catch(e){}return true}
 function fail(m){if(mode==='ctl'){$('cst').textContent=m;$('cdot').classList.remove('ok')}else{$('noroom').textContent=m;$('noroom').classList.remove('hide')}}
