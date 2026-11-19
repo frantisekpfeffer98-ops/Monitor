@@ -171,6 +171,18 @@ body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff 0%,#f7fbff 4
 #ubar button{border-radius:16px;background:#e3ecf7;border:0;color:#7a8ea3;opacity:1}
 #ubar button.on{background:linear-gradient(135deg,#2f7df6,#12b886);color:#fff;box-shadow:0 8px 20px #2f7df640}
 #ctl,#ubar{color-scheme:light}
+/* --- ovladač: hodnoty jako dlaždice (návrh E) --- */
+#ctl .cols>div:last-child{background:transparent;box-shadow:none;padding:0}
+#sliders{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#sliders .row{margin:0;background:#fff;border-radius:20px;padding:12px 12px 6px;box-shadow:0 8px 22px #1a3a6a17;display:flex;flex-direction:column}
+#sliders .row label{flex-direction:column;align-items:flex-start;gap:2px;font-size:.82rem;color:#4b6178;margin-bottom:0;flex:1}
+#sliders .row label>span:last-child{font-size:2.2rem;font-weight:800;color:#0f2a47;line-height:1.1;font-variant-numeric:tabular-nums}
+#sliders .row .mini{margin-left:6px}
+#ctl input[type=range]{-webkit-appearance:none;appearance:none;height:30px;background:transparent;--k:#2f7df6}
+#ctl input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--k) var(--p,50%),#dfe8f3 var(--p,50%))}
+#ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#fff;border:5px solid var(--k);box-shadow:0 2px 8px #0002}
+#sliders .row label>span:first-child{display:flex;align-items:center;gap:6px}
+#sliders .row label>span:first-child .mini{flex:none;margin-left:0;padding:3px 9px;font-size:.72rem}
 </style>
 </head>
 <body>
@@ -182,7 +194,7 @@ body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff 0%,#f7fbff 4
     <button id="dPc" class="card c-ctl" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>PC</b></button>
   </div>
   <button id="pback" class="ghost" type="button">Zpět</button>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v41</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v42</span></div>
 </div>
 
 <div id="home" class="page">
@@ -194,7 +206,7 @@ body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff 0%,#f7fbff 4
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v41</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v42</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -208,7 +220,7 @@ body:has(#ctl:not(.hide)){background:linear-gradient(160deg,#e6f1ff 0%,#f7fbff 4
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v41</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v42</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -274,7 +286,7 @@ function buildCtl(){
 }
 function paintCtl(setSliders=true){
   document.querySelectorAll('#rhy-chips button').forEach(b=>b.classList.toggle('on',b.dataset.k===S.rhythm));
-  for(const [k] of FIELDS){$('o_'+k).textContent=S[k];if(setSliders)$('s_'+k).value=S[k]}
+  for(const [k] of FIELDS){$('o_'+k).textContent=S[k];const i=$('s_'+k);if(setSliders)i.value=S[k];i.style.setProperty('--p',(S[k]-i.min)/(i.max-i.min)*100+'%')}
   const eo=S.ecgon!==false,eb=$('ecgbtn');eb.textContent=eo?'ZAP':'VYP';eb.classList.toggle('on',eo);$('rhy-chips').style.opacity=eo?1:.4;
   const on=S.co2on!==false,cb=$('co2btn');
   cb.textContent=on?'ZAP':'VYP';cb.classList.toggle('on',on);
