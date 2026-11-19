@@ -164,7 +164,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
     <button id="dPc" class="card c-ctl" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>PC</b></button>
   </div>
   <button id="pback" class="ghost" type="button">Zpět</button>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v31</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v32</span></div>
 </div>
 
 <div id="home" class="page">
@@ -176,7 +176,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v31</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v32</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -190,7 +190,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v31</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v32</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -249,7 +249,7 @@ function buildCtl(){
     const d=document.createElement('div');d.className='row';
     d.innerHTML=k==='etco2'?`<label><span>${l} <button type="button" id="co2btn" class="mini"></button></span><span id="o_${k}"></span></label><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="1">`:`<label><span>${l}</span><span id="o_${k}"></span></label><input type="range" id="s_${k}" min="${mi}" max="${ma}" step="1">`;
     sl.appendChild(d);
-    if(TG[k]){const b=document.createElement('button');b.type='button';b.id='tg_'+k;b.className='mini';d.querySelector('label span').appendChild(b);b.onclick=()=>{const v=(S[TG[k]]===false);S[TG[k]]=v;if(k==='hr'||k==='spo2'){S.hron=v;S.spo2on=v}sync(false)}}
+    if(TG[k]){const b=document.createElement('button');b.type='button';b.id='tg_'+k;b.className='mini';d.querySelector('label span').appendChild(b);b.onclick=()=>{const v=(S[TG[k]]===false);S[TG[k]]=v;if(k==='spo2')S.hron=v;sync(false)}}
     if(k==='etco2')$('co2btn').onclick=()=>{S.co2on=(S.co2on===false);sync(false)};
     d.querySelector('input').oninput=e=>{S[k]=+e.target.value;if(k==='dia'&&S.dia>S.sys){S.sys=S.dia}if(k==='sys'&&S.sys<S.dia){S.dia=S.sys}sync(false)};
   }
@@ -265,7 +265,7 @@ function paintCtl(setSliders=true){
   $('s_dia').style.opacity=S.syson!==false?1:.4;
 }
 let tmr=0;
-const TG={hr:'hron',spo2:'spo2on',sys:'syson'};
+const TG={spo2:'spo2on',sys:'syson'};
 const sig=o=>[o.rhythm,o.hr,o.spo2,o.sys,o.dia,o.etco2,o.rr,o.co2on!==false,o.hron!==false,o.spo2on!==false,o.syson!==false,o.ecgon!==false].join('|');
 function dirtyPaint(){
   const d=sig(S)!==sig(C),b=$('upd');
@@ -454,7 +454,7 @@ function dfPaint(){
   const pc=df.st==='chg'?Math.min(100,Math.round((Date.now()-df.t0)/CHG*100)):0;
   $('dfst').style.setProperty('--p',pc+'%');
   const t={idle:'',chg:pc+' %',rdy:'PŘIPRAVEN',shk:'DODÁN'}[df.st];
-  $('dfch').textContent=(!ecgOn()&&df.st==='idle')?'BEZ EKG':t;$('dfp').dataset.st=df.st;
+  const dt=(!ecgOn()&&df.st==='idle')?'BEZ EKG':t;$('dfch').textContent=dt;$('dfst').classList.toggle('hide',!dt);$('dfp').dataset.st=df.st;
   const eo=ecgOn();$('dfx').disabled=df.st!=='rdy'||!eo;$('dfc').disabled=df.st==='shk'||(!eo&&df.st==='idle');
   $('dfc').textContent=(df.st==='chg'||df.st==='rdy')?'ZRUŠIT':'NABÍT';
   $('dfm').disabled=$('dfp2').disabled=df.st!=='idle';
