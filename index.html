@@ -246,7 +246,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="dPc" class="card c-ctl" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>PC</b></button>
   </div>
   <button id="pback" class="ghost" type="button">Zpět</button>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v55</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v56</span></div>
 </div>
 
 <div id="home" class="page">
@@ -258,7 +258,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v55</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v56</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -273,7 +273,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v55</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v56</span><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -463,12 +463,15 @@ function ecgBase(){
   if(r==='vt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
   if(r==='tdp'){const f=Math.max(S.hr,150)/60;return 0.9*Math.sin(6.28*f*st+0.4*Math.sin(6.28*0.22*st))*(0.2+0.8*Math.abs(Math.sin(6.28*0.2*st)))}
   let v=0;
-  if(r==='av3'&&btype!=='p'){v=0.13*g(st%0.78,0.1,0.025);if(lastBeat>-5){const u=st-lastBeat;v+=-0.12*g(u,0.20,0.02)+0.95*g(u,0.25,0.032)-0.4*g(u,0.31,0.035)-0.28*g(u,0.52,0.07)}return v}
+  /* AV blokáda III. st.: P vlny 80/min nezávisle na širokém komorovém náhradním rytmu (QRS ≥ 0,12 s, diskordantní T) */
+  if(r==='av3'&&btype!=='p'){const pp=st%0.75;v=0.13*(g(pp,0.12,0.022)+g(pp+0.75,0.12,0.022));if(lastBeat>-5){const u=st-lastBeat,ag=(x,m,a,b)=>g(x,m,x<m?a:b);v+=-0.08*g(u,0.16,0.02)+0.95*ag(u,0.23,0.035,0.045)-0.42*g(u,0.33,0.045)-0.32*ag(u,0.62,0.09,0.07)}return v}
+  /* Elevace ST – vyvíjející se infarkt: hluboké Q, menší R, zvednutý ST, negativní T */
+  if(r==='ste'&&btype!=='p'){if(lastBeat<-5)return 0;const u=(st-lastBeat)/Math.min(1,rrBeat/0.8),sg=x=>1/(1+Math.exp(-x));
+    return 0.12*g(u,0.10,0.025)-0.32*g(u,0.215,0.014)+0.6*g(u,0.255,0.012)+0.32*sg((u-0.285)/0.004)*sg(-(u-0.40)/0.03)+0.1*g(u,0.36,0.04)-0.3*g(u,0.50,0.055)}
   if(lastBeat>-5){
     const k=btype==='p'?1:Math.min(1,rrBeat/0.8),u=(st-lastBeat)/k;
     v=-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045);
     if(btype!=='p'&&(r==='sinus'||r==='tachy'||r==='brady'||r==='ste'||r==='pea'))v+=0.12*g(u,0.10,0.025);
-    if(btype!=='p'&&r==='ste')v+=0.5/(1+Math.exp(-(u-0.265)/0.005))/(1+Math.exp((u-0.47)/0.035))
   }
   if(r==='flutter')v+=((st*5)%1-0.5)*0.35;
   if(r==='af')v+=0.04*(Math.sin(6.28*7*st)+Math.sin(6.28*11.3*st+2))+0.015*(Math.random()-.5);
