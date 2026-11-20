@@ -64,7 +64,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .ns{font-size:.7rem;opacity:.85}
 #heart{opacity:.25}
 #wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000d;z-index:5;text-align:center;padding:20px;font-family:system-ui,sans-serif}
-#stale{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:4;background:#ff9f43;color:#000;font-weight:700;font-size:.75rem;padding:2px 10px;border-radius:999px;white-space:nowrap;pointer-events:none}
+#stale{position:absolute;top:4px;left:50%;transform:translateX(-50%);z-index:4;background:#ff9f43;color:#000;font-weight:700;font-size:.75rem;padding:2px 3px 2px 10px;border-radius:999px;white-space:nowrap;display:flex;align-items:center;gap:8px}
 #fs{background:transparent;border:1px solid #8b94a1;border-radius:6px;padding:2px 10px;font-size:.9rem;color:#c9d1d9}
 #mon.pc{grid-template-columns:28% 1fr;grid-template-rows:auto 1fr}
 #mon.pc #top{font-size:1rem;padding:8px 18px}
@@ -285,6 +285,8 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 #mini.shock{animation:mshock .9s ease-out}
 @keyframes mshock{0%{box-shadow:0 0 0 0 #ff3b3bcc,0 8px 22px #0f2a4733;background:#5a0b0b}100%{box-shadow:0 0 0 14px #ff3b3b00,0 8px 22px #0f2a4733;background:#05080c}}
 @media (max-width:420px){#mini.closed:has(.dv:not(.hide)) .ml{display:none}}
+#stale button{background:#000;color:#ff9f43;border:0;border-radius:999px;padding:3px 10px;font:700 .72rem system-ui,sans-serif;cursor:pointer}
+#stale.busy button{opacity:.5}
 </style>
 </head>
 <body>
@@ -298,7 +300,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v73</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v74</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -314,7 +316,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v73</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v74</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -325,7 +327,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
       <div id="secd" class="sec"><div id="dfst"><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
       <div id="secp" class="sec off"><div class="pe"><button id="prm" type="button">−</button><b><span id="prv">70</span> /min</b><button id="prp" type="button">+</button></div><div class="pe"><button id="pom" type="button">−</button><b><span id="pov">5</span> mA</b><button id="pop" type="button">+</button></div><button id="pps" type="button">PAUZA</button></div></div>
     </div></div>
-  <div id="stale" class="hide" role="status">⚠ Spojení přerušeno</div></div>
+  <div id="stale" class="hide" role="status"><span>⚠ Spojení přerušeno</span><button type="button" id="relink">Připojit znovu</button></div></div>
   <div id="nums">
     <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> <span id="hrsrc">EKG</span></div></div>
     <div class="n" id="nSpo" style="--c:#3aa0ff"><div class="nh"><small>SpO₂</small><em>%</em><u id="lSpo"></u></div><b id="vSpo">--</b><div class="ns">TF <span id="vPr">--</span> /min</div></div>
@@ -452,7 +454,7 @@ $('bCtl').onclick=()=>{
   const start=()=>{
     const p=new Peer('ecgsim-'+code);ctlPeer=p;
     /* 'open' přijde i po každém znovupřipojení k serveru – ovladač se ale smí spustit jen jednou */
-    p.on('open',()=>{if(started)return;started=true;$('noroom').classList.add('hide');mode='ctl';loadState();show('ctl');buildCtl();paintCtl();dirtyPaint();send();setInterval(send,2000);miniPaint();miniSize();setInterval(miniPaint,1000);requestAnimationFrame(miniFrame)});
+    p.on('open',()=>{if(started)return;started=true;$('noroom').classList.add('hide');mode='ctl';loadState();show('ctl');buildCtl();paintCtl();dirtyPaint();send();setInterval(send,2000);miniPaint();miniSize();setInterval(miniPaint,1000);ctlWake();document.addEventListener('visibilitychange',ctlWake);requestAnimationFrame(miniFrame)});
     p.on('connection',c=>{conns.push(c);c.on('data',d=>{if(!d||typeof d!=='object')return;if(d.mon&&typeof d.mon==='object')miniData(d.mon);if(d.ev&&typeof d.ev==='object')miniEvent(d.ev)});c.on('open',()=>send());c.on('close',()=>{conns=conns.filter(x=>x!==c);send()});c.on('error',()=>{})});
     p.on('error',e=>{
       /* kód může být chvíli po odchodu z ovladače ještě obsazený – zkusit znovu */
@@ -464,6 +466,8 @@ $('bCtl').onclick=()=>{
   start();
 };
 let ctlPeer=null;
+/* ovladač: zabránit zhasnutí displeje (obnovit i po návratu do aplikace) */
+function ctlWake(){try{if(navigator.wakeLock&&document.visibilityState==='visible')navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}}
 /* ---------- náhled monitoru v ovladači ---------- */
 let miniLast=0,miniOpen=true;try{miniOpen=localStorage.getItem('simmini')!=='0'}catch(e){}
 function miniData(m){miniLast=Date.now();const v=x=>String(x==null?'---':x).slice(0,9);
@@ -850,6 +854,9 @@ function startMon(){
   setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);setInterval(()=>{varStep();paintNums()},2000);dfPaint();
   const p=new Peer();let conn=null,retry=0;
   const again=()=>{if(!retry)retry=setTimeout(()=>{retry=0;link()},3000)};
+  /* ruční obnovení spojení z monitoru */
+  $('relink').onclick=()=>{const b=$('stale');b.classList.add('busy');$('relink').textContent='Připojuji…';setTimeout(()=>{b.classList.remove('busy');$('relink').textContent='Připojit znovu'},4000);
+    try{if(p.disconnected&&!p.destroyed)p.reconnect();else link()}catch(e){link()}};
   function link(){
     clearTimeout(retry);retry=0;
     const old=conn;conn=null;if(old){try{old.close()}catch(e){}}
