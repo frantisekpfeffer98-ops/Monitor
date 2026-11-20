@@ -36,7 +36,7 @@ input[type=text]{width:100%;font-size:2rem;letter-spacing:.4em;text-align:center
 .mini{padding:3px 12px;font-size:.8rem;margin-left:8px;border-radius:999px}
 /* monitor */
 #mon{position:fixed;inset:0;display:grid;grid-template-columns:30% 1fr;grid-template-rows:auto 1fr;background:#000;font-family:"Arial Narrow","Roboto Condensed",Arial,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (orientation:portrait){#mon:not(.pc){grid-template-columns:1fr;grid-template-rows:auto 1fr 36%}#mon:not(.pc) #nums,#mon:not(.pc) #traces{grid-column:1}#mon:not(.pc) #traces{grid-row:2;border-left:0!important}#mon:not(.pc) #nums{grid-row:3}}
+@media (orientation:portrait){#mon:not(.pc):not(.rot){grid-template-columns:1fr;grid-template-rows:auto 1fr 36%}#mon:not(.pc):not(.rot) #nums,#mon:not(.pc):not(.rot) #traces{grid-column:1}#mon:not(.pc):not(.rot) #traces{grid-row:2;border-left:0!important}#mon:not(.pc):not(.rot) #nums{grid-row:3}}
 #top{grid-column:1/-1;display:flex;align-items:center;gap:10px;background:linear-gradient(#16304f,#0b1a2e);border-bottom:1px solid #2a4a70;padding:4px 10px;font-size:.8rem;color:#c9d1d9;letter-spacing:.05em}
 #top .pt{white-space:nowrap;font-weight:700}
 .sim{border:1px solid #8b94a1;padding:0 6px;border-radius:3px;font-size:.68rem;white-space:nowrap}
@@ -250,6 +250,12 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 #sliders .row.off .adj,#sliders .row.off label>span:last-child{opacity:.35}
 #ctl .adj button:disabled,#ctl .adj input:disabled{cursor:not-allowed}
 #rhy-chips button:disabled{cursor:not-allowed}
+/* --- monitor otočený na šířku na telefonu drženém na výšku --- */
+#mon.rot{inset:auto;top:0;left:0;transform-origin:0 0;padding:0}
+#mon.rot #nums{grid-template-columns:1fr;grid-template-rows:repeat(4,1fr)}
+#mon.rot #dfp{width:170px;gap:3px;padding:4px}#mon.rot #dfp button{padding:2px 4px}
+#mon.rot #secd{display:grid;grid-template-columns:1fr 1fr}#mon.rot #secd>#dfst,#mon.rot #secd>#dfe,#mon.rot #secd>#dfx{grid-column:1/-1}
+#mon.rot #top{padding:2px 10px;font-size:.7rem}#mon.rot #clock{font-size:.75rem}
 </style>
 </head>
 <body>
@@ -263,7 +269,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v69</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v70</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -278,7 +284,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v69</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v70</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -446,11 +452,15 @@ const T=[{x:0,y:null},{x:0,y:null},{x:0,y:null}];
 const COL=['#2ee66b','#3aa0ff','#ff9a2e'];
 const SPEED=[110,110,40]; // px za sekundu (CSS px)
 function resize(){
-  cv.forEach((c,i)=>{const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;
+  cv.forEach((c,i)=>{const r={width:c.clientWidth,height:c.clientHeight},d=window.devicePixelRatio||1;
     c.width=Math.max(1,r.width*d);c.height=Math.max(1,r.height*d);cx[i].setTransform(d,0,0,d,0,0);cx[i].lineWidth=dev==='pc'?2.5:2;cx[i].lineJoin='round';
     c.style.width='100%';T[i].x=0;T[i].y=null;});
 }
-window.addEventListener('resize',()=>{if(mode==='mon')resize()});
+/* telefon na výšku: monitor se otočí o 90°, aby byl vždy na šířku (záloha, když prohlížeč nedovolí zamknout orientaci) */
+function orient(){const m=$('mon'),rot=mode==='mon'&&dev!=='pc'&&innerHeight>innerWidth;m.classList.toggle('rot',rot);
+  m.style.width=rot?innerHeight+'px':'';m.style.height=rot?innerWidth+'px':'';m.style.transform=rot?'translateX('+innerWidth+'px) rotate(90deg)':'';
+  if(mode==='mon')resize()}
+window.addEventListener('resize',()=>{if(mode==='mon')orient()});
 
 const g=(x,m,s)=>Math.exp(-((x-m)**2)/(2*s*s));
 let beatFlag=0,st=0,lastBeat=-9,nextBeat=0,rrBeat=0.8,withP=true;
@@ -532,7 +542,7 @@ function frame(now){
     const vals=[ecg(),pleth(),capno()];
     for(let i=0;i<3;i++){
       if((i===1&&S.spo2on===false)||(i===2&&S.co2on===false)){T[i].y=null;continue}
-      const c=cv[i],W=c.getBoundingClientRect().width,H=c.getBoundingClientRect().height,t=T[i],ctx=cx[i];
+      const c=cv[i],W=c.clientWidth,H=c.clientHeight,t=T[i],ctx=cx[i];
       let y;
       if(i===0)y=H*0.58-vals[0]*H*0.33;
       else if(i===1)y=H*0.85-vals[1]*H*0.65;
@@ -746,10 +756,12 @@ function startMon(){
   if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
   mode='mon';$('mon').classList.toggle('pc',dev==='pc');
   const devPaint=()=>{const b=$('devb');b.textContent=dev==='pc'?'🖥':'📱';b.title=dev==='pc'?'Zobrazení pro PC – přepnout na telefon':'Zobrazení pro telefon – přepnout na PC';b.setAttribute('aria-label',b.title)};devPaint();
-  $('devb').onclick=()=>{dev=dev==='pc'?'phone':'pc';try{localStorage.setItem('simdev',dev)}catch(e){}$('mon').classList.toggle('pc',dev==='pc');devPaint();requestAnimationFrame(resize)};$('fs').classList.toggle('hide',!document.documentElement.requestFullscreen);
+  $('devb').onclick=()=>{dev=dev==='pc'?'phone':'pc';try{localStorage.setItem('simdev',dev)}catch(e){}$('mon').classList.toggle('pc',dev==='pc');devPaint();requestAnimationFrame(orient)};$('fs').classList.toggle('hide',!document.documentElement.requestFullscreen);
   $('fs').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else{await document.documentElement.requestFullscreen();try{await screen.orientation.lock('landscape')}catch(e){}}}catch(e){}};
   document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement){try{screen.orientation.unlock()}catch(e){}}});
-  show('mon');$('wcode').textContent=code;tick();setInterval(tick,1000);resize();paintNums();
+  show('mon');$('wcode').textContent=code;tick();setInterval(tick,1000);orient();paintNums();
+  /* telefon: zkusit celou obrazovku a zamknout na šířku (Android); jinak zůstane otočení přes CSS */
+  if(dev!=='pc'){try{const de=document.documentElement,rq=de.requestFullscreen||de.webkitRequestFullscreen;if(rq)Promise.resolve(rq.call(de)).then(()=>screen.orientation&&screen.orientation.lock('landscape')).catch(()=>{}).finally(()=>setTimeout(orient,300))}catch(e){}}
   const wake=()=>{try{if(navigator.wakeLock&&document.visibilityState==='visible')navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}};wake();
   /* prohlížeč zámek obrazovky i zvuk při přepnutí aplikace uvolní – po návratu obnovit */
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){wake();try{AC&&AC.resume()}catch(e){}}});
