@@ -56,8 +56,9 @@ Ovladač i monitor by měly mít stejnou verzi aplikace (číslo verze je dole n
 
 - Statická webová aplikace (`index.html`, `style.css`, `app.js`), bez serveru a bez sestavování; hostováno na GitHub Pages.
 - Testovací verze pro zkoušení změn před nasazením: https://frantisekpfeffer98-ops.github.io/Monitor/test/
-- Spojení mezi zařízeními přes WebRTC pomocí knihovny [PeerJS](https://github.com/peers/peerjs)
-  1.5.4 (MIT), přibalené jako `peerjs.min.js`. K nalezení protějšku se používá veřejný server PeerJS.
+- Spojení mezi zařízeními přes **Firebase Realtime Database** (běžné HTTPS spojení, projde i přísnými sítěmi);
+  pravidla zabezpečení jsou v `database.rules.json`. Záloha: WebRTC pomocí knihovny [PeerJS](https://github.com/peers/peerjs)
+  1.5.4 (MIT), přibalené jako `peerjs.min.js`. Knihovny Firebase (Apache-2.0) jsou také přibalené.
 - Žádná data se neukládají na server; ovladač si nastavení pamatuje jen v prohlížeči daného zařízení.
 
 ## Automatické testy

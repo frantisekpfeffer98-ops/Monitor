@@ -42,6 +42,8 @@ jobs:
         run: |
           npm install --no-audit --no-fund
           npx playwright install --with-deps chromium
+      - name: Testy Firebase (ostrá verze)
+        run: npm run test:firebase
       - name: Testy Firebase (testovací verze)
         env:
           APP_PATH: test/index.html

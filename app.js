@@ -1,6 +1,6 @@
 /* Simulátor monitoru pacienta – ovladač (lektor) a monitor (studenti) v jednom skriptu.
    Číslo verze se mění jen tady. */
-const APP_VERSION='v85';
+const APP_VERSION='v86';
 const $=id=>document.getElementById(id);
 document.querySelectorAll('[data-ver]').forEach(e=>{e.textContent=e.dataset.ver.replace('{v}',APP_VERSION)});
 const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],pvt:['KT bez pulzu',190],vf:['Fibrilace komor',0],asys:['Asystolie',0],av3:['AV blokáda III. st.',35],pea:['PEA',60],tdp:['Torsades de pointes',220],ste:['Elevace ST',80]};
@@ -118,28 +118,71 @@ function sync(full=true){
 function send(){
   let n=0;
   conns.forEach(c=>{if(c.open){try{c.send(C);n++}catch(e){}}});
+  if(fbCtl){fbCtl.room.update({state:{...C,t:fbTS()},t:fbTS()}).catch(()=>{});n+=fbCtl.mons()}
   $('cdot').classList.toggle('ok',n>0);
   $('ccode').textContent=code;$('cst').textContent=n>1?'Připojeno: '+n+' monitory':n?'Připojeno':'Čekám na monitor';
 }
 $('bCtl').onclick=()=>{
   if(!getCode())return;
-  if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
-  $('bCtl').disabled=true;let tries=0,started=false;
+  if(typeof Peer==='undefined'&&typeof firebase==='undefined'){fail('Nepodařilo se načíst službu pro spojení. Zkontroluj připojení k internetu.');return}
+  $('bCtl').disabled=true;let tries=0,started=false,viaFb=false;
+  /* spuštění ovladače smí proběhnout jen jednou ('open' PeerJS přijde i po znovupřipojení) */
+  const ui=()=>{if(started)return;started=true;$('noroom').classList.add('hide');mode='ctl';loadState();show('ctl');buildCtl();paintCtl();dirtyPaint();send();setInterval(send,2000);miniPaint();miniSize();setInterval(miniPaint,1000);ctlWake();document.addEventListener('visibilitychange',ctlWake);requestAnimationFrame(miniFrame)};
   const start=()=>{
     const p=new Peer('ecgsim-'+code);ctlPeer=p;
-    /* 'open' přijde i po každém znovupřipojení k serveru – ovladač se ale smí spustit jen jednou */
-    p.on('open',()=>{if(started)return;started=true;$('noroom').classList.add('hide');mode='ctl';loadState();show('ctl');buildCtl();paintCtl();dirtyPaint();send();setInterval(send,2000);miniPaint();miniSize();setInterval(miniPaint,1000);ctlWake();document.addEventListener('visibilitychange',ctlWake);requestAnimationFrame(miniFrame)});
+    p.on('open',()=>{if(!viaFb)ui()});
     p.on('connection',c=>{conns.push(c);c.on('data',d=>{if(!d||typeof d!=='object')return;if(d.mon&&typeof d.mon==='object')miniData(d.mon);if(d.ev&&typeof d.ev==='object')miniEvent(d.ev)});c.on('open',()=>send());c.on('close',()=>{conns=conns.filter(x=>x!==c);send()});c.on('error',()=>{})});
     p.on('error',e=>{
+      if(viaFb)return; /* hlavní spojení přes Firebase běží – chyby zálohy PeerJS nevadí */
       /* kód může být chvíli po odchodu z ovladače ještě obsazený – zkusit znovu */
       if(e.type==='unavailable-id'&&!started&&tries<5){tries++;fail('Kód se uvolňuje, zkouším znovu… ('+tries+'/5)');try{p.destroy()}catch(x){}setTimeout(start,2500);return}
       if(!started)$('bCtl').disabled=false;
       fail(e.type==='unavailable-id'?'Tento kód už někdo používá. Zvol jiný.':'Chyba spojení: '+e.type)});
     p.on('disconnected',()=>{try{if(!p.destroyed)p.reconnect()}catch(e){}});
   };
-  start();
+  /* nejdřív Firebase; PeerJS běží souběžně jako záloha pro monitory bez Firebase */
+  fail('Připojuji…');
+  fbCtlStart().then(()=>{viaFb=true;ui()}).catch(e=>{if(!started&&String(e&&e.message)==='obsazeno'){viaFb=true;$('bCtl').disabled=false;fail('Tento kód už někdo používá. Zvol jiný.');try{ctlPeer&&ctlPeer.destroy()}catch(x){}}});
+  if(typeof Peer!=='undefined')start();
 };
 let ctlPeer=null;
+/* ---------- Firebase Realtime Database (hlavní spojení; PeerJS je záloha) ----------
+   Hodnoty jdou přes běžné zabezpečené webové spojení (port 443), takže projdou i sítěmi,
+   které blokují přímé spojení mezi zařízeními. Konfigurace není tajná – přístup hlídají pravidla databáze. */
+const FB_CONFIG={apiKey:"AIzaSyAkQBKtefk5GHRSQtXl1sfAoYjqAVprvvA",authDomain:"simulator-monitoru-pacienta.firebaseapp.com",
+  databaseURL:"https://simulator-monitoru-pacienta-default-rtdb.europe-west1.firebasedatabase.app",projectId:"simulator-monitoru-pacienta",
+  storageBucket:"simulator-monitoru-pacienta.firebasestorage.app",messagingSenderId:"784927985435",appId:"1:784927985435:web:e2e81bd398c9df023f0dbe"};
+const FB={p:null,db:null,uid:null};
+const fbTS=()=>firebase.database.ServerValue.TIMESTAMP;
+function fbInit(){
+  if(FB.p)return FB.p;
+  FB.p=new Promise((res,rej)=>{
+    if(typeof firebase==='undefined'||!firebase.database||!firebase.auth)return rej(new Error('knihovna Firebase se nenačetla'));
+    try{
+      const app=firebase.apps.length?firebase.app():firebase.initializeApp(FB_CONFIG),auth=firebase.auth(app),db=firebase.database(app);
+      const emu=new URLSearchParams(location.search).get('emu'); /* jen pro automatické testy s lokálním emulátorem */
+      if(emu&&/^[\w.-]+$/.test(emu)){auth.useEmulator('http://'+emu+':9099',{disableWarnings:true});db.useEmulator(emu,9000)}
+      const to=setTimeout(()=>rej(new Error('Firebase neodpovídá')),12000);
+      auth.signInAnonymously().then(c=>{clearTimeout(to);FB.db=db;FB.uid=c.user.uid;res(FB)}).catch(e=>{clearTimeout(to);rej(e)});
+    }catch(e){rej(e)}});
+  FB.p.catch(()=>{FB.p=null});
+  return FB.p;
+}
+/* ovladač: založí místnost s kódem; do 'state' zapisuje jen on, monitory zapisují do 'mon/<id>' */
+let fbCtl=null;
+async function fbCtlStart(){
+  const f=await fbInit(),room=f.db.ref('rooms/'+code);
+  const r=await room.transaction(cur=>{if(cur&&cur.owner&&cur.owner!==f.uid&&cur.t>Date.now()-30000)return;return{owner:f.uid,t:fbTS()}},undefined,false);
+  if(!r.committed)throw new Error('obsazeno');
+  room.onDisconnect().remove();
+  const last={};let mons=0;
+  room.child('mon').on('value',sn=>{const v=sn.val()||{};const ids=Object.keys(v);mons=ids.length;let best=null;
+    ids.forEach(id=>{const m=v[id]||{};if(m.snap&&(!best||(m.t||0)>(best.t||0)))best=m;
+      if(m.ev&&typeof m.ev==='object'){if(last[id]!==undefined&&m.ev.n>last[id])miniEvent(m.ev);last[id]=m.ev.n}});
+    if(best)miniData(best.snap);send()});
+  fbCtl={room,mons:()=>mons};
+}
+
 /* ovladač: zabránit zhasnutí displeje (obnovit i po návratu do aplikace) */
 function ctlWake(){try{if(navigator.wakeLock&&document.visibilityState==='visible')navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}}
 /* ---------- náhled monitoru v ovladači ---------- */
@@ -171,9 +214,9 @@ function miniFrame(now){if(mode!=='ctl')return;requestAnimationFrame(miniFrame);
   try{for(let i=0;i<steps;i++){st+=hh;sched();const v=C.ecgon===false||Date.now()-miniLast>4000?0:ecg(),y=h*.6-v*h*.42,nx=MX+70*hh;
     mx.beginPath();mx.moveTo(MX,MY===null?y:MY);mx.lineTo(nx,y);mx.stroke();mx.clearRect(nx+1,0,12,h);MX=nx;MY=y;if(MX>w){MX=0;MY=null;mx.clearRect(0,0,14,h)}}}
   finally{S=keep}}
-window.addEventListener('pagehide',()=>{try{ctlPeer&&ctlPeer.destroy()}catch(e){}});
+window.addEventListener('pagehide',()=>{try{ctlPeer&&ctlPeer.destroy()}catch(e){}try{fbCtl&&fbCtl.room.remove()}catch(e){}});
 $('cback').onclick=()=>{const d=!autoSend&&sig(S)!==sig(C);
-  if(confirm('Opravdu odejít z ovladače?\n\nMonitor přestane dostávat hodnoty. Nastavení zůstane uložené a příště se obnoví.'+(d?'\n\nPozor: máš neodeslané změny.':''))){try{ctlPeer&&ctlPeer.destroy()}catch(e){}location.reload()}};
+  if(confirm('Opravdu odejít z ovladače?\n\nMonitor přestane dostávat hodnoty. Nastavení zůstane uložené a příště se obnoví.'+(d?'\n\nPozor: máš neodeslané změny.':''))){try{ctlPeer&&ctlPeer.destroy()}catch(e){}const go=()=>location.reload();if(fbCtl)fbCtl.room.remove().then(go,go);else go()}};
 {const sh=$('almsheet'),open=o=>{sh.classList.toggle('hide',!o);$('calm').classList.toggle('on',o);if(o)$('almx').focus()};
  $('calm').onclick=()=>open(sh.classList.contains('hide'));$('almx').onclick=$('almbg').onclick=()=>open(false);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!sh.classList.contains('hide'))open(false)})}
@@ -510,7 +553,7 @@ function monEvent(text,kind){const c=monConn();if(c&&c.open){try{c.send({ev:{tex
 function monSnap(){const t=id=>$(id).textContent.trim();return{hr:t('vHr'),spo2:t('vSpo'),bp:t('vBp'),co2:t('vCo'),alm:t('alm'),crit:$('alm').className==='on',df:{st:df.st,j:df.j,sync:df.sync,pend:df.pend},pc:{on:pc.on,rate:pc.rate,ma:pc.ma}}}
 function startMon(){
   if(!getCode())return;
-  if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
+  if(typeof Peer==='undefined'&&typeof firebase==='undefined'){fail('Nepodařilo se načíst službu pro spojení. Zkontroluj připojení k internetu.');return}
   mode='mon';$('mon').classList.toggle('pc',dev==='pc');
   const devPaint=()=>{const b=$('devb');b.textContent=dev==='pc'?'🖥':'📱';b.title=dev==='pc'?'Zobrazení pro PC – přepnout na telefon':'Zobrazení pro telefon – přepnout na PC';b.setAttribute('aria-label',b.title)};devPaint();
   $('devb').onclick=()=>{dev=dev==='pc'?'phone':'pc';try{localStorage.setItem('simdev',dev)}catch(e){}$('mon').classList.toggle('pc',dev==='pc');devPaint();requestAnimationFrame(orient)};$('fs').classList.toggle('hide',!document.documentElement.requestFullscreen);
@@ -540,6 +583,19 @@ function startMon(){
   $('pps').onclick=()=>{if(!pc.on||!ecgOn())return;pc.pz=Date.now()+5000;pLast=-9;monEvent('Stimulace PAUZA 5 s','pace');pPaint()};
   ['prm','prp','pom','pop'].forEach(id=>$(id).addEventListener('click',()=>{clearTimeout(pcT);pcT=setTimeout(()=>{if(pc.on)monEvent('Stimulace '+pc.rate+'/min · '+pc.ma+' mA','pace')},900)}));
   setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);setInterval(()=>{varStep();paintNums()},2000);dfPaint();
+  setInterval(()=>{if(lastRx&&Date.now()-lastRx>7000)$('stale').classList.remove('hide')},1000);
+  setInterval(()=>{const c=monConn();if(c&&c.open){try{c.send({mon:monSnap()})}catch(e){}}},1000);
+  prev=performance.now();requestAnimationFrame(frame);
+  /* spojení: nejdřív Firebase, když nejde, záloha PeerJS */
+  fbInit().then(f=>{
+    const room=f.db.ref('rooms/'+code),me=room.child('mon/'+f.uid);let evn=0;
+    room.child('state').on('value',sn=>{const v=sn.val();if(v)handleState(v)});
+    me.onDisconnect().remove();
+    monConn=()=>({open:true,send(d){if(d.mon)me.update({snap:d.mon,t:fbTS()}).catch(()=>{});if(d.ev)me.update({ev:{...d.ev,n:++evn},t:fbTS()}).catch(()=>{})}});
+    $('relink').onclick=()=>{const b=$('stale');b.classList.add('busy');$('relink').textContent='Připojuji…';setTimeout(()=>{b.classList.remove('busy');$('relink').textContent='Připojit znovu'},4000);try{f.db.goOffline();f.db.goOnline()}catch(e){}};
+  }).catch(()=>{if(typeof Peer!=='undefined')monPeer()});
+}
+function monPeer(){
   const p=new Peer();let conn=null,retry=0;
   const again=()=>{if(!retry)retry=setTimeout(()=>{retry=0;link()},3000)};
   /* ruční obnovení spojení z monitoru */
@@ -557,8 +613,5 @@ function startMon(){
   p.on('open',link);
   p.on('error',e=>{if(e.type==='peer-unavailable'||e.type==='network'||e.type==='server-error')again()});
   p.on('disconnected',()=>{try{p.reconnect()}catch(e){}});
-  setInterval(()=>{if(lastRx&&Date.now()-lastRx>7000)$('stale').classList.remove('hide')},1000);
-  setInterval(()=>{const c=monConn();if(c&&c.open){try{c.send({mon:monSnap()})}catch(e){}}},1000);
-  prev=performance.now();requestAnimationFrame(frame);
 }
 try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
