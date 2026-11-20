@@ -302,7 +302,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v78</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v79</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -318,7 +318,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v78</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v79</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -556,6 +556,7 @@ function sched(){
 }
 /* KPR: komprese 110/min s mírně proměnlivou silou a tempem (návrh B) */
 const KC={next:0,start:-9,dur:.55,amp:1};
+const SHOCKP=3.2; /* délka pauzy po výboji [s] */
 function kprStep(){if(KC.next<st-1)KC.next=st;while(st>=KC.next){const iv=60/110*(1+.06*(Math.random()*2-1));KC.start=KC.next;KC.dur=iv;KC.amp=1+.18*(Math.random()*2-1);KC.next+=iv}}
 function kprShape(){if(KC.start<-5)return 0;const x=(st-KC.start)/KC.dur;if(x<0||x>1)return 0;
   if(x<0.42)return Math.pow(Math.sin(Math.PI*x/0.42),1.4);const t=(x-0.42)/0.58;return -0.28*Math.sin(Math.PI*t)*Math.exp(-1.5*t)}
@@ -564,9 +565,12 @@ function respW(){return S.rr>0?Math.sin(6.2832*S.rr/60*st):0}
 function ecg(){let v=ecgBase();if(ecgOn()&&st>=shockEnd&&!kprOn())v+=0.03*respW();
   if(kprOn()&&ecgOn()){kprStep();v=v*0.3+1.15*KC.amp*kprShape()+0.12*Math.sin(6.28*0.27*st)+0.06*Math.sin(6.28*0.11*st+1)}
   return v+((pFire()&&pLast>-5&&pc.ma>=20)?Math.min(.4,.1+pc.ma/250)*g(st,pLast,.008):0)}
+/* zachycený stimulovaný úder (stimulace pravé komory): široký, ve II převážně negativní QRS a opačně orientovaná T vlna */
+function pacedBeat(u){const ag=(x,m,a,b)=>g(x,m,x<m?a:b);return 0.18*g(u,0.19,0.018)-0.95*ag(u,0.255,0.032,0.05)+0.12*g(u,0.33,0.03)+0.38*ag(u,0.52,0.08,0.06)}
 function ecgBase(){
   const r=S.rhythm;
-  if(st<shockEnd)return (shockEnd-st>1.15)?(Math.random()-.5)*3:0.005*Math.random();
+  /* po výboji: krátký artefakt výboje, pak ~3 s pauza (izolinie se po přebuzení zesilovače vrací k nule) */
+  if(st<shockEnd){const el=SHOCKP-(shockEnd-st);return el<0.15?(Math.random()-.5)*3:0.6*Math.exp(-(el-0.15)/0.7)+0.006*(Math.random()-.5)}
   if(S.ecgon===false)return 0;
   if(r==='asys'&&!pCap())return 0.01*Math.sin(st*3)+0.01*(Math.random()-.5);
   if(r==='vf')return 0.45*Math.sin(6.28*4.2*st)*(0.6+0.4*Math.sin(6.28*0.6*st))+0.3*Math.sin(6.28*6.9*st+1)+0.1*(Math.random()-.5);
@@ -574,14 +578,14 @@ function ecgBase(){
   if(r==='tdp'){const f=Math.max(S.hr,150)/60;return 0.9*Math.sin(6.28*f*st+0.4*Math.sin(6.28*0.22*st))*(0.2+0.8*Math.abs(Math.sin(6.28*0.2*st)))}
   let v=0;
   /* AV blokáda III. st.: P vlny 80/min nezávisle na širokém komorovém náhradním rytmu (QRS ≥ 0,12 s, diskordantní T) */
-  if(r==='av3'&&btype==='p'&&lastBeat>-5){const pp=st%0.75,u=st-lastBeat;return 0.13*(g(pp,0.12,0.022)+g(pp+0.75,0.12,0.022))-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045)}
+  if(r==='av3'&&btype==='p'&&lastBeat>-5){const pp=st%0.75;return 0.13*(g(pp,0.12,0.022)+g(pp+0.75,0.12,0.022))+pacedBeat(st-lastBeat)}
   if(r==='av3'&&btype!=='p'){const pp=st%0.75;v=0.13*(g(pp,0.12,0.022)+g(pp+0.75,0.12,0.022));if(lastBeat>-5){const u=st-lastBeat,ag=(x,m,a,b)=>g(x,m,x<m?a:b);v+=-0.08*g(u,0.16,0.02)+0.95*ag(u,0.23,0.035,0.045)-0.42*g(u,0.33,0.045)-0.32*ag(u,0.62,0.09,0.07)}return v}
   /* Elevace ST – vyvíjející se infarkt: hluboké Q, menší R, zvednutý ST, negativní T */
   if(r==='ste'&&btype!=='p'){if(lastBeat<-5)return 0;const u=(st-lastBeat)/Math.min(1,rrBeat/0.8),sg=x=>1/(1+Math.exp(-x));
     return 0.12*g(u,0.10,0.025)-0.32*g(u,0.215,0.014)+0.6*g(u,0.255,0.012)+0.32*sg((u-0.285)/0.004)*sg(-(u-0.40)/0.03)+0.1*g(u,0.36,0.04)-0.3*g(u,0.50,0.055)}
   if(lastBeat>-5){
     const k=btype==='p'?1:Math.min(1,rrBeat/0.8),u=(st-lastBeat)/k;
-    v=-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045);
+    v=btype==='p'?pacedBeat(u):-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045);
     if(btype!=='p'&&(r==='sinus'||r==='tachy'||r==='brady'||r==='ste'||r==='pea'))v+=0.12*g(u,0.10,0.025);
   }
   if(r==='flutter')v+=((st*5)%1-0.5)*0.35;
@@ -746,7 +750,7 @@ function dfShock(){
 function dfFire(){
   if(df.st!=='rdy'||!ecgOn())return;
   monEvent('VÝBOJ '+df.j+' J'+(df.sync?' (SYNC)':''),'shock');
-  df.pend=false;df.sync=false;markAt=0;dfStopSnd();df.st='shk';df.t0=Date.now();shockEnd=st+1.3;tone(110,.5,.5,'sawtooth');
+  df.pend=false;df.sync=false;markAt=0;dfStopSnd();df.st='shk';df.t0=Date.now();shockEnd=st+SHOCKP;tone(110,.5,.5,'sawtooth');
   const f=$('flash');f.style.opacity=1;setTimeout(()=>{f.style.opacity=0},130);dfPaint();
 }
 function dfTick(){
@@ -801,7 +805,7 @@ function paintNums(){
   else if(eOn&&(S.rhythm==='vt'||S.rhythm==='tdp')){al.push('KOMOROVÁ TACHYKARDIE');crit=true}
   const f={
     nHr:!kp&&hOn&&!dead&&(hrv<LIM.hr[0]||hrv>LIM.hr[1]),
-    nSpo:sOn&&!kp&&!dead&&(!pulse||S.spo2<LIM.spo2[0]),
+    nSpo:sOn&&!kp&&(!pulse||S.spo2<LIM.spo2[0]),
     nBp:!dead&&sv>0&&(sv<LIM.sys[0]||sv>LIM.sys[1]),
     nCo:co&&!arrest()&&(q.rr<=0||q.et<LIM.etco2[0]||q.et>LIM.etco2[1])
   };
