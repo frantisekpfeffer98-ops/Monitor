@@ -302,7 +302,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v77</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v78</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -318,7 +318,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v77</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v78</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -348,8 +348,8 @@ const NOPULSE=['vf','asys','pea','tdp'];
 /* povolený rozsah tepu podle rytmu (aby název rytmu odpovídal frekvenci) */
 const HRR={sinus:[50,100],tachy:[101,180],brady:[30,59],af:[50,180],flutter:[60,170],vt:[120,250],vf:[0,0],asys:[0,0],av3:[20,60],pea:[20,150],tdp:[150,250],ste:[50,120]};
 const hrClamp=o=>{const r=HRR[o.rhythm]||[0,250];o.hr=Math.max(r[0],Math.min(r[1],+o.hr||0));return o};
-/* TK: systolický vždy aspoň o 10 vyšší než diastolický */
-const bpFix=(o,k)=>{if(o.sys<=0&&o.dia<=0)return o;if(k==='dia'){if(o.dia>o.sys-10)o.sys=Math.min(260,o.dia+10)}else if(o.dia>o.sys-10)o.dia=Math.max(0,o.sys-10);return o};
+/* TK: systolický vždy aspoň o 20 vyšší než diastolický */
+const bpFix=(o,k)=>{if(o.sys<=0&&o.dia<=0)return o;if(k==='dia'){if(o.dia>o.sys-20)o.sys=Math.min(260,o.dia+20);if(o.dia>o.sys-20)o.dia=o.sys-20}else if(o.dia>o.sys-20)o.dia=Math.max(0,o.sys-20);return o};
 const LIMR={hr:['Srdeční frekvence','#0ca678',20,250,5],spo2:['SpO₂','#1c7ed6',50,100,1],sys:['TK systolický','#e03131',40,260,5],etco2:['EtCO₂','#f76707',5,80,1]};
 const LIMDEF={hr:[50,120],spo2:[90,100],sys:[90,180],etco2:[30,50]};
 const FIELDS=[['hr','Srdeční frekvence (/min)',0,250],['spo2','SpO₂ (%)',50,100],['sys','TK systolický (mmHg)',0,260],['dia','TK diastolický (mmHg)',0,160],['etco2','EtCO₂ (mmHg)',0,80],['rr','Dechová frekvence (/min)',0,60]];
@@ -397,7 +397,7 @@ function buildCtl(){
       return b};
      w.append(mk('−',-1),i,mk('+',1))}
   }
-  $('kprb').onclick=()=>{if(!NOPULSE.includes(S.rhythm))return;S.kpr=!S.kpr;sync(false)};
+  $('kprb').onclick=()=>{if(!NOPULSE.includes(S.rhythm))return;S.kpr=!S.kpr;if(S.kpr){S.rr=10;S.etco2=15}sync()};
   const lw=$('lims');lw.innerHTML='';
   for(const k in LIMR){const [n,c,mi,ma,stp]=LIMR[k],row=document.createElement('div');row.className='limrow';row.style.setProperty('--k',c);
     row.innerHTML=`<div class="limname"><i></i>${n}</div><div class="limsteps"></div>`;lw.appendChild(row);
@@ -574,6 +574,7 @@ function ecgBase(){
   if(r==='tdp'){const f=Math.max(S.hr,150)/60;return 0.9*Math.sin(6.28*f*st+0.4*Math.sin(6.28*0.22*st))*(0.2+0.8*Math.abs(Math.sin(6.28*0.2*st)))}
   let v=0;
   /* AV blokáda III. st.: P vlny 80/min nezávisle na širokém komorovém náhradním rytmu (QRS ≥ 0,12 s, diskordantní T) */
+  if(r==='av3'&&btype==='p'&&lastBeat>-5){const pp=st%0.75,u=st-lastBeat;return 0.13*(g(pp,0.12,0.022)+g(pp+0.75,0.12,0.022))-0.10*g(u,0.215,0.009)+1.0*g(u,0.245,0.011)-0.22*g(u,0.275,0.011)+0.25*g(u,0.48,0.045)}
   if(r==='av3'&&btype!=='p'){const pp=st%0.75;v=0.13*(g(pp,0.12,0.022)+g(pp+0.75,0.12,0.022));if(lastBeat>-5){const u=st-lastBeat,ag=(x,m,a,b)=>g(x,m,x<m?a:b);v+=-0.08*g(u,0.16,0.02)+0.95*ag(u,0.23,0.035,0.045)-0.42*g(u,0.33,0.045)-0.32*ag(u,0.62,0.09,0.07)}return v}
   /* Elevace ST – vyvíjející se infarkt: hluboké Q, menší R, zvednutý ST, negativní T */
   if(r==='ste'&&btype!=='p'){if(lastBeat<-5)return 0;const u=(st-lastBeat)/Math.min(1,rrBeat/0.8),sg=x=>1/(1+Math.exp(-x));
@@ -591,13 +592,14 @@ function pleth(){
   if(kprOn()){kprStep();const x=KC.start<-5?2:(st-KC.start)/KC.dur;return 0.04+(x<=1?0.42*KC.amp*Math.pow(Math.sin(Math.PI*Math.min(1,x/0.7)),2)*(x<0.7?1:Math.max(0,1-(x-0.7)/0.3)):0)}
   if(NOPULSE.includes(S.rhythm)&&!pCap())return 0.02;
   if(lastBeat<-5||S.spo2<=0)return 0.02;
+  if(S.sys>0&&S.sys<60)return 0.03+0.02*Math.sin(6.28*1.3*st)+0.015*(Math.random()-.5); /* slabý signál – bez čitelné pulzové vlny */
   const tb=st-lastBeat;
   const perf=Math.max(0.12,Math.min(1,S.sys/110))*Math.max(0.35,Math.min(1,S.spo2/95));
   return perf*(1+0.07*respW())*(g(tb,0.28,0.07)+0.3*g(tb,0.48,0.09))+0.015*respW();
 }
 /* zástava bez KPR: nedýchá → plochý kapnogram; při KPR ventilace 10/min s nízkým EtCO2 */
 function arrest(){return NOPULSE.includes(S.rhythm)&&!pCap()}
-function co2Now(){if(S.kpr===true)return{rr:10,et:Math.max(8,Math.min(20,Math.round(S.etco2*0.4)))};if(arrest())return{rr:0,et:0};return{rr:S.rr,et:S.etco2}}
+function co2Now(){if(S.kpr!==true&&arrest())return{rr:0,et:0};return{rr:S.rr,et:S.etco2}}
 function capno(){
   const q=co2Now();if(q.rr<=0)return 0;
   const per=60/q.rr,ph=(st%per)/per;
@@ -785,7 +787,7 @@ function paintNums(){
   $('nibpb').textContent=nibp.on?'Zrušit':'Změřit TK';
   const co=S.co2on!==false;
   const q=co2Now();$('vCo').textContent=(!co||q.rr<=0||q.et<=0)?'---':vv('etco2',q.et,1,99);
-  $('vRr').textContent=(!co||q.rr<=0)?'---':(kp?q.rr:vv('rr',q.rr,1,99));
+  $('vRr').textContent=(!co||q.rr<=0)?'---':vv('rr',q.rr,1,99);
   $('co2em').textContent=co?'0–60 mmHg':'VYPNUTO';
   $('nCo').style.opacity=co?1:.35;
   $('nHr').style.opacity=hOn?1:.35;$('nSpo').style.opacity=sOn?1:.35;$('nBp').style.opacity=(yOn||dOn)?1:.35;
