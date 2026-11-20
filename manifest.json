@@ -21,10 +21,34 @@
    "purpose": "any"
   },
   {
-   "src": "icon-512.png",
+   "src": "icon-maskable-512.png",
    "sizes": "512x512",
    "type": "image/png",
    "purpose": "maskable"
+  }
+ ],
+ "id": "./",
+ "description": "Simulátor monitoru pacienta pro výuku: jeden telefon slouží jako ovladač, druhý jako monitor s EKG, SpO₂, NIBP, EtCO₂, alarmy, defibrilací a kardiostimulací.",
+ "lang": "cs",
+ "dir": "ltr",
+ "categories": [
+  "education",
+  "medical"
+ ],
+ "screenshots": [
+  {
+   "src": "screenshots/monitor.png",
+   "sizes": "1280x720",
+   "type": "image/png",
+   "form_factor": "wide",
+   "label": "Monitor pacienta"
+  },
+  {
+   "src": "screenshots/ovladac.png",
+   "sizes": "390x844",
+   "type": "image/png",
+   "form_factor": "narrow",
+   "label": "Ovladač lektora"
   }
  ]
 }
