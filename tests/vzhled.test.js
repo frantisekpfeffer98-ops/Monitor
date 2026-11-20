@@ -28,3 +28,14 @@ test('horní lišta ovladače se vejde i na malý telefon',async()=>{
   const pret=await p.evaluate(()=>{const b=document.querySelector('#ctl .bar');return [...b.querySelectorAll('button,.code')].some(e=>e.getBoundingClientRect().right>innerWidth+1)});
   assert.equal(pret,false);
 });
+
+test('tlačítko UPDATE se nezalomí ani s širším písmem (zkrátí text)',async()=>{
+  for(const w of [320,360]){
+    const p=await ovladac({viewport:{width:w,height:800}});
+    await p.addStyleTag({content:'*{font-family:"DejaVu Sans",Verdana,sans-serif!important}'});
+    await p.click('#ecgbtn');
+    assert.equal(await p.evaluate(()=>$('upd').scrollWidth>$('upd').clientWidth),false,`UPDATE ${w} px`);
+    await p.click('#autob');
+    assert.equal(await p.evaluate(()=>$('upd').scrollWidth>$('upd').clientWidth),false,`Odesílat ihned ${w} px`);
+  }
+});

@@ -1,6 +1,6 @@
 /* Simulátor monitoru pacienta – ovladač (lektor) a monitor (studenti) v jednom skriptu.
    Číslo verze se mění jen tady. */
-const APP_VERSION='v84-test';
+const APP_VERSION='v85-test';
 const $=id=>document.getElementById(id);
 document.querySelectorAll('[data-ver]').forEach(e=>{e.textContent=e.dataset.ver.replace('{v}',APP_VERSION)});
 const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],pvt:['KT bez pulzu',190],vf:['Fibrilace komor',0],asys:['Asystolie',0],av3:['AV blokáda III. st.',35],pea:['PEA',60],tdp:['Torsades de pointes',220],ste:['Elevace ST',80]};
@@ -95,13 +95,16 @@ function saveState(){try{localStorage.setItem('simstate',JSON.stringify({S,C}))}
 function loadState(){try{const o=JSON.parse(localStorage.getItem('simstate')||'null');if(!o||!o.S||!o.C||!RHY[o.S.rhythm]||!RHY[o.C.rhythm])return;
   /* po novém spuštění jsou senzory i KPR vypnuté; rytmus, hodnoty a hranice alarmů zůstanou */
   const fix=x=>{const n={...DEF,...x,syson:true,ecgon:false,hron:false,spo2on:false,co2on:false,kpr:false};n.lim={...LIMDEF,...(x.lim||{})};n.spo2=Math.max(50,Math.min(100,+n.spo2||98));hrClamp(n);bpFix(n,'sys');return n};S=fix(o.S);C=fix(o.C)}catch(e){}}
+/* text tlačítka na jeden řádek: když se delší verze nevejde (malý displej, široké písmo), použije se kratší */
+function fitText(el,variants){for(const t of variants){el.textContent=t;if(el.scrollWidth<=el.clientWidth)return}}
+addEventListener('resize',()=>{if(mode==='ctl')dirtyPaint()});
 function dirtyPaint(){
   const d=sig(S)!==sig(C),b=$('upd'),a=$('autob');
   a.classList.toggle('on',autoSend);a.setAttribute('role','switch');a.setAttribute('aria-checked',autoSend);
   b.classList.toggle('auto',autoSend);
-  if(autoSend){b.disabled=true;b.classList.remove('on');b.textContent='Změny se odesílají ihned';return}
+  if(autoSend){b.disabled=true;b.classList.remove('on');fitText(b,['Změny se odesílají ihned','Odesílá se ihned','Ihned']);return}
   b.disabled=!d;b.classList.toggle('on',d);
-  b.textContent=d?'UPDATE – odeslat změny':'Žádné změny k odeslání';
+  fitText(b,d?['UPDATE – odeslat změny','UPDATE – odeslat','UPDATE']:['Žádné změny k odeslání','Žádné změny']);
 }
 function commit(){clearTimeout(tmr);tmr=0;C={...S};send();saveState();dirtyPaint()}
 $('upd').onclick=commit;
