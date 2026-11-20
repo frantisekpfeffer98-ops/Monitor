@@ -17,8 +17,9 @@ Jedno zařízení slouží jako **ovladač** lektora, druhé jako **monitor**, n
 3. Na prvním zařízení spusť **Ovladač**.
 4. Na druhém zařízení spusť **Monitor**.
 
-Obě zařízení potřebují internet. Pokud se nespárují na Wi-Fi (školní a nemocniční sítě někdy
-přímé spojení blokují), zapni na jednom telefonu hotspot a připoj na něj druhé zařízení.
+Obě zařízení potřebují internet. Spojení jde přes běžné zabezpečené webové spojení (Firebase),
+takže funguje i na většině školních a nemocničních sítí. Kdyby se zařízení přesto nespárovala,
+zapni na jednom telefonu hotspot a připoj na něj druhé zařízení.
 Ovladač i monitor by měly mít stejnou verzi aplikace (číslo verze je dole na úvodní obrazovce).
 
 ## Ovladač (lektor)
