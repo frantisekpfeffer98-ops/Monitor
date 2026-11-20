@@ -256,6 +256,28 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 #mon.rot #dfp{width:170px;gap:3px;padding:4px}#mon.rot #dfp button{padding:2px 4px}
 #mon.rot #secd{display:grid;grid-template-columns:1fr 1fr}#mon.rot #secd>#dfst,#mon.rot #secd>#dfe,#mon.rot #secd>#dfx{grid-column:1/-1}
 #mon.rot #top{padding:2px 10px;font-size:.7rem}#mon.rot #clock{font-size:.75rem}
+/* --- ovladač: sbalitelný náhled monitoru --- */
+#mini{position:sticky;top:0;z-index:12;margin:0 0 14px;background:#05080c;border-radius:18px;padding:6px 10px 10px;box-shadow:0 8px 22px #0f2a4733;color:#e8ecf1;font-family:"Arial Narrow","Roboto Condensed",Arial,sans-serif}
+#ctl #mini .mh{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;cursor:pointer;font:700 .72rem system-ui,sans-serif;color:#8b94a1;letter-spacing:.04em;padding:2px 0 4px}
+#mini .mt{flex:none}#mini .mt i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5b6573;margin-right:5px}
+#mini .mt i.ok{background:#2ee66b;box-shadow:0 0 0 3px #2ee66b33}
+#mini .ml{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c9d1d9;letter-spacing:0;display:none}
+#mini .al{flex:none;max-width:55%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#d11;color:#fff;border-radius:4px;padding:1px 7px;font-size:.66rem;margin-left:auto}
+#mini .al.w{background:#e6c200;color:#000}
+#mini .mtg{flex:none;margin-left:auto;font-size:.9rem;transition:transform .2s}
+#mini .al:not(.hide)+.mtg{margin-left:0}
+#mini .mb{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:stretch}
+#mini .mcw{position:relative;min-width:0}
+#mini canvas{width:100%;height:58px;display:block}
+#mini .mmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:600 .75rem system-ui,sans-serif;color:#8b94a1;pointer-events:none}
+#mini .mn{display:grid;grid-template-columns:repeat(2,auto);gap:2px 12px;align-content:center;text-align:right}
+#mini .mn div{line-height:1}#mini .mn small{display:block;font-size:.58rem;font-weight:700;opacity:.85}
+#mini .mn b{font-size:1.35rem;font-variant-numeric:tabular-nums}
+#mini.closed{padding-bottom:6px}#mini.closed .mb{display:none}#mini.closed .ml{display:block}#mini.closed .mtg{transform:rotate(-90deg)}
+#mini.closed .al{max-width:40%}
+#mini .ml b{font:700 .95rem "Arial Narrow",Arial,sans-serif;margin-right:6px;font-variant-numeric:tabular-nums}
+#mini.stale .mn b{color:#5b6573}
+@media (min-width:900px){#mini canvas{height:80px}#mini .mn{grid-template-columns:repeat(4,auto);gap:4px 22px}#mini .mn b{font-size:1.9rem}#mini .mn small{font-size:.7rem}}
 </style>
 </head>
 <body>
@@ -269,11 +291,12 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v70</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v71</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
   <div class="bar hj"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7df6"/><stop offset="1" stop-color="#12b886"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg3)"/><polyline points="8,34 20,34 25,24 31,44 37,16 43,38 47,34 56,34" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="t"><h2>Ovladač</h2><div class="st"><i id="cdot"></i><span id="cst">Připojuji…</span></div></div><div class="code"><small>KÓD</small><b id="ccode"></b></div><button id="calm" type="button" class="ib" aria-label="Hranice alarmů" title="Hranice alarmů"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><button id="cfs" type="button" class="hide ib" aria-label="Celá obrazovka" title="Celá obrazovka">⛶</button><button id="cback" type="button" class="ib" aria-label="Zpět" title="Zpět">←</button></div>
+  <div id="mini" aria-label="Náhled monitoru"><button type="button" id="minih" class="mh" aria-expanded="true"><span class="mt"><i id="mdot"></i>MONITOR</span><span id="mline" class="ml"></span><span id="malm" class="al hide"></span><span class="mtg" aria-hidden="true">▾</span></button><div class="mb"><div class="mcw"><canvas id="mc"></canvas><span id="mmsg" class="mmsg"></span></div><div class="mn"><div style="color:#2ee66b"><small>HR</small><b id="mHr">---</b></div><div style="color:#3aa0ff"><small>SpO₂</small><b id="mSpo">---</b></div><div style="color:#fff"><small>NIBP</small><b id="mBp">---/---</b></div><div style="color:#ff9a2e"><small>EtCO₂</small><b id="mCo">---</b></div></div></div></div>
   <div class="cols">
     <div><h1>Rytmus EKG <button type="button" id="ecgbtn" class="mini"></button></h1><div class="chips" id="rhy-chips"></div><div class="kpr" id="kprc"><div><b>KPR – masáž srdce</b><small id="kprs">rušení na EKG a pletysmografu</small></div><button type="button" id="kprb">ZAPNOUT</button></div></div>
     <div><h1>Hodnoty</h1><div id="sliders"></div></div>
@@ -284,7 +307,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v70</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v71</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -422,8 +445,8 @@ $('bCtl').onclick=()=>{
   const start=()=>{
     const p=new Peer('ecgsim-'+code);ctlPeer=p;
     /* 'open' přijde i po každém znovupřipojení k serveru – ovladač se ale smí spustit jen jednou */
-    p.on('open',()=>{if(started)return;started=true;$('noroom').classList.add('hide');mode='ctl';loadState();show('ctl');buildCtl();paintCtl();dirtyPaint();send();setInterval(send,2000)});
-    p.on('connection',c=>{conns.push(c);c.on('open',()=>send());c.on('close',()=>{conns=conns.filter(x=>x!==c);send()});c.on('error',()=>{})});
+    p.on('open',()=>{if(started)return;started=true;$('noroom').classList.add('hide');mode='ctl';loadState();show('ctl');buildCtl();paintCtl();dirtyPaint();send();setInterval(send,2000);miniPaint();miniSize();setInterval(miniPaint,1000);requestAnimationFrame(miniFrame)});
+    p.on('connection',c=>{conns.push(c);c.on('data',d=>{if(d&&typeof d==='object'&&d.mon&&typeof d.mon==='object')miniData(d.mon)});c.on('open',()=>send());c.on('close',()=>{conns=conns.filter(x=>x!==c);send()});c.on('error',()=>{})});
     p.on('error',e=>{
       /* kód může být chvíli po odchodu z ovladače ještě obsazený – zkusit znovu */
       if(e.type==='unavailable-id'&&!started&&tries<5){tries++;fail('Kód se uvolňuje, zkouším znovu… ('+tries+'/5)');try{p.destroy()}catch(x){}setTimeout(start,2500);return}
@@ -434,6 +457,29 @@ $('bCtl').onclick=()=>{
   start();
 };
 let ctlPeer=null;
+/* ---------- náhled monitoru v ovladači ---------- */
+let miniLast=0,miniOpen=true;try{miniOpen=localStorage.getItem('simmini')!=='0'}catch(e){}
+function miniData(m){miniLast=Date.now();const v=x=>String(x==null?'---':x).slice(0,9);
+  $('mHr').textContent=v(m.hr);$('mSpo').textContent=v(m.spo2);$('mBp').textContent=v(m.bp);$('mCo').textContent=v(m.co2);
+  const a=String(m.alm||'').trim(),al=$('malm');al.textContent=a.slice(0,60);al.classList.toggle('hide',!a);al.classList.toggle('w',!m.crit);
+  $('mline').innerHTML=[['#2ee66b',m.hr],['#3aa0ff',m.spo2],['#fff',m.bp],['#ff9a2e',m.co2]].map(([c,x])=>'<b style="color:'+c+'">'+v(x).replace(/[<>&]/g,'')+'</b>').join(' ');miniPaint()}
+function miniPaint(){const live=Date.now()-miniLast<4000;$('mdot').classList.toggle('ok',live);$('mini').classList.toggle('stale',!live);
+  $('mini').classList.toggle('closed',!miniOpen);$('minih').setAttribute('aria-expanded',miniOpen);
+  $('mmsg').textContent=!live?'Čekám na data z monitoru…':(C.ecgon===false?'EKG vypnuto':'');
+  if(!live){['mHr','mSpo','mCo'].forEach(i=>$(i).textContent='---');$('mBp').textContent='---/---';$('malm').classList.add('hide');$('mline').textContent='čekám na monitor'}}
+$('minih').onclick=()=>{miniOpen=!miniOpen;try{localStorage.setItem('simmini',miniOpen?'1':'0')}catch(e){}miniPaint();miniSize()};
+let MX=0,MY=null,mprev=0;const mc=$('mc'),mx=mc.getContext('2d');
+function miniSize(){const d=window.devicePixelRatio||1,w=mc.clientWidth,h=mc.clientHeight;if(!w)return;mc.width=w*d;mc.height=h*d;mx.setTransform(d,0,0,d,0,0);mx.lineWidth=1.6;mx.lineJoin='round';mx.strokeStyle='#2ee66b';MX=0;MY=null}
+window.addEventListener('resize',()=>{if(mode==='ctl')miniSize()});
+/* křivka se počítá stejným modelem jako na monitoru, z odeslaného stavu C */
+function miniFrame(now){if(mode!=='ctl')return;requestAnimationFrame(miniFrame);
+  const dt=Math.min(.1,(now-(mprev||now))/1000);mprev=now;if(!miniOpen||document.hidden)return;
+  const w=mc.clientWidth,h=mc.clientHeight;if(!w||!h)return;
+  if(Date.now()-miniLast>4000){if(MY!==null||MX){mx.clearRect(0,0,w,h);MX=0;MY=null}return}
+  const keep=S;S=C;const steps=Math.max(1,Math.round(dt/.008)),hh=dt/steps;
+  try{for(let i=0;i<steps;i++){st+=hh;sched();const v=C.ecgon===false||Date.now()-miniLast>4000?0:ecg(),y=h*.6-v*h*.42,nx=MX+70*hh;
+    mx.beginPath();mx.moveTo(MX,MY===null?y:MY);mx.lineTo(nx,y);mx.stroke();mx.clearRect(nx+1,0,12,h);MX=nx;MY=y;if(MX>w){MX=0;MY=null;mx.clearRect(0,0,14,h)}}}
+  finally{S=keep}}
 window.addEventListener('pagehide',()=>{try{ctlPeer&&ctlPeer.destroy()}catch(e){}});
 $('cback').onclick=()=>{const d=!autoSend&&sig(S)!==sig(C);
   if(confirm('Opravdu odejít z ovladače?\n\nMonitor přestane dostávat hodnoty. Nastavení zůstane uložené a příště se obnoví.'+(d?'\n\nPozor: máš neodeslané změny.':''))){try{ctlPeer&&ctlPeer.destroy()}catch(e){}location.reload()}};
@@ -751,6 +797,9 @@ function handleState(d){
   if(changed){nextBeat=st}
   paintNums();
 }
+/* monitor posílá ovladači, co právě zobrazuje (pro náhled v ovladači) */
+let monConn=()=>null;
+function monSnap(){const t=id=>$(id).textContent.trim();return{hr:t('vHr'),spo2:t('vSpo'),bp:t('vBp'),co2:t('vCo'),alm:t('alm'),crit:$('alm').className==='on'}}
 function startMon(){
   if(!getCode())return;
   if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
@@ -789,7 +838,7 @@ function startMon(){
     const old=conn;conn=null;if(old){try{old.close()}catch(e){}}
     if(p.destroyed||p.disconnected)return;
     const c=p.connect('ecgsim-'+code,{reliable:true});conn=c;
-    c.on('data',d=>{if(c===conn)handleState(d)});
+    c.on('data',d=>{if(c===conn)handleState(d)});monConn=()=>conn;
     c.on('close',()=>{if(c===conn)again()});
     c.on('error',()=>{if(c===conn)again()});
   }
@@ -797,6 +846,7 @@ function startMon(){
   p.on('error',e=>{if(e.type==='peer-unavailable'||e.type==='network'||e.type==='server-error')again()});
   p.on('disconnected',()=>{try{p.reconnect()}catch(e){}});
   setInterval(()=>{if(lastRx&&Date.now()-lastRx>7000)$('stale').classList.remove('hide')},1000);
+  setInterval(()=>{const c=monConn();if(c&&c.open){try{c.send({mon:monSnap()})}catch(e){}}},1000);
   prev=performance.now();requestAnimationFrame(frame);
 }
 try{if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
