@@ -302,7 +302,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v79</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v80</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
@@ -318,7 +318,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v79</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v80</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -343,10 +343,11 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <script src="peerjs.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
-const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],vf:['Fibrilace komor',0],asys:['Asystolie',0],av3:['AV blokáda III. st.',35],pea:['PEA',60],tdp:['Torsades de pointes',220],ste:['Elevace ST',80]};
-const NOPULSE=['vf','asys','pea','tdp'];
+const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],pvt:['KT bez pulzu',190],vf:['Fibrilace komor',0],asys:['Asystolie',0],av3:['AV blokáda III. st.',35],pea:['PEA',60],tdp:['Torsades de pointes',220],ste:['Elevace ST',80]};
+/* rytmy bez pulzu (zástava oběhu); KT bez pulzu je defibrilovatelný rytmus jako VF */
+const NOPULSE=['vf','pvt','asys','pea','tdp'];
 /* povolený rozsah tepu podle rytmu (aby název rytmu odpovídal frekvenci) */
-const HRR={sinus:[50,100],tachy:[101,180],brady:[30,59],af:[50,180],flutter:[60,170],vt:[120,250],vf:[0,0],asys:[0,0],av3:[20,60],pea:[20,150],tdp:[150,250],ste:[50,120]};
+const HRR={sinus:[50,100],tachy:[101,180],brady:[30,59],af:[50,180],flutter:[60,170],vt:[120,250],pvt:[120,250],vf:[0,0],asys:[0,0],av3:[20,60],pea:[20,150],tdp:[150,250],ste:[50,120]};
 const hrClamp=o=>{const r=HRR[o.rhythm]||[0,250];o.hr=Math.max(r[0],Math.min(r[1],+o.hr||0));return o};
 /* TK: systolický vždy aspoň o 20 vyšší než diastolický */
 const bpFix=(o,k)=>{if(o.sys<=0&&o.dia<=0)return o;if(k==='dia'){if(o.dia>o.sys-20)o.sys=Math.min(260,o.dia+20);if(o.dia>o.sys-20)o.dia=o.sys-20}else if(o.dia>o.sys-20)o.dia=Math.max(0,o.sys-20);return o};
@@ -422,7 +423,7 @@ function paintCtl(setSliders=true){
   /* u rytmů bez pulzu nejde nastavovat SpO2 ani tlak; u VF a asystolie ani tep */
   const en={hr:(S.ecgon!==false||S.spo2on!==false)&&hz[1]>0,spo2:S.spo2on!==false&&!arr,sys:!arr,dia:!arr,etco2:S.co2on!==false,rr:S.co2on!==false};
   for(const k in en){const i=$('s_'+k);i.disabled=!en[k];i.closest('.adj').querySelectorAll('button').forEach(b=>b.disabled=!en[k]);i.closest('.row').classList.toggle('off',!en[k])}
-  const kp=S.kpr===true;$('kprc').classList.toggle('on',kp);$('kprc').classList.toggle('dis',!arr);$('kprb').disabled=!arr;$('kprb').textContent=kp?'VYPNOUT':'ZAPNOUT';$('kprs').textContent=!arr?'jen při zástavě oběhu (VF, asystolie, PEA, torsades)':kp?'probíhá – rušení na EKG a pletysmografu':'rušení na EKG a pletysmografu';
+  const kp=S.kpr===true;$('kprc').classList.toggle('on',kp);$('kprc').classList.toggle('dis',!arr);$('kprb').disabled=!arr;$('kprb').textContent=kp?'VYPNOUT':'ZAPNOUT';$('kprs').textContent=!arr?'jen při zástavě oběhu (VF, KT bez pulzu, asystolie, PEA, torsades)':kp?'probíhá – rušení na EKG a pletysmografu':'rušení na EKG a pletysmografu';
   for(const k in LIMR)[0,1].forEach(j=>{$(`lim_${k}_${j}`).textContent=S.lim[k][j]});
   document.querySelectorAll('#ctl .mini').forEach(b=>{b.setAttribute('role','switch');b.setAttribute('aria-checked',b.classList.contains('on'))});
 }
@@ -574,7 +575,7 @@ function ecgBase(){
   if(S.ecgon===false)return 0;
   if(r==='asys'&&!pCap())return 0.01*Math.sin(st*3)+0.01*(Math.random()-.5);
   if(r==='vf')return 0.45*Math.sin(6.28*4.2*st)*(0.6+0.4*Math.sin(6.28*0.6*st))+0.3*Math.sin(6.28*6.9*st+1)+0.1*(Math.random()-.5);
-  if(r==='vt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
+  if(r==='vt'||r==='pvt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
   if(r==='tdp'){const f=Math.max(S.hr,150)/60;return 0.9*Math.sin(6.28*f*st+0.4*Math.sin(6.28*0.22*st))*(0.2+0.8*Math.abs(Math.sin(6.28*0.2*st)))}
   let v=0;
   /* AV blokáda III. st.: P vlny 80/min nezávisle na širokém komorovém náhradním rytmu (QRS ≥ 0,12 s, diskordantní T) */
@@ -648,12 +649,12 @@ let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0,pend:false,pendT:0,msgT:0}
 /* čas příštího vrcholu R pro synchronizovanou kardioverzi; null = monitor nenajde QRS (VF, asystolie, torsades, KPR) */
 const VTPK=(()=>{let b=0,bv=-9;for(let p=0;p<6.283;p+=.001){const v=.85*Math.sin(p)+.3*Math.sin(2*p+.6);if(v>bv){bv=v;b=p}}return b/6.2832})();
 function nextR(){const r=S.rhythm;if(!ecgOn()||st<shockEnd||S.kpr===true||r==='vf'||r==='asys'||r==='tdp')return null;
-  if(r==='vt'){const f=Math.max(S.hr,100)/60;return (Math.floor(st*f-VTPK)+1+VTPK)/f}
+  if(r==='vt'||r==='pvt'){const f=Math.max(S.hr,100)/60;return (Math.floor(st*f-VTPK)+1+VTPK)/f}
   if(lastBeat<-5||S.hr<=0&&btype!=='p')return null;const off=r==='av3'?.23:.245,t=lastBeat+off*(btype==='p'?1:Math.min(1,rrBeat/.8));
   return t>st?t:nextBeat+off*Math.min(1,60/Math.max(S.hr,1)/.8)}
 /* nastal vrchol R právě v posledním kroku (st-h, st]? */
 function rHit(h){const r=S.rhythm;if(!ecgOn()||st<shockEnd||S.kpr===true||r==='vf'||r==='asys'||r==='tdp')return false;
-  let t;if(r==='vt'){const f=Math.max(S.hr,100)/60;t=(Math.floor(st*f-VTPK)+VTPK)/f}
+  let t;if(r==='vt'||r==='pvt'){const f=Math.max(S.hr,100)/60;t=(Math.floor(st*f-VTPK)+VTPK)/f}
   else{if(lastBeat<-5)return false;t=lastBeat+(r==='av3'?.23:.245)*(btype==='p'?1:Math.min(1,rrBeat/.8))}
   return t>st-h&&t<=st}
 const EN=[2,3,4,5,6,7,8,9,10,15,20,30,50,70,100,125,150,175,200,225,250,275,300,325,360],CHG=4000;
@@ -802,14 +803,14 @@ function paintNums(){
   const al=[];let crit=false;
   if(eOn&&S.rhythm==='asys'&&!cap){al.push('ASYSTOLIE');crit=true}
   else if(eOn&&S.rhythm==='vf'){al.push('FIBRILACE KOMOR');crit=true}
-  else if(eOn&&(S.rhythm==='vt'||S.rhythm==='tdp')){al.push('KOMOROVÁ TACHYKARDIE');crit=true}
+  else if(eOn&&(S.rhythm==='vt'||S.rhythm==='pvt'||S.rhythm==='tdp')){al.push('KOMOROVÁ TACHYKARDIE');crit=true}
   const f={
     nHr:!kp&&hOn&&!dead&&(hrv<LIM.hr[0]||hrv>LIM.hr[1]),
     nSpo:sOn&&!kp&&(!pulse||S.spo2<LIM.spo2[0]),
     nBp:!dead&&sv>0&&(sv<LIM.sys[0]||sv>LIM.sys[1]),
     nCo:co&&!arrest()&&(q.rr<=0||q.et<LIM.etco2[0]||q.et>LIM.etco2[1])
   };
-  if(f.nHr&&S.rhythm!=='vt'&&S.rhythm!=='tdp')al.push(hrv<LIM.hr[0]?'HR NÍZKÁ':'HR VYSOKÁ');
+  if(f.nHr&&S.rhythm!=='vt'&&S.rhythm!=='pvt'&&S.rhythm!=='tdp')al.push(hrv<LIM.hr[0]?'HR NÍZKÁ':'HR VYSOKÁ');
   if(f.nSpo)al.push(pulse?'SpO₂ NÍZKÁ':lowp&&!NOPULSE.includes(S.rhythm)?'SpO₂ – SLABÝ SIGNÁL':'SpO₂ – BEZ PULZU');
   if(f.nBp)al.push(sv<LIM.sys[0]?'TK NÍZKÝ':'TK VYSOKÝ');
   if(f.nCo)al.push(q.rr<=0?'APNOE':q.et<LIM.etco2[0]?'EtCO₂ NÍZKÝ':'EtCO₂ VYSOKÝ');
