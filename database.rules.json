@@ -1,0 +1,27 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$code": {
+        ".validate": "$code.matches(/^[0-9]{6}$/) && newData.child('owner').isString()",
+        ".read": "auth != null",
+        ".write": "auth != null && (!newData.exists() ? data.child('owner').val() === auth.uid : (newData.child('owner').val() === auth.uid && (!data.exists() || data.child('owner').val() === auth.uid || data.child('t').val() < now - 30000)))",
+        "owner": { ".validate": "newData.isString() && newData.val().length < 200" },
+        "t": { ".validate": "newData.isNumber() && newData.val() <= now + 60000" },
+        "state": {
+          ".validate": "newData.child('rhythm').isString() && newData.child('rhythm').val().length < 10"
+        },
+        "mon": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && data.parent().parent().child('owner').exists()",
+            ".validate": "newData.child('t').isNumber()",
+            "snap": { "$k": { ".validate": "!newData.isString() || newData.val().length < 120" } },
+            "ev": { "text": { ".validate": "newData.isString() && newData.val().length < 100" } }
+          }
+        },
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

@@ -4,9 +4,11 @@
   "description": "Simulátor monitoru pacienta – automatické testy",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "test:testovaci": "APP_PATH=test/index.html node --test tests/*.test.js"
+    "test:testovaci": "APP_PATH=test/index.html node --test tests/*.test.js",
+    "test:firebase": "firebase emulators:exec --only auth,database --project simulator-monitoru-pacienta \"FB_EMU=127.0.0.1 node --test tests/firebase.test.js\""
   },
   "devDependencies": {
-    "playwright": "1.63.0"
+    "playwright": "1.63.0",
+    "firebase-tools": "15.37.0"
   }
 }

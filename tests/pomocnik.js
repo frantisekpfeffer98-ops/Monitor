@@ -20,6 +20,8 @@ async function stranka(viewport={width:390,height:844}){
   const ctx=await b.newContext({viewport,screen:viewport});
   await ctx.addInitScript(FAKE_PEER);
   await ctx.route('**/peerjs.min.js',r=>r.abort());
+  // Firebase se v těchto testech nepoužívá (testuje se zvlášť proti emulátoru v firebase.test.js)
+  await ctx.route('**/firebase-*-compat.js',r=>r.abort());
   const p=await ctx.newPage();
   const chyby=[];p.on('pageerror',e=>chyby.push(e.message));p.chyby=chyby;
   await p.goto(URL);

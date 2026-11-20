@@ -24,3 +24,25 @@ jobs:
         run: npm test
       - name: Testy testovací verze (/test/)
         run: npm run test:testovaci
+
+  firebase:
+    # Spojení přes Firebase a pravidla databáze proti lokálnímu emulátoru (nepotřebuje ostrý projekt)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Instalace
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Testy Firebase (testovací verze)
+        env:
+          APP_PATH: test/index.html
+        run: npm run test:firebase
