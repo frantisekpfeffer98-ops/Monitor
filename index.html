@@ -278,6 +278,19 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 #mini .ml b{font:700 .95rem "Arial Narrow",Arial,sans-serif;margin-right:6px;font-variant-numeric:tabular-nums}
 #mini.stale .mn b{color:#5b6573}
 @media (min-width:900px){#mini canvas{height:80px}#mini .mn{grid-template-columns:repeat(4,auto);gap:4px 22px}#mini .mn b{font-size:1.9rem}#mini .mn small{font-size:.7rem}}
+/* --- ovladač: stav defibrilátoru a události z monitoru --- */
+#mini .dv{flex:none;white-space:nowrap;border-radius:4px;padding:1px 7px;font-size:.66rem;background:#ff9a2e;color:#000}
+#mini .dv.rdy{background:#d11;color:#fff;animation:bl 1s steps(1) infinite}#mini .dv.shk{background:#fff;color:#d11}#mini .dv.pace{background:#3aa0ff;color:#000}
+#mini .dv:not(.hide)~.al{margin-left:0}#mini .dv:not(.hide){margin-left:auto}
+#mini .mlog{list-style:none;margin:6px 0 0;padding:6px 0 0;border-top:1px solid #1f2731;font:600 .74rem system-ui,sans-serif;color:#c9d1d9;display:flex;flex-direction:column;gap:2px}
+#mini .mlog:empty{display:none}
+#mini .mlog li span{color:#6b7684;font-variant-numeric:tabular-nums;margin-right:4px}
+#mini .mlog li.shock{color:#ff6b6b}#mini .mlog li.chg{color:#ffb020}#mini .mlog li.pace{color:#74b9ff}
+#mini .mlog li:nth-child(n+3){opacity:.6}
+#mini.closed .mlog{display:none}
+#mini.shock{animation:mshock .9s ease-out}
+@keyframes mshock{0%{box-shadow:0 0 0 0 #ff3b3bcc,0 8px 22px #0f2a4733;background:#5a0b0b}100%{box-shadow:0 0 0 14px #ff3b3b00,0 8px 22px #0f2a4733;background:#05080c}}
+@media (max-width:420px){#mini.closed:has(.dv:not(.hide)) .ml{display:none}}
 </style>
 </head>
 <body>
@@ -291,12 +304,12 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
     <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
     <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
   </div>
-  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v71</span></div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span>v72</span></div>
 </div>
 
 <div id="ctl" class="wrap hide">
   <div class="bar hj"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7df6"/><stop offset="1" stop-color="#12b886"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg3)"/><polyline points="8,34 20,34 25,24 31,44 37,16 43,38 47,34 56,34" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="t"><h2>Ovladač</h2><div class="st"><i id="cdot"></i><span id="cst">Připojuji…</span></div></div><div class="code"><small>KÓD</small><b id="ccode"></b></div><button id="calm" type="button" class="ib" aria-label="Hranice alarmů" title="Hranice alarmů"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><button id="cfs" type="button" class="hide ib" aria-label="Celá obrazovka" title="Celá obrazovka">⛶</button><button id="cback" type="button" class="ib" aria-label="Zpět" title="Zpět">←</button></div>
-  <div id="mini" aria-label="Náhled monitoru"><button type="button" id="minih" class="mh" aria-expanded="true"><span class="mt"><i id="mdot"></i>MONITOR</span><span id="mline" class="ml"></span><span id="malm" class="al hide"></span><span class="mtg" aria-hidden="true">▾</span></button><div class="mb"><div class="mcw"><canvas id="mc"></canvas><span id="mmsg" class="mmsg"></span></div><div class="mn"><div style="color:#2ee66b"><small>HR</small><b id="mHr">---</b></div><div style="color:#3aa0ff"><small>SpO₂</small><b id="mSpo">---</b></div><div style="color:#fff"><small>NIBP</small><b id="mBp">---/---</b></div><div style="color:#ff9a2e"><small>EtCO₂</small><b id="mCo">---</b></div></div></div></div>
+  <div id="mini" aria-label="Náhled monitoru"><button type="button" id="minih" class="mh" aria-expanded="true"><span class="mt"><i id="mdot"></i>MONITOR</span><span id="mline" class="ml"></span><span id="mdev" class="dv hide"></span><span id="malm" class="al hide"></span><span class="mtg" aria-hidden="true">▾</span></button><div class="mb"><div class="mcw"><canvas id="mc"></canvas><span id="mmsg" class="mmsg"></span></div><div class="mn"><div style="color:#2ee66b"><small>HR</small><b id="mHr">---</b></div><div style="color:#3aa0ff"><small>SpO₂</small><b id="mSpo">---</b></div><div style="color:#fff"><small>NIBP</small><b id="mBp">---/---</b></div><div style="color:#ff9a2e"><small>EtCO₂</small><b id="mCo">---</b></div></div></div><ul id="mlog" class="mlog" aria-live="polite"></ul></div>
   <div class="cols">
     <div><h1>Rytmus EKG <button type="button" id="ecgbtn" class="mini"></button></h1><div class="chips" id="rhy-chips"></div><div class="kpr" id="kprc"><div><b>KPR – masáž srdce</b><small id="kprs">rušení na EKG a pletysmografu</small></div><button type="button" id="kprb">ZAPNOUT</button></div></div>
     <div><h1>Hodnoty</h1><div id="sliders"></div></div>
@@ -307,7 +320,7 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 <div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
 
 <div id="mon" class="hide">
-  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v71</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim">SIMULACE · v72</span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
   <div id="traces">
     <div class="tr"><span style="color:#2ee66b">II</span><em>1 mV · 25 mm/s</em><canvas id="c0"></canvas></div>
     <div id="lower"><div id="lw">
@@ -446,7 +459,7 @@ $('bCtl').onclick=()=>{
     const p=new Peer('ecgsim-'+code);ctlPeer=p;
     /* 'open' přijde i po každém znovupřipojení k serveru – ovladač se ale smí spustit jen jednou */
     p.on('open',()=>{if(started)return;started=true;$('noroom').classList.add('hide');mode='ctl';loadState();show('ctl');buildCtl();paintCtl();dirtyPaint();send();setInterval(send,2000);miniPaint();miniSize();setInterval(miniPaint,1000);requestAnimationFrame(miniFrame)});
-    p.on('connection',c=>{conns.push(c);c.on('data',d=>{if(d&&typeof d==='object'&&d.mon&&typeof d.mon==='object')miniData(d.mon)});c.on('open',()=>send());c.on('close',()=>{conns=conns.filter(x=>x!==c);send()});c.on('error',()=>{})});
+    p.on('connection',c=>{conns.push(c);c.on('data',d=>{if(!d||typeof d!=='object')return;if(d.mon&&typeof d.mon==='object')miniData(d.mon);if(d.ev&&typeof d.ev==='object')miniEvent(d.ev)});c.on('open',()=>send());c.on('close',()=>{conns=conns.filter(x=>x!==c);send()});c.on('error',()=>{})});
     p.on('error',e=>{
       /* kód může být chvíli po odchodu z ovladače ještě obsazený – zkusit znovu */
       if(e.type==='unavailable-id'&&!started&&tries<5){tries++;fail('Kód se uvolňuje, zkouším znovu… ('+tries+'/5)');try{p.destroy()}catch(x){}setTimeout(start,2500);return}
@@ -462,11 +475,20 @@ let miniLast=0,miniOpen=true;try{miniOpen=localStorage.getItem('simmini')!=='0'}
 function miniData(m){miniLast=Date.now();const v=x=>String(x==null?'---':x).slice(0,9);
   $('mHr').textContent=v(m.hr);$('mSpo').textContent=v(m.spo2);$('mBp').textContent=v(m.bp);$('mCo').textContent=v(m.co2);
   const a=String(m.alm||'').trim(),al=$('malm');al.textContent=a.slice(0,60);al.classList.toggle('hide',!a);al.classList.toggle('w',!m.crit);
-  $('mline').innerHTML=[['#2ee66b',m.hr],['#3aa0ff',m.spo2],['#fff',m.bp],['#ff9a2e',m.co2]].map(([c,x])=>'<b style="color:'+c+'">'+v(x).replace(/[<>&]/g,'')+'</b>').join(' ');miniPaint()}
+  devChip(m);$('mline').innerHTML=[['#2ee66b',m.hr],['#3aa0ff',m.spo2],['#fff',m.bp],['#ff9a2e',m.co2]].map(([c,x])=>'<b style="color:'+c+'">'+v(x).replace(/[<>&]/g,'')+'</b>').join(' ');miniPaint()}
+const MLOG=[];
+function miniEvent(e){const txt=String(e.text||'').slice(0,60);if(!txt)return;const k=['shock','chg','pace','info'].includes(e.kind)?e.kind:'info';
+  MLOG.unshift({txt,k,time:new Date().toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit',second:'2-digit'})});MLOG.length=Math.min(MLOG.length,4);
+  const ul=$('mlog');ul.textContent='';MLOG.forEach(x=>{const li=document.createElement('li');li.className=x.k;const tm=document.createElement('span');tm.textContent=x.time;li.append(tm,' ',x.txt);ul.appendChild(li)});
+  if(k==='shock'){const m=$('mini');m.classList.remove('shock');void m.offsetWidth;m.classList.add('shock');try{navigator.vibrate&&navigator.vibrate([120,60,120])}catch(x){}}}
+function devChip(m){const d=m.df||{},p=m.pc||{},el=$('mdev');let t='',c='';
+  if(d.st==='chg'){t='NABÍJÍ '+(+d.j||'')+' J';c='chg'}else if(d.st==='rdy'){t=d.pend?'ČEKÁ NA QRS':'PŘIPRAVEN '+(+d.j||'')+' J';c='rdy'}else if(d.st==='shk'){t='VÝBOJ!';c='shk'}
+  else if(p.on){t='STIMULACE '+(+p.rate||'')+'/min · '+(+p.ma||0)+' mA';c='pace'}
+  if(t&&d.sync&&d.st!=='shk')t+=' · SYNC';el.textContent=t;el.className='dv '+c+(t?'':' hide')}
 function miniPaint(){const live=Date.now()-miniLast<4000;$('mdot').classList.toggle('ok',live);$('mini').classList.toggle('stale',!live);
   $('mini').classList.toggle('closed',!miniOpen);$('minih').setAttribute('aria-expanded',miniOpen);
   $('mmsg').textContent=!live?'Čekám na data z monitoru…':(C.ecgon===false?'EKG vypnuto':'');
-  if(!live){['mHr','mSpo','mCo'].forEach(i=>$(i).textContent='---');$('mBp').textContent='---/---';$('malm').classList.add('hide');$('mline').textContent='čekám na monitor'}}
+  if(!live){['mHr','mSpo','mCo'].forEach(i=>$(i).textContent='---');$('mBp').textContent='---/---';$('malm').classList.add('hide');$('mdev').classList.add('hide');$('mline').textContent='čekám na monitor'}}
 $('minih').onclick=()=>{miniOpen=!miniOpen;try{localStorage.setItem('simmini',miniOpen?'1':'0')}catch(e){}miniPaint();miniSize()};
 let MX=0,MY=null,mprev=0;const mc=$('mc'),mx=mc.getContext('2d');
 function miniSize(){const d=window.devicePixelRatio||1,w=mc.clientWidth,h=mc.clientHeight;if(!w)return;mc.width=w*d;mc.height=h*d;mx.setTransform(d,0,0,d,0,0);mx.lineWidth=1.6;mx.lineJoin='round';mx.strokeStyle='#2ee66b';MX=0;MY=null}
@@ -632,6 +654,7 @@ function pPaint(){$('mdp').disabled=pBlocked();$('prv').textContent=pc.rate;$('p
 function pTick(){if(pc.pz){if(Date.now()>=pc.pz)pc.pz=0;pPaint()}}
 function setMode(m){
   if(m==='p'&&pBlocked())return;
+  if(m==='p'&&!pc.on)monEvent('Stimulace ZAP · '+pc.rate+'/min · '+pc.ma+' mA','pace');else if(m==='d'&&pc.on)monEvent('Stimulace VYP','pace');
   $('dfp').dataset.md=m;$('mdd').classList.toggle('on',m==='d');$('mdp').classList.toggle('on',m==='p');
   $('secd').classList.toggle('off',m!=='d');$('secp').classList.toggle('off',m!=='p');
   if(m==='d'){pc.on=false;pc.pz=0;pLast=-9}else{pc.on=true;pc.pz=0;pNext=st+.3;if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle'}}
@@ -676,7 +699,7 @@ function nibpStep(){
   if(el>8){const k=Math.floor((el-8)/1.4);if(k!==nibp.k){nibp.k=k;tone(1500,.03,.1,'square')}}
   if(el>=20){nibp.on=false;const j=()=>Math.round(Math.random()*4-2),ok=S.kpr!==true&&S.hr>0&&(!NOPULSE.includes(S.rhythm)||pCap());
     /* bez pulzu nebo při KPR manžeta nic nenaměří */
-    nibp.val=ok?{sys:S.sys>0?Math.max(1,S.sys+j()):0,dia:S.dia>0?Math.max(1,S.dia+j()):0}:{sys:0,dia:0};bpTime=hhmm();[0,.18].forEach(o=>tone(880,.12,.18,'sine',o))}
+    nibp.val=ok?{sys:S.sys>0?Math.max(1,S.sys+j()):0,dia:S.dia>0?Math.max(1,S.dia+j()):0}:{sys:0,dia:0};monEvent(nibp.val.sys>0?'TK změřen '+nibp.val.sys+'/'+nibp.val.dia:'TK nenaměřen','info');bpTime=hhmm();[0,.18].forEach(o=>tone(880,.12,.18,'sine',o))}
   paintNums();
 }
 function dfStopSnd(){
@@ -702,7 +725,7 @@ function dfPaint(){
   $('dfc').textContent=(df.st==='chg'||df.st==='rdy')?'ZRUŠIT':'NABÍT';
   $('dfm').disabled=$('dfp2').disabled=df.st!=='idle';
 }
-function dfCharge(){if(!ecgOn())return;df.st='chg';df.t0=Date.now();dfChgSnd(CHG/1000);dfPaint()}
+function dfCharge(){if(!ecgOn())return;monEvent('Nabíjení '+df.j+' J'+(df.sync?' (SYNC)':''),'chg');df.st='chg';df.t0=Date.now();dfChgSnd(CHG/1000);dfPaint()}
 function dfShock(){
   if(df.st!=='rdy'||!ecgOn()||df.pend)return;
   /* SYNC: výboj až na příštím komplexu QRS; když QRS není, výboj se nedodá */
@@ -711,6 +734,7 @@ function dfShock(){
 }
 function dfFire(){
   if(df.st!=='rdy'||!ecgOn())return;
+  monEvent('VÝBOJ '+df.j+' J'+(df.sync?' (SYNC)':''),'shock');
   df.pend=false;df.sync=false;markAt=0;dfStopSnd();df.st='shk';df.t0=Date.now();shockEnd=st+1.3;tone(110,.5,.5,'sawtooth');
   const f=$('flash');f.style.opacity=1;setTimeout(()=>{f.style.opacity=0},130);dfPaint();
 }
@@ -798,8 +822,9 @@ function handleState(d){
   paintNums();
 }
 /* monitor posílá ovladači, co právě zobrazuje (pro náhled v ovladači) */
-let monConn=()=>null;
-function monSnap(){const t=id=>$(id).textContent.trim();return{hr:t('vHr'),spo2:t('vSpo'),bp:t('vBp'),co2:t('vCo'),alm:t('alm'),crit:$('alm').className==='on'}}
+let monConn=()=>null,pcT=0;
+function monEvent(text,kind){const c=monConn();if(c&&c.open){try{c.send({ev:{text,kind,t:Date.now()}})}catch(e){}}}
+function monSnap(){const t=id=>$(id).textContent.trim();return{hr:t('vHr'),spo2:t('vSpo'),bp:t('vBp'),co2:t('vCo'),alm:t('alm'),crit:$('alm').className==='on',df:{st:df.st,j:df.j,sync:df.sync,pend:df.pend},pc:{on:pc.on,rate:pc.rate,ma:pc.ma}}}
 function startMon(){
   if(!getCode())return;
   if(typeof Peer==='undefined'){fail('Nepodařilo se načíst službu PeerJS. Zkontroluj připojení k internetu.');return}
@@ -819,17 +844,18 @@ function startMon(){
   const volPaint=()=>{const b=$('snd');b.textContent=VOLI[VOL];b.title='Hlasitost: '+['vypnuto','tiše','středně','nahlas'][VOL]+' (klepnutím změníš)';b.setAttribute('aria-label',b.title)};
   sndOn=VOL>0;volPaint();
   $('snd').onclick=()=>{VOL=(VOL+1)%4;sndOn=VOL>0;try{localStorage.setItem('simvol',VOL)}catch(e){}volPaint();if(MG)MG.gain.value=VOLG[VOL];if(sndOn){audioInit();OUT();tone(880,.08,.18)}};
-  $('alsil').onclick=()=>{alSilence=alSilence>Date.now()?0:Date.now()+120000};
-  $('nibpb').onclick=()=>{if(nibp.on){nibp.on=false;stopSound(nibpSnd);nibpSnd=null}else{nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val,k:-1};nibpSnd=holdSound('sawtooth',70,130,8,.05)}paintNums()};
+  $('alsil').onclick=()=>{alSilence=alSilence>Date.now()?0:Date.now()+120000;monEvent(alSilence?'Alarmy ztlumeny na 2 min':'Ztlumení alarmů zrušeno','info')};
+  $('nibpb').onclick=()=>{if(nibp.on){nibp.on=false;stopSound(nibpSnd);nibpSnd=null;monEvent('Měření TK zrušeno','info')}else{monEvent('Měření TK…','info');nibp={on:true,t0:Date.now(),tgt:Math.max(120,S.sys+30),val:nibp.val,k:-1};nibpSnd=holdSound('sawtooth',70,130,8,.05)}paintNums()};
   $('dfm').onclick=()=>{df.j=EN[Math.max(0,EN.indexOf(df.j)-1)];dfPaint()};
   $('dfp2').onclick=()=>{df.j=EN[Math.min(EN.length-1,EN.indexOf(df.j)+1)];dfPaint()};
   $('dfs').onclick=()=>{df.sync=!df.sync;dfPaint()};
-  $('dfc').onclick=()=>{if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle';dfPaint()}else dfCharge()};
+  $('dfc').onclick=()=>{if(df.st==='chg'||df.st==='rdy'){dfStopSnd();df.st='idle';monEvent('Nabití zrušeno','info');dfPaint()}else dfCharge()};
   $('dfx').onclick=dfShock;
   $('mdd').onclick=()=>setMode('d');$('mdp').onclick=()=>setMode('p');
   $('prm').onclick=()=>{pc.rate=Math.max(40,pc.rate-5);pPaint()};$('prp').onclick=()=>{pc.rate=Math.min(170,pc.rate+5);pPaint()};
   $('pom').onclick=()=>{pc.ma=CUR[Math.max(0,CUR.indexOf(pc.ma)-1)];pPaint()};$('pop').onclick=()=>{pc.ma=CUR[Math.min(CUR.length-1,CUR.indexOf(pc.ma)+1)];pPaint()};
-  $('pps').onclick=()=>{if(!pc.on||!ecgOn())return;pc.pz=Date.now()+5000;pLast=-9;pPaint()};
+  $('pps').onclick=()=>{if(!pc.on||!ecgOn())return;pc.pz=Date.now()+5000;pLast=-9;monEvent('Stimulace PAUZA 5 s','pace');pPaint()};
+  ['prm','prp','pom','pop'].forEach(id=>$(id).addEventListener('click',()=>{clearTimeout(pcT);pcT=setTimeout(()=>{if(pc.on)monEvent('Stimulace '+pc.rate+'/min · '+pc.ma+' mA','pace')},900)}));
   setInterval(()=>{nibpStep();dfTick();pTick()},250);setInterval(alarmTick,1000);setInterval(()=>{varStep();paintNums()},2000);dfPaint();
   const p=new Peer();let conn=null,retry=0;
   const again=()=>{if(!retry)retry=setTimeout(()=>{retry=0;link()},3000)};
