@@ -1,0 +1,26 @@
+# Automatické testy: spustí se při každé změně v repozitáři.
+# Výsledek je vidět na GitHubu u změny (zelená fajfka / červený křížek).
+name: Testy
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  testy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Instalace Playwright a prohlížeče Chromium
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Testy ostré verze
+        run: npm test
+      - name: Testy testovací verze (/test/)
+        run: npm run test:testovaci

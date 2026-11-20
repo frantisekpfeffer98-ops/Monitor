@@ -62,3 +62,19 @@ Ovladač i monitor by měly mít stejnou verzi aplikace (číslo verze je dole n
 ## Autor
 
 František Pfeffer
+
+## Automatické testy
+
+Složka `tests/` obsahuje automatické testy, které aplikaci vyzkoušejí v prohlížeči bez okna
+(rytmy a jejich rozsahy, zámky posuvníků, KPR, alarmy, SpO₂ a TF, defibrilace a SYNC, pauza po výboji,
+kardiostimulace, NIBP, odesílání změn, rozložení na různých displejích). Spojení mezi zařízeními
+se při testech jen předstírá, takže testy nepotřebují internet.
+
+GitHub je spouští automaticky při každé změně (záložka **Actions**). Ručně:
+
+```bash
+npm install
+npx playwright install chromium
+npm test                 # ostrá verze
+npm run test:testovaci   # verze v /test/
+```
