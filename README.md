@@ -54,14 +54,11 @@ Ovladač i monitor by měly mít stejnou verzi aplikace (číslo verze je dole n
 
 ## Technické informace
 
-- Jedna statická stránka (`index.html`), bez serveru a bez sestavování; hostováno na GitHub Pages.
+- Statická webová aplikace (`index.html`, `style.css`, `app.js`), bez serveru a bez sestavování; hostováno na GitHub Pages.
+- Testovací verze pro zkoušení změn před nasazením: https://frantisekpfeffer98-ops.github.io/Monitor/test/
 - Spojení mezi zařízeními přes WebRTC pomocí knihovny [PeerJS](https://github.com/peers/peerjs)
   1.5.4 (MIT), přibalené jako `peerjs.min.js`. K nalezení protějšku se používá veřejný server PeerJS.
 - Žádná data se neukládají na server; ovladač si nastavení pamatuje jen v prohlížeči daného zařízení.
-
-## Autor
-
-František Pfeffer
 
 ## Automatické testy
 
@@ -78,3 +75,7 @@ npx playwright install chromium
 npm test                 # ostrá verze
 npm run test:testovaci   # verze v /test/
 ```
+
+## Autor
+
+František Pfeffer
