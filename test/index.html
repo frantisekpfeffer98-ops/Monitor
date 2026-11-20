@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulátor monitoru pacienta</title>
+<link rel="manifest" href="../manifest.json">
+<link rel="icon" type="image/png" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="theme-color" content="#0b1a2e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Monitor">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="home" class="page">
+  <div class="hero"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7df6"/><stop offset="1" stop-color="#12b886"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg2)"/><polyline points="8,34 20,34 25,24 31,44 37,16 43,38 47,34 56,34" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><h1>Simulátor monitoru pacienta</h1>
+    <ol class="steps"><li><span>Otevři aplikaci na dvou zařízeních.</span></li><li><span>Na obou zadej stejný kód pro spárování.</span></li><li><span>Na prvním spusť <b>Ovladač</b>.</span></li><li><span>Na druhém spusť <b>Monitor</b>.</span></li></ol></div>
+  <div class="codebox"><label for="code">Kód pro spárování</label><input id="code" type="text" inputmode="numeric" maxlength="6" autocomplete="off" aria-describedby="codehint"><small id="codehint">Kód musí mít 6 číslic.</small></div>
+  <div id="noroom" class="hide"></div>
+  <div class="cards">
+    <button id="bCtl" class="card c-ctl" type="button"><svg viewBox="0 0 120 110" aria-hidden="true"><rect x="34" y="6" width="52" height="98" rx="10" fill="#fff" stroke="#2f7df6" stroke-width="4"/><rect x="42" y="18" width="36" height="6" rx="3" fill="#dbe9ff"/><g stroke="#cfe0fb" stroke-width="4" stroke-linecap="round"><line x1="44" y1="42" x2="76" y2="42"/><line x1="44" y1="60" x2="76" y2="60"/><line x1="44" y1="78" x2="76" y2="78"/></g><circle cx="58" cy="42" r="5.5" fill="#2f7df6"/><circle cx="68" cy="60" r="5.5" fill="#12b886"/><circle cx="50" cy="78" r="5.5" fill="#ff922b"/><rect x="48" y="90" width="24" height="7" rx="3.5" fill="#2f7df6"/></svg><b>Ovladač</b><span>(nastavuji hodnoty)</span></button>
+    <button id="bMon" class="card c-mon" type="button"><svg viewBox="0 0 140 110" aria-hidden="true"><rect x="8" y="8" width="124" height="80" rx="9" fill="#0b1a2e" stroke="#12b886" stroke-width="4"/><polyline points="16,40 38,40 44,30 50,40 62,40 68,18 74,56 80,40 100,40" fill="none" stroke="#2ee66b" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M16 68 q10 -14 20 0 t20 0 t20 0" fill="none" stroke="#3aa0ff" stroke-width="3" stroke-linecap="round"/><rect x="104" y="30" width="20" height="9" rx="2" fill="#2ee66b"/><rect x="104" y="44" width="20" height="9" rx="2" fill="#3aa0ff"/><rect x="104" y="58" width="20" height="9" rx="2" fill="#ff9a2e"/><rect x="56" y="88" width="28" height="8" fill="#9db4cf"/><rect x="40" y="96" width="60" height="7" rx="3.5" fill="#9db4cf"/></svg><b>Monitor</b><span>(zobrazuji hodnoty)</span></button>
+  </div>
+  <div class="foot"><span>Vytvořil: František Pfeffer</span><span data-ver="{v}"></span></div>
+</div>
+
+<div id="ctl" class="wrap hide">
+  <div class="bar hj"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="lg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7df6"/><stop offset="1" stop-color="#12b886"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#lg3)"/><polyline points="8,34 20,34 25,24 31,44 37,16 43,38 47,34 56,34" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="t"><h2>Ovladač</h2><div class="st"><i id="cdot"></i><span id="cst">Připojuji…</span></div></div><div class="code"><small>KÓD</small><b id="ccode"></b></div><button id="calm" type="button" class="ib" aria-label="Hranice alarmů" title="Hranice alarmů"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><button id="cfs" type="button" class="hide ib" aria-label="Celá obrazovka" title="Celá obrazovka">⛶</button><button id="cback" type="button" class="ib" aria-label="Zpět" title="Zpět">←</button></div>
+  <div id="mini" aria-label="Náhled monitoru"><button type="button" id="minih" class="mh" aria-expanded="true"><span class="mt"><i id="mdot"></i>MONITOR</span><span id="mline" class="ml"></span><span id="mdev" class="dv hide"></span><span id="malm" class="al hide"></span><span class="mtg" aria-hidden="true">▾</span></button><div class="mb"><div class="mcw"><canvas id="mc"></canvas><span id="mmsg" class="mmsg"></span></div><div class="mn"><div style="color:#2ee66b"><small>HR</small><b id="mHr">---</b></div><div style="color:#3aa0ff"><small>SpO₂</small><b id="mSpo">---</b></div><div style="color:#fff"><small>NIBP</small><b id="mBp">---/---</b></div><div style="color:#ff9a2e"><small>EtCO₂</small><b id="mCo">---</b></div></div></div></div>
+  <div class="cols">
+    <div><h1>Rytmus EKG <button type="button" id="ecgbtn" class="mini"></button></h1><div class="chips" id="rhy-chips"></div><div class="kpr" id="kprc"><div><b>KPR – masáž srdce</b><small id="kprs">rušení na EKG a pletysmografu</small></div><button type="button" id="kprb">ZAPNOUT</button></div></div>
+    <div><h1>Hodnoty</h1><div id="sliders"></div></div>
+  </div>
+<div id="almsheet" class="hide" role="dialog" aria-modal="true" aria-labelledby="almt"><div class="sbg" id="almbg"></div><div class="sbox"><div class="shd"><h1 id="almt">Hranice alarmů</h1><button id="almx" type="button" class="ib" aria-label="Zavřít">✕</button></div><div id="lims"></div><p class="snote">Změny se na monitor odešlou tlačítkem UPDATE.</p></div></div>
+</div>
+
+<div id="ubar"><div class="ubi"><label class="auto" for="autob"><button id="autob" class="mini" type="button" aria-label="Odesílat ihned"></button><span>Odesílat<br>ihned</span></label><button id="upd" type="button" disabled>UPDATE (žádné změny k odeslání)</button></div></div>
+
+<div id="mon" class="hide">
+  <div id="top"><span class="pt">PACIENT · LŮŽKO 1</span><div id="alm">&nbsp;</div><span class="sim" data-ver="SIMULACE · {v}"></span><button id="devb" class="tb" type="button"></button><button id="snd" class="tb" type="button">🔊</button><button id="alsil" class="tb" type="button">🔕</button><button id="fs" class="hide tb" type="button">⛶</button><span id="clock"></span></div>
+  <div id="traces">
+    <div class="tr"><span style="color:#2ee66b">II</span><canvas id="c0"></canvas></div>
+    <div id="lower"><div id="lw">
+      <div class="tr"><span style="color:#3aa0ff">Pleth</span><canvas id="c1"></canvas></div>
+      <div class="tr"><span style="color:#ff9a2e">CO₂</span><em id="co2em">0–60 mmHg</em><canvas id="c2"></canvas></div>
+    </div>
+    <div id="dfp" data-md="d"><div id="mds"><button id="mdp" class="md" type="button">KARDIOSTIMULACE</button><button id="mdd" class="md on" type="button">DEFIBRILACE</button></div><div id="secs">
+      <div id="secd" class="sec"><div id="dfst"><i id="dfch"></i></div><div id="dfe"><button id="dfm" type="button">−</button><b id="dfj">200 J</b><button id="dfp2" type="button">+</button></div><button id="dfs" type="button">SYNC</button><button id="dfc" type="button">NABÍT</button><button id="dfx" type="button">VÝBOJ</button></div>
+      <div id="secp" class="sec off"><div class="pe"><button id="prm" type="button">−</button><b><span id="prv">70</span> /min</b><button id="prp" type="button">+</button></div><div class="pe"><button id="pom" type="button">−</button><b><span id="pov">5</span> mA</b><button id="pop" type="button">+</button></div><button id="pps" type="button">PAUZA</button></div></div>
+    </div></div>
+  <div id="stale" class="hide" role="status"><span>⚠ Spojení přerušeno</span><button type="button" id="relink">Připojit znovu</button></div></div>
+  <div id="nums">
+    <div class="n" id="nHr" style="--c:#2ee66b"><div class="nh"><small>HR</small><em>/min</em><u id="lHr"></u></div><b id="vHr">--</b><div class="ns"><span id="heart">♥</span> <span id="hrsrc">EKG</span></div></div>
+    <div class="n" id="nSpo" style="--c:#3aa0ff"><div class="nh"><small>SpO₂</small><em>%</em><u id="lSpo"></u></div><b id="vSpo">--</b><div class="ns">TF <span id="vPr">--</span> /min</div></div>
+    <div class="n" id="nBp" style="--c:#ffffff"><div class="nh"><small>NIBP</small><em>mmHg</em><u id="lBp"></u></div><b class="sm" id="vBp">--/--</b><div class="ns"><span id="vMap">(--)</span> · <span id="vBpT"></span><button id="nibpb" class="tb" type="button">Změřit TK</button></div></div>
+    <div class="n" id="nCo" style="--c:#ff9a2e"><div class="nh"><small>EtCO₂</small><em>mmHg</em><u id="lCo"></u></div><b id="vCo">--</b><div class="ns">DF <span id="vRr">--</span> /min</div></div>
+  </div>
+  <div id="flash"></div>
+  <div id="wait">Čekám na ovladač…<br>Kód: <span id="wcode"></span></div>
+</div>
+
+<script src="peerjs.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
