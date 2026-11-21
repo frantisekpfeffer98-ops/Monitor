@@ -26,7 +26,8 @@ Ovladač i monitor by měly mít stejnou verzi aplikace (číslo verze je dole n
 
 <img src="screenshots/ovladac.png" alt="Ovladač" width="260" align="right">
 
-- **Rytmus EKG:** sinusový rytmus, sinusová tachykardie a bradykardie, fibrilace a flutter síní,
+- **Rytmus EKG:** sinusový rytmus, sinusová tachykardie a bradykardie, fibrilace a flutter síní, SVT
+  (s ukončením vagovým manévrem nebo adenosinem),
   komorová tachykardie (s pulzem i bez pulzu), fibrilace komor, asystolie, AV blokáda III. stupně,
   PEA, torsades de pointes, elevace ST.
 - **Hodnoty:** srdeční frekvence, SpO₂, krevní tlak, EtCO₂, dechová frekvence – posuvníky a tlačítka −/+.
