@@ -1,13 +1,13 @@
 /* Simulátor monitoru pacienta – ovladač (lektor) a monitor (studenti) v jednom skriptu.
    Číslo verze se mění jen tady. */
-const APP_VERSION='v86-test';
+const APP_VERSION='v87-test';
 const $=id=>document.getElementById(id);
 document.querySelectorAll('[data-ver]').forEach(e=>{e.textContent=e.dataset.ver.replace('{v}',APP_VERSION)});
-const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],vt:['Komorová tachykardie',180],pvt:['KT bez pulzu',190],vf:['Fibrilace komor',0],asys:['Asystolie',0],av3:['AV blokáda III. st.',35],pea:['PEA',60],tdp:['Torsades de pointes',220],ste:['Elevace ST',80]};
+const RHY={sinus:['Sinusový rytmus',75],tachy:['Sinusová tachykardie',130],brady:['Sinusová bradykardie',40],af:['Fibrilace síní',110],flutter:['Flutter síní',150],svt:['SVT',180],vt:['Komorová tachykardie',180],pvt:['KT bez pulzu',190],vf:['Fibrilace komor',0],asys:['Asystolie',0],av3:['AV blokáda III. st.',35],pea:['PEA',60],tdp:['Torsades de pointes',220],ste:['Elevace ST',80]};
 /* rytmy bez pulzu (zástava oběhu); KT bez pulzu je defibrilovatelný rytmus jako VF */
 const NOPULSE=['vf','pvt','asys','pea','tdp'];
 /* povolený rozsah tepu podle rytmu (aby název rytmu odpovídal frekvenci) */
-const HRR={sinus:[50,100],tachy:[101,180],brady:[30,59],af:[50,180],flutter:[60,170],vt:[120,250],pvt:[120,250],vf:[0,0],asys:[0,0],av3:[20,60],pea:[20,150],tdp:[150,250],ste:[50,120]};
+const HRR={sinus:[50,100],tachy:[101,180],brady:[30,59],af:[50,180],flutter:[60,170],svt:[150,250],vt:[120,250],pvt:[120,250],vf:[0,0],asys:[0,0],av3:[20,60],pea:[20,150],tdp:[150,250],ste:[50,120]};
 const hrClamp=o=>{const r=HRR[o.rhythm]||[0,250];o.hr=Math.max(r[0],Math.min(r[1],+o.hr||0));return o};
 /* TK: systolický vždy aspoň o 20 vyšší než diastolický */
 const bpFix=(o,k)=>{if(o.sys<=0&&o.dia<=0)return o;if(k==='dia'){if(o.dia>o.sys-20)o.sys=Math.min(260,o.dia+20);if(o.dia>o.sys-20)o.dia=o.sys-20}else if(o.dia>o.sys-20)o.dia=Math.max(0,o.sys-20);return o};
@@ -58,6 +58,8 @@ function buildCtl(){
       return b};
      w.append(mk('−',-1),i,mk('+',1))}
   }
+  const term=k=>{if(S.rhythm!=='svt'||S.ecgon===false)return;S.rhythm='sinus';S.hr=RHY.sinus[1];hrClamp(S);S.term={kind:k,id:Date.now()};paintCtl();commit()};
+  $('svtv').onclick=()=>term('vagal');$('svta').onclick=()=>term('adeno');
   $('kprb').onclick=()=>{if(!NOPULSE.includes(S.rhythm))return;S.kpr=!S.kpr;if(S.kpr){S.rr=10;S.etco2=10}sync()};
   const lw=$('lims');lw.innerHTML='';
   for(const k in LIMR){const [n,c,mi,ma,stp]=LIMR[k],row=document.createElement('div');row.className='limrow';row.style.setProperty('--k',c);
@@ -83,6 +85,7 @@ function paintCtl(setSliders=true){
   /* u rytmů bez pulzu nejde nastavovat SpO2 ani tlak; u VF a asystolie ani tep */
   const en={hr:(S.ecgon!==false||S.spo2on!==false)&&hz[1]>0,spo2:S.spo2on!==false&&!arr,sys:!arr,dia:!arr,etco2:S.co2on!==false,rr:S.co2on!==false};
   for(const k in en){const i=$('s_'+k);i.disabled=!en[k];i.closest('.adj').querySelectorAll('button').forEach(b=>b.disabled=!en[k]);i.closest('.row').classList.toggle('off',!en[k])}
+  const sv=S.rhythm==='svt'&&S.ecgon!==false;$('svtc').classList.toggle('hide',!sv);
   const kp=S.kpr===true;$('kprc').classList.toggle('on',kp);$('kprc').classList.toggle('dis',!arr);$('kprb').disabled=!arr;$('kprb').textContent=kp?'VYPNOUT':'ZAPNOUT';$('kprs').textContent=!arr?'jen při zástavě oběhu (VF, KT bez pulzu, asystolie, PEA, torsades)':kp?'probíhá – rušení na EKG a pletysmografu':'rušení na EKG a pletysmografu';
   for(const k in LIMR)[0,1].forEach(j=>{$(`lim_${k}_${j}`).textContent=S.lim[k][j]});
   document.querySelectorAll('#ctl .mini').forEach(b=>{b.setAttribute('role','switch');b.setAttribute('aria-checked',b.classList.contains('on'))});
@@ -94,7 +97,7 @@ let autoSend=false;try{autoSend=localStorage.getItem('simauto')==='1'}catch(e){}
 function saveState(){try{localStorage.setItem('simstate',JSON.stringify({S,C}))}catch(e){}}
 function loadState(){try{const o=JSON.parse(localStorage.getItem('simstate')||'null');if(!o||!o.S||!o.C||!RHY[o.S.rhythm]||!RHY[o.C.rhythm])return;
   /* po novém spuštění jsou senzory i KPR vypnuté; rytmus, hodnoty a hranice alarmů zůstanou */
-  const fix=x=>{const n={...DEF,...x,syson:true,ecgon:false,hron:false,spo2on:false,co2on:false,kpr:false};n.lim={...LIMDEF,...(x.lim||{})};n.spo2=Math.max(50,Math.min(100,+n.spo2||98));hrClamp(n);bpFix(n,'sys');return n};S=fix(o.S);C=fix(o.C)}catch(e){}}
+  const fix=x=>{const n={...DEF,...x,term:null,syson:true,ecgon:false,hron:false,spo2on:false,co2on:false,kpr:false};n.lim={...LIMDEF,...(x.lim||{})};n.spo2=Math.max(50,Math.min(100,+n.spo2||98));hrClamp(n);bpFix(n,'sys');return n};S=fix(o.S);C=fix(o.C)}catch(e){}}
 /* text tlačítka na jeden řádek: když se delší verze nevejde (malý displej, široké písmo), použije se kratší */
 function fitText(el,variants){for(const t of variants){el.textContent=t;if(el.scrollWidth<=el.clientWidth)return}}
 addEventListener('resize',()=>{if(mode==='ctl')dirtyPaint()});
@@ -195,6 +198,7 @@ function miniEvent(e){const txt=String(e.text||'').slice(0,60);if(!txt)return;co
   if(k==='shock'){const m=$('mini');m.classList.remove('shock');void m.offsetWidth;m.classList.add('shock');try{navigator.vibrate&&navigator.vibrate([120,60,120])}catch(x){}}}
 function devChip(m){const d=m.df||{},p=m.pc||{},el=$('mdev');let t='',c='';
   if(d.st==='chg'){t='NABÍJÍ '+(+d.j||'')+' J';c='chg'}else if(d.st==='rdy'){t=d.pend?'ČEKÁ NA QRS':'PŘIPRAVEN '+(+d.j||'')+' J';c='rdy'}else if(d.st==='shk'){t='VÝBOJ!';c='shk'}
+  else if(m.term){t='UKONČENÍ SVT · PAUZA';c='term'}
   else if(p.on){t='STIMULACE '+(+p.rate||'')+'/min · '+(+p.ma||0)+' mA';c='pace'}
   if(t&&d.sync&&d.st!=='shk')t+=' · SYNC';el.textContent=t;el.className='dv '+c+(t?'':' hide')}
 function miniPaint(){const live=Date.now()-miniLast<4000;$('mdot').classList.toggle('ok',live);$('mini').classList.toggle('stale',!live);
@@ -247,6 +251,7 @@ let beatFlag=0,st=0,lastBeat=-9,nextBeat=0,rrBeat=0.8;
 function sched(){
   const r=S.rhythm;
   if(st<shockEnd){lastBeat=-9;nextBeat=shockEnd;return}
+  if(st<termEnd){lastBeat=-9;nextBeat=termEnd;return}
   if(pFire()){
     const iv=60/pc.rate;
     if(pNext<=0||pNext>st+iv+1)pNext=st;
@@ -256,13 +261,15 @@ function sched(){
   if(r==='vf'||r==='asys'||S.hr<=0){lastBeat=-9;nextBeat=st;return}
   while(st>=nextBeat){
     lastBeat=nextBeat;btype='n';beatFlag=1;pulseBeep();
-    let rr=60/S.hr;
+    let rr=60/S.hr;if(escN>0){rr=Math.max(rr,1.2);escN--}
     if(r==='af')rr*=0.6+0.8*Math.random(); else if(r==='sinus'||r==='tachy'||r==='brady'||r==='ste'||r==='pea')rr*=1+0.015*Math.sin(st*0.8);
     rrBeat=rr;nextBeat=lastBeat+rr;
   }
 }
 /* KPR: komprese 110/min s mírně proměnlivou silou a tempem (návrh B) */
 const KC={next:0,start:-9,dur:.55,amp:1};
+/* ukončení SVT (vagový manévr / adenosin): pauza, pak 2 pomalé náhradní údery */
+let termEnd=0,escN=0,termId=null;const TERMP={vagal:2,adeno:4};
 const SHOCKP=3.2; /* délka pauzy po výboji [s] */
 function kprStep(){if(KC.next<st-1)KC.next=st;while(st>=KC.next){const iv=60/110*(1+.06*(Math.random()*2-1));KC.start=KC.next;KC.dur=iv;KC.amp=1+.18*(Math.random()*2-1);KC.next+=iv}}
 function kprShape(){if(KC.start<-5)return 0;const x=(st-KC.start)/KC.dur;if(x<0||x>1)return 0;
@@ -284,6 +291,9 @@ function ecgBase(){
   if(r==='vt'||r==='pvt'){const f=Math.max(S.hr,100)/60;const p=6.28*f*st;return 0.85*Math.sin(p)+0.3*Math.sin(2*p+0.6)}
   if(r==='tdp'){const f=Math.max(S.hr,150)/60;return 0.9*Math.sin(6.28*f*st+0.4*Math.sin(6.28*0.22*st))*(0.2+0.8*Math.abs(Math.sin(6.28*0.2*st)))}
   let v=0;
+  /* SVT (AVNRT): úzké QRS stejné šířky i při vysokém tepu, bez P vln, malý zoubek (retrográdní P) za QRS, mírná deprese ST */
+  if(r==='svt'&&btype!=='p'){if(lastBeat<-5)return 0;const u=st-lastBeat,rr=rrBeat,sg=x=>1/(1+Math.exp(-x)),Tp=0.06+0.5*rr;
+    return -0.07*g(u,0.022,0.008)+1.0*g(u,0.045,0.011)-0.22*g(u,0.072,0.010)-0.09*g(u,0.10,0.012)-0.07*sg((u-0.095)/0.008)*sg(-(u-(Tp-0.05))/0.02)+0.2*g(u,Tp,0.04*Math.min(1,rr/0.5))}
   /* AV blokáda III. st.: P vlny 80/min nezávisle na širokém komorovém náhradním rytmu (QRS ≥ 0,12 s, diskordantní T) */
   if(r==='av3'&&btype==='p'&&lastBeat>-5){const pp=st%0.75;return 0.13*(g(pp,0.12,0.022)+g(pp+0.75,0.12,0.022))+pacedBeat(st-lastBeat)}
   if(r==='av3'&&btype!=='p'){const pp=st%0.75;v=0.13*(g(pp,0.12,0.022)+g(pp+0.75,0.12,0.022));if(lastBeat>-5){const u=st-lastBeat,ag=(x,m,a,b)=>g(x,m,x<m?a:b);v+=-0.08*g(u,0.16,0.02)+0.95*ag(u,0.23,0.035,0.045)-0.42*g(u,0.33,0.045)-0.32*ag(u,0.62,0.09,0.07)}return v}
@@ -355,14 +365,14 @@ let nibp={on:false,t0:0,tgt:0,val:null};
 let df={mode:true,st:'idle',j:200,sync:false,t0:0,b:0,pend:false,pendT:0,msgT:0};
 /* čas příštího vrcholu R pro synchronizovanou kardioverzi; null = monitor nenajde QRS (VF, asystolie, torsades, KPR) */
 const VTPK=(()=>{let b=0,bv=-9;for(let p=0;p<6.283;p+=.001){const v=.85*Math.sin(p)+.3*Math.sin(2*p+.6);if(v>bv){bv=v;b=p}}return b/6.2832})();
-function nextR(){const r=S.rhythm;if(!ecgOn()||st<shockEnd||S.kpr===true||r==='vf'||r==='asys'||r==='tdp')return null;
+function nextR(){const r=S.rhythm;if(!ecgOn()||st<shockEnd||st<termEnd||S.kpr===true||r==='vf'||r==='asys'||r==='tdp')return null;
   if(r==='vt'||r==='pvt'){const f=Math.max(S.hr,100)/60;return (Math.floor(st*f-VTPK)+1+VTPK)/f}
-  if(lastBeat<-5||S.hr<=0&&btype!=='p')return null;const off=r==='av3'?.23:.245,t=lastBeat+off*(btype==='p'?1:Math.min(1,rrBeat/.8));
-  return t>st?t:nextBeat+off*Math.min(1,60/Math.max(S.hr,1)/.8)}
+  if(lastBeat<-5||S.hr<=0&&btype!=='p')return null;const off=r==='av3'?.23:.245,t=r==='svt'&&btype!=='p'?lastBeat+0.045:lastBeat+off*(btype==='p'?1:Math.min(1,rrBeat/.8));
+  return t>st?t:nextBeat+(r==='svt'?0.045:off*Math.min(1,60/Math.max(S.hr,1)/.8))}
 /* nastal vrchol R právě v posledním kroku (st-h, st]? */
-function rHit(h){const r=S.rhythm;if(!ecgOn()||st<shockEnd||S.kpr===true||r==='vf'||r==='asys'||r==='tdp')return false;
+function rHit(h){const r=S.rhythm;if(!ecgOn()||st<shockEnd||st<termEnd||S.kpr===true||r==='vf'||r==='asys'||r==='tdp')return false;
   let t;if(r==='vt'||r==='pvt'){const f=Math.max(S.hr,100)/60;t=(Math.floor(st*f-VTPK)+VTPK)/f}
-  else{if(lastBeat<-5)return false;t=lastBeat+(r==='av3'?.23:.245)*(btype==='p'?1:Math.min(1,rrBeat/.8))}
+  else{if(lastBeat<-5)return false;t=r==='svt'&&btype!=='p'?lastBeat+0.045:lastBeat+(r==='av3'?.23:.245)*(btype==='p'?1:Math.min(1,rrBeat/.8))}
   return t>st-h&&t<=st}
 const EN=[2,3,4,5,6,7,8,9,10,15,20,30,50,70,100,125,150,175,200,225,250,275,300,325,360],CHG=4000;
 let dfSnd=null,nibpSnd=null;
@@ -466,7 +476,7 @@ function dfTick(){
   if(df.st==='chg'&&n>=CHG){df.st='rdy';df.t0=Date.now();df.b=-1}
   if(df.st==='rdy'){const k=Math.floor((Date.now()-df.t0)/600);if(k!==df.b){df.b=k;tone(1400,.28,.12)}}
   if(df.st==='shk'&&n>3500)df.st='idle';
-  if(df.st==='shk'||shockEnd>st-1)paintNums(); /* rychlá aktualizace tepu během pauzy po výboji a po ní */
+  if(df.st==='shk'||shockEnd>st-1||termEnd>st-1)paintNums(); /* rychlá aktualizace tepu během pauzy po výboji a po ní */
   if(df.pend&&(df.st!=='rdy'||!df.sync||Date.now()-df.pendT>3000)){df.pend=false;if(df.st==='rdy')df.msgT=Date.now()}
   dfPaint();
 }
@@ -487,7 +497,7 @@ function paintNums(){
   /* saturační čidlo: SpO2 a TF jdou vždy spolu – jen při hmatném pulzu (ne bez pulzu, ne při KPR) */
   const lowp=S.sys>0&&S.sys<60; /* velmi nízký tlak → oxymetr nenajde spolehlivý pulz */
   const pulse=sOn&&S.spo2>0&&hrOk&&!kp&&!lowp&&(!NOPULSE.includes(S.rhythm)||cap);
-  const shp=st<shockEnd; /* pauza po výboji – monitor tep nezachytí */
+  const shp=st<shockEnd||st<termEnd; /* pauza po výboji nebo po ukončení SVT – monitor tep nezachytí */
   $('vHr').textContent=(!kp&&!shp&&S.rhythm!=='tdp'&&hOn&&hrOk&&(!noecg||pulse))?hrd:'---';
   $('nHr').style.setProperty('--c',noecg?'#3aa0ff':'#2ee66b');
   $('hrsrc').textContent=noecg?'':'EKG';
@@ -540,17 +550,20 @@ function handleState(d){
   [['ecgon',0],['spo2on',1],['co2on',2]].forEach(([k,i])=>{if(n[k]!==(S[k]!==false)){T[i].x=0;T[i].y=null;cx[i].clearRect(0,0,1e5,1e5)}});
   if(n.sys!==S.sys||n.dia!==S.dia)bpTime=hhmm();
   const changed=n.rhythm!==S.rhythm||n.hr!==S.hr;
+  /* ukončení SVT z ovladače: jen jednou (podle id) a jen při přechodu ze SVT */
+  const tm=d.term&&typeof d.term==='object'&&TERMP[d.term.kind]?d.term:null;
+  if(tm&&tm.id!==termId){const was=termId!==null||S.rhythm==='svt';termId=tm.id;if(S.rhythm==='svt'&&n.rhythm!=='svt'&&n.ecgon){termEnd=st+TERMP[tm.kind];escN=2;monEvent('Ukončení SVT – '+(tm.kind==='adeno'?'adenosin':'vagový manévr'),'info')}}
   S=n;lastRx=Date.now();
   $('wait').classList.add('hide');$('stale').classList.add('hide');
   if(pc.on&&pBlocked())setMode('d');
   ecgGuard();dfPaint();pPaint();
-  if(changed){nextBeat=st}
+  if(changed&&st>=termEnd){nextBeat=st}
   paintNums();
 }
 /* monitor posílá ovladači, co právě zobrazuje (pro náhled v ovladači) */
 let monConn=()=>null,pcT=0;
 function monEvent(text,kind){const c=monConn();if(c&&c.open){try{c.send({ev:{text,kind,t:Date.now()}})}catch(e){}}}
-function monSnap(){const t=id=>$(id).textContent.trim();return{hr:t('vHr'),spo2:t('vSpo'),bp:t('vBp'),co2:t('vCo'),alm:t('alm'),crit:$('alm').className==='on',df:{st:df.st,j:df.j,sync:df.sync,pend:df.pend},pc:{on:pc.on,rate:pc.rate,ma:pc.ma}}}
+function monSnap(){const t=id=>$(id).textContent.trim();return{hr:t('vHr'),spo2:t('vSpo'),bp:t('vBp'),co2:t('vCo'),alm:t('alm'),crit:$('alm').className==='on',term:st<termEnd,df:{st:df.st,j:df.j,sync:df.sync,pend:df.pend},pc:{on:pc.on,rate:pc.rate,ma:pc.ma}}}
 function startMon(){
   if(!getCode())return;
   if(typeof Peer==='undefined'&&typeof firebase==='undefined'){fail('Nepodařilo se načíst službu pro spojení. Zkontroluj připojení k internetu.');return}

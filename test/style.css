@@ -323,3 +323,13 @@ html.lightbg body,body:has(#ctl:not(.hide)){background:transparent;height:auto;m
 #stale.busy button{opacity:.5}
 #codehint{display:none;color:#c92a2a;margin-top:6px;font-size:.82rem}
 #codehint.err{display:block}
+/* --- ovladač: ukončení SVT --- */
+.svtend{margin-top:12px;padding:12px 14px;border-radius:16px;background:#f3f7ff;border:2px solid #cfe1f5}
+.svtend b{display:block;color:#0f2a47;margin-bottom:2px}
+.svtend>small{display:block;color:#7a8ea3;font-size:.78rem;margin-bottom:8px}
+.svtend .r{display:flex;gap:8px}
+#ctl .svtend button{flex:1;padding:10px 6px;font-weight:700;font-size:.88rem;line-height:1.2}
+#ctl .svtend button span{display:block;font-weight:400;font-size:.78rem}
+#ctl .svtend button.a{border-color:#2f7df6;color:#2f7df6}
+#ctl .svtend button.v{border-color:#12b886;color:#0b8a5f}
+#mini .dv.term{background:#74b9ff;color:#000}
